@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>AI 小手机</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    }
+    body {
+      background: #1a1a1a;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+    .phone {
+      width: 380px;
+      height: 780px;
+      background: #000;
+      border-radius: 40px;
+      padding: 12px;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.8), inset 0 0 0 2px #333;
+      position: relative;
+    }
+    .phone-screen {
+      width: 100%;
+      height: 100%;
+      background: #f2f2f7;
+      border-radius: 30px;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+    .status-bar {
+      background: transparent;
+      padding: 12px 20px 8px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      font-weight: 600;
+      color: #1c1c1e;
+      flex-shrink: 0;
+    }
+    .status-bar .time { font-weight: 700; }
+    .status-bar .icons { display: flex; gap: 6px; align-items: center; }
+    .status-bar .icons span { font-size: 14px; }
+    .home-screen {
+      flex: 1;
+      padding: 20px 16px 0;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+    .home-screen .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px 10px;
+      margin-bottom: 20px;
+    }
+    .app-icon {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      transition: transform 0.1s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .app-icon:active { transform: scale(0.9); }
+    .app-icon .icon-circle {
+      width: 64px;
+      height: 64px;
+      border-radius: 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 30px;
+      color: #fff;
+      background: #007aff;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      margin-bottom: 6px;
+    }
+    .app-icon .icon-label {
+      font-size: 11px;
+      color: #1c1c1e;
+      text-align: center;
+    }
+    .app-icon .icon-circle.chat { background: #34c759; }
+    .app-icon .icon-circle.settings { background: #8e8e93; }
+    .dock {
+      background: rgba(255,255,255,0.5);
+      backdrop-filter: blur(30px);
+      -webkit-backdrop-filter: blur(30px);
+      border-radius: 30px;
+      padding: 12px 16px;
+      margin: 0 4px 16px;
+      display: flex;
+      justify-content: space-around;
+      flex-shrink: 0;
+      margin-top: auto; /* 将 Dock 推到底部 */
+    }
+    .dock .app-icon .icon-circle {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      font-size: 26px;
+    }
+    .page {
+      display: none;
+      flex-direction: column;
+      height: 100%;
+      background: #f2f2f7;
+    }
+    .page.active { display: flex; }
+    .settings-page {
+      padding: 20px 16px;
+      flex: 1;
+      overflow-y: auto;
+    }
+    .settings-page .header {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .settings-page .header .back {
+      font-size: 24px;
+      cursor: pointer;
+      padding: 4px 8px;
+    }
+    .settings-list {
+      background: #fff;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .settings-item {
+      padding: 14px 16px;
+      border-bottom: 1px solid #e5e5ea;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+    .settings-item:last-child { border-bottom: none; }
+    .settings-item:active { background: #e5e5ea; }
+    .settings-item .label { font-size: 16px; color: #1c1c1e; }
+    .settings-item .arrow { color: #8e8e93; font-size: 18px; }
+    .api-settings-page {
+      padding: 20px 16px;
+      flex: 1;
+      overflow-y: auto;
+    }
+    .api-settings-page .header {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .api-settings-page .header .back {
+      font-size: 24px;
+      cursor: pointer;
+      padding: 4px 8px;
+    }
+    .api-group {
+      background: #fff;
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .api-group label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: #3a3a3c;
+      margin-bottom: 4px;
+    }
+    .api-group input, .api-group select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #d1d1d6;
+      border-radius: 10px;
+      font-size: 15px;
+      background: #f9f9f9;
+      margin-bottom: 12px;
+      outline: none;
+    }
+    .api-group input:focus, .api-group select:focus {
+      border-color: #007aff;
+      background: #fff;
+    }
+    .api-group button {
+      background: #007aff;
+      color: #fff;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      width: 100%;
+    }
+    .api-group button:active { opacity: 0.7; }
+    .api-group .status-msg {
+      margin-top: 8px;
+      font-size: 14px;
+      color: #3a3a3c;
+      min-height: 20px;
+    }
+    .chat-page {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      background: #f2f2f7;
+    }
+    .chat-page .chat-header {
+      padding: 16px 20px;
+      background: #ffffffcc;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid #e5e5ea;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    .chat-page .chat-header .back {
+      font-size: 24px;
+      cursor: pointer;
+      padding: 4px 8px;
+    }
+    .chat-page .chat-header .title {
+      font-size: 18px;
+      font-weight: 700;
+      flex: 1;
+    }
+    .chat-page .chat-body {
+      flex: 1;
+      padding: 16px 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+    .chat-page .chat-body .output {
+      background: #fff;
+      border-radius: 14px;
+      padding: 14px;
+      min-height: 100px;
+      white-space: pre-wrap;
+      font-size: 15px;
+      line-height: 1.5;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      flex: 1;
+    }
+    .chat-page .chat-input-area {
+      padding: 12px 16px 16px;
+      background: #ffffffcc;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid #e5e5ea;
+      display: flex;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+    .chat-page .chat-input-area textarea {
+      flex: 1;
+      border: 1px solid #d1d1d6;
+      border-radius: 20px;
+      padding: 10px 14px;
+      font-size: 15px;
+      resize: none;
+      outline: none;
+      background: #f9f9f9;
+      font-family: inherit;
+      min-height: 40px;
+      max-height: 100px;
+    }
+    .chat-page .chat-input-area textarea:focus {
+      border-color: #007aff;
+      background: #fff;
+    }
+    .chat-page .chat-input-area button {
+      background: #007aff;
+      color: #fff;
+      border: none;
+      border-radius: 20px;
+      padding: 0 20px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .chat-page .chat-input-area button:active { opacity: 0.7; }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-thumb { background: #c6c6c8; border-radius: 4px; }
+    @media (max-width: 420px) {
+      .phone { width: 100%; height: 100vh; border-radius: 0; padding: 0; }
+      .phone-screen { border-radius: 0; }
+      body { padding: 0; }
+    }
+  </style>
+</head>
+<body>
+<div class="phone">
+  <div class="phone-screen">
+    <!-- 状态栏 -->
+    <div class="status-bar" id="statusBar">
+      <span class="time" id="statusTime">00:00</span>
+      <span class="icons"><span>📶</span><span>🔋</span></span>
+    </div>
+
+    <!-- 主屏幕 -->
+    <div class="page active" id="homePage">
+      <div class="home-screen">
+        <div class="grid">
+          <div class="app-icon" id="goToChat"><div class="icon-circle chat">💬</div><span class="icon-label">聊天</span></div>
+          <div class="app-icon" id="goToSettingsFromHome"><div class="icon-circle settings">⚙️</div><span class="icon-label">设置</span></div>
+          <div class="app-icon"><div class="icon-circle" style="background:#ff9500;">📁</div><span class="icon-label">文件</span></div>
+          <div class="app-icon"><div class="icon-circle" style="background:#ff2d55;">🎵</div><span class="icon-label">音乐</span></div>
+        </div>
+        <div class="dock">
+          <div class="app-icon" id="goToChatFromDock"><div class="icon-circle chat">💬</div><span class="icon-label">聊天</span></div>
+          <div class="app-icon" id="goToSettingsFromDock"><div class="icon-circle settings">⚙️</div><span class="icon-label">设置</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 设置列表 -->
+    <div class="page" id="settingsPage">
+      <div class="settings-page">
+        <div class="header"><span class="back" id="backFromSettings">‹</span><span>设置</span></div>
+        <div class="settings-list">
+          <div class="settings-item" id="goToApiSettings"><span class="label">🔑 API 设置</span><span class="arrow">›</span></div>
+          <div class="settings-item"><span class="label">📱 通用</span><span class="arrow">›</span></div>
+          <div class="settings-item"><span class="label">ℹ️ 关于</span><span class="arrow">›</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- API 设置 -->
+    <div class="page" id="apiSettingsPage">
+      <div class="api-settings-page">
+        <div class="header"><span class="back" id="backFromApiSettings">‹</span><span>API 设置</span></div>
+        <div class="api-group">
+          <label>🔗 API 地址</label>
+          <input id="apiBase" type="text" placeholder="https://api.deepseek.com/v1" value="https://api.deepseek.com/v1" />
+          <label>🔑 API Key</label>
+          <input id="apiKey" type="password" placeholder="sk-..." />
+          <label>📦 模型</label>
+          <div style="display:flex; gap:8px;">
+            <select id="modelSelect" style="flex:1; margin-bottom:0;"><option value="">请先拉取</option></select>
+            <button id="fetchModelsBtn" style="width:auto; padding:10px 16px; background:#34c759;">🔄</button>
+          </div>
+          <div class="status-msg" id="apiStatus">就绪</div>
+          <button id="saveApiBtn" style="background:#8e8e93; margin-top:8px;">保存设置</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 聊天 -->
+    <div class="page" id="chatPage">
+      <div class="chat-page">
+        <div class="chat-header">
+          <span class="back" id="backFromChat">‹</span>
+          <span class="title">💬 聊天</span>
+          <span style="font-size:14px; color:#8e8e93;" id="modelDisplay">未选择</span>
+        </div>
+        <div class="chat-body">
+          <div class="output" id="output">等待提问...</div>
+        </div>
+        <div class="chat-input-area">
+          <textarea id="userInput" rows="1" placeholder="输入问题..."></textarea>
+          <button id="sendBtn">发送</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ==================== 页面导航 ====================
+  const homePage = document.getElementById('homePage');
+  const settingsPage = document.getElementById('settingsPage');
+  const apiSettingsPage = document.getElementById('apiSettingsPage');
+  const chatPage = document.getElementById('chatPage');
+
+  function showPage(pageId) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(pageId).classList.add('active');
+  }
+
+  document.getElementById('goToChat').addEventListener('click', () => showPage('chatPage'));
+  document.getElementById('goToChatFromDock').addEventListener('click', () => showPage('chatPage'));
+  document.getElementById('goToSettingsFromHome').addEventListener('click', () => showPage('settingsPage'));
+  document.getElementById('goToSettingsFromDock').addEventListener('click', () => showPage('settingsPage'));
+  document.getElementById('backFromSettings').addEventListener('click', () => showPage('homePage'));
+  document.getElementById('backFromApiSettings').addEventListener('click', () => showPage('settingsPage'));
+  document.getElementById('backFromChat').addEventListener('click', () => showPage('homePage'));
+  document.getElementById('goToApiSettings').addEventListener('click', () => showPage('apiSettingsPage'));
+
+  // ==================== 状态栏时间 ====================
+  function updateTime() {
+    const now = new Date();
+    const h = String(now.getHours()).padStart(2,'0');
+    const m = String(now.getMinutes()).padStart(2,'0');
+    document.getElementById('statusTime').textContent = h + ':' + m;
+  }
+  updateTime();
+  setInterval(updateTime, 10000);
+
+  // ==================== DOM 引用 ====================
+  const apiBase = document.getElementById('apiBase');
+  const apiKey = document.getElementById('apiKey');
+  const modelSelect = document.getElementById('modelSelect');
+  const fetchModelsBtn = document.getElementById('fetchModelsBtn');
+  const saveApiBtn = document.getElementById('saveApiBtn');
+  const apiStatus = document.getElementById('apiStatus');
+  const outputDiv = document.getElementById('output');
+  const userInput = document.getElementById('userInput');
+  const sendBtn = document.getElementById('sendBtn');
+  const modelDisplay = document.getElementById('modelDisplay');
+
+  // ==================== 本地存储 ====================
+  function loadSettings() {
+    const savedBase = localStorage.getItem('apiBase');
+    const savedKey = localStorage.getItem('apiKey');
+    const savedModel = localStorage.getItem('selectedModel');
+    if (savedBase) apiBase.value = savedBase;
+    if (savedKey) apiKey.value = savedKey;
+    if (savedModel) {
+      window._savedModel = savedModel;
+      modelDisplay.textContent = savedModel;
+    }
+  }
+  function saveSettings(includeModel = false) {
+    localStorage.setItem('apiBase', apiBase.value.trim());
+    localStorage.setItem('apiKey', apiKey.value.trim());
+    if (includeModel && modelSelect.value) {
+      localStorage.setItem('selectedModel', modelSelect.value);
+      modelDisplay.textContent = modelSelect.value;
+    }
+    apiStatus.textContent = '✅ 已保存';
+    setTimeout(() => { if (apiStatus.textContent === '✅ 已保存') apiStatus.textContent = '就绪'; }, 2000);
+  }
+  loadSettings();
+
+  // ==================== 拉取模型 ====================
+  fetchModelsBtn.addEventListener('click', async () => {
+    const base = apiBase.value.trim();
+    const key = apiKey.value.trim();
+    if (!base || !key) { apiStatus.textContent = '❌ 请填写地址和Key'; return; }
+    saveSettings(false);
+    apiStatus.textContent = '📥 拉取中...';
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'models', baseUrl: base, apiKey: key })
+      });
+      const data = await res.json();
+      if (data.models) {
+        modelSelect.innerHTML = '<option value="">请选择</option>';
+        data.models.forEach(m => {
+          const opt = document.createElement('option');
+          opt.value = m.id || m;
+          opt.textContent = m.id || m;
+          modelSelect.appendChild(opt);
+        });
+        apiStatus.textContent = `✅ 成功拉取 ${data.models.length} 个模型`;
+        const savedModel = localStorage.getItem('selectedModel');
+        if (savedModel && [...modelSelect.options].some(opt => opt.value === savedModel)) {
+          modelSelect.value = savedModel;
+          modelDisplay.textContent = savedModel;
+        }
+      } else {
+        apiStatus.textContent = '❌ 拉取失败：' + (data.error || '未知错误');
+      }
+    } catch (e) {
+      apiStatus.textContent = '❌ 请求失败：' + e.message;
+    }
+  });
+
+  // ==================== 保存按钮 ====================
+  saveApiBtn.addEventListener('click', () => {
+    saveSettings(true);
+  });
+
+  modelSelect.addEventListener('change', () => {
+    if (modelSelect.value) {
+      modelDisplay.textContent = modelSelect.value;
+      localStorage.setItem('selectedModel', modelSelect.value);
+    }
+  });
+
+  // ==================== 发送消息 ====================
+  sendBtn.addEventListener('click', async () => {
+    const base = apiBase.value.trim();
+    const key = apiKey.value.trim();
+    const model = modelSelect.value;
+    const msg = userInput.value.trim();
+    if (!base || !key) { alert('请先设置 API 地址和 Key'); showPage('apiSettingsPage'); return; }
+    if (!model) { alert('请先拉取并选择模型'); showPage('apiSettingsPage'); return; }
+    if (!msg) { alert('请输入问题'); return; }
+    saveSettings(true);
+    outputDiv.textContent = '🤔 思考中...';
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'chat', baseUrl: base, apiKey: key, model, message: msg })
+      });
+      const data = await res.json();
+      outputDiv.textContent = data.reply || '无回复';
+    } catch (e) {
+      outputDiv.textContent = '❌ 出错：' + e.message;
+    }
+  });
+
+  userInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendBtn.click();
+    }
+  });
+
+  // ==================== 自动拉取模型（页面加载时） ====================
+  window.addEventListener('load', async () => {
+    const savedBase = localStorage.getItem('apiBase');
+    const savedKey = localStorage.getItem('apiKey');
+    const savedModel = localStorage.getItem('selectedModel');
+    if (savedBase) apiBase.value = savedBase;
+    if (savedKey) apiKey.value = savedKey;
+    if (savedModel) {
+      window._savedModel = savedModel;
+      modelDisplay.textContent = savedModel;
+      // 自动拉取并恢复选择
+      if (savedBase && savedKey) {
+        await autoFetchAndSelect(savedBase, savedKey, savedModel);
+      }
+    }
+  });
+
+  async function autoFetchAndSelect(base, key, model) {
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'models', baseUrl: base, apiKey: key })
+      });
+      const data = await res.json();
+      if (data.models) {
+        modelSelect.innerHTML = '<option value="">请选择</option>';
+        data.models.forEach(m => {
+          const opt = document.createElement('option');
+          opt.value = m.id || m;
+          opt.textContent = m.id || m;
+          modelSelect.appendChild(opt);
+        });
+        if ([...modelSelect.options].some(opt => opt.value === model)) {
+          modelSelect.value = model;
+          modelDisplay.textContent = model;
+          localStorage.setItem('selectedModel', model);
+        }
+        apiStatus.textContent = `✅ 自动拉取 ${data.models.length} 个模型`;
+        setTimeout(() => { if (apiStatus.textContent.includes('自动拉取')) apiStatus.textContent = '就绪'; }, 3000);
+      }
+    } catch (e) {
+      console.log('自动拉取失败，可手动拉取');
+    }
+  }
+</script>
+</body>
+</html>
