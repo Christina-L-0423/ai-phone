@@ -40,16 +40,33 @@
     .home-screen .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px 10px;margin-bottom:20px}
     .app-icon{display:flex;flex-direction:column;align-items:center;cursor:pointer;transition:transform .1s;-webkit-tap-highlight-color:transparent}
     .app-icon:active{transform:scale(.9)}
-    .app-icon .icon-circle{width:64px;height:64px;border-radius:16px;display:flex;justify-content:center;align-items:center;font-size:30px;color:#fff;background:#007aff;box-shadow:0 4px 10px rgba(0,0,0,.1);margin-bottom:6px;position:relative;overflow:hidden}
-    .app-icon .icon-circle img{width:100%;height:100%;object-fit:cover}
+    /* 毛玻璃图标背景 */
+    .app-icon .icon-circle{
+      width:64px;height:64px;border-radius:16px;
+      display:flex;justify-content:center;align-items:center;
+      background: rgba(255,255,255,0.2);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.3);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      margin-bottom:6px;
+      position:relative;
+      overflow:hidden;
+      transition: all 0.2s;
+    }
+    .app-icon .icon-circle svg {
+      width: 32px;
+      height: 32px;
+      stroke: #C5C8F0;  /* 浅紫色 */
+      stroke-width: 2;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
     .app-icon .icon-label{font-size:11px;color:#1c1c1e;text-align:center}
-    /* 所有图标统一为浅紫色偏蓝 */
-    .app-icon .icon-circle.chat,
-    .app-icon .icon-circle.settings,
-    .app-icon .icon-circle.novel,
-    .app-icon .icon-circle.music { background: #C5C8F0; }
     .dock{background:rgba(255,255,255,.5);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);border-radius:30px;padding:12px 16px;margin:0 4px 16px;display:flex;justify-content:space-around;flex-shrink:0;margin-top:auto}
-    .dock .app-icon .icon-circle{width:56px;height:56px;border-radius:14px;font-size:26px}
+    .dock .app-icon .icon-circle{width:56px;height:56px;border-radius:14px}
+    .dock .app-icon .icon-circle svg{width:28px;height:28px}
     .page{display:none;flex-direction:column;height:100%;background:#E3EEFA !important}
     .page.active{display:flex}
     .settings-page{padding:20px 16px;flex:1;overflow-y:auto;background:#E3EEFA !important}
@@ -272,14 +289,65 @@
     <div class="page active" id="homePage">
       <div class="home-screen">
         <div class="grid">
-          <div class="app-icon" id="goToWechat"><div class="icon-circle chat">💬</div><span class="icon-label">聊天</span></div>
-          <div class="app-icon" id="goToSettingsFromHome"><div class="icon-circle settings">⚙️</div><span class="icon-label">设置</span></div>
-          <div class="app-icon" id="goToNovel"><div class="icon-circle novel">📖</div><span class="icon-label">小说</span></div>
-          <div class="app-icon" id="goToMusic"><div class="icon-circle music">🎵</div><span class="icon-label">音乐</span></div>
+          <!-- 聊天图标 -->
+          <div class="app-icon" id="goToWechat">
+            <div class="icon-circle">
+              <svg viewBox="0 0 24 24">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+            </div>
+            <span class="icon-label">聊天</span>
+          </div>
+          <!-- 设置图标 -->
+          <div class="app-icon" id="goToSettingsFromHome">
+            <div class="icon-circle">
+              <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M12 1v4m0 14v4M4.22 4.22l2.83 2.83m9.9 9.9l2.83 2.83M1 12h4m14 0h4M4.22 19.78l2.83-2.83m9.9-9.9l2.83-2.83"/>
+              </svg>
+            </div>
+            <span class="icon-label">设置</span>
+          </div>
+          <!-- 小说图标 -->
+          <div class="app-icon" id="goToNovel">
+            <div class="icon-circle">
+              <svg viewBox="0 0 24 24">
+                <path d="M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6z"/>
+                <path d="M8 10h8M8 14h5"/>
+              </svg>
+            </div>
+            <span class="icon-label">小说</span>
+          </div>
+          <!-- 音乐图标 -->
+          <div class="app-icon" id="goToMusic">
+            <div class="icon-circle">
+              <svg viewBox="0 0 24 24">
+                <path d="M9 18V5l12-2v13"/>
+                <circle cx="6" cy="18" r="3"/>
+                <circle cx="18" cy="16" r="3"/>
+              </svg>
+            </div>
+            <span class="icon-label">音乐</span>
+          </div>
         </div>
         <div class="dock">
-          <div class="app-icon" id="goToWechatFromDock"><div class="icon-circle chat">💬</div><span class="icon-label">聊天</span></div>
-          <div class="app-icon" id="goToSettingsFromDock"><div class="icon-circle settings">⚙️</div><span class="icon-label">设置</span></div>
+          <div class="app-icon" id="goToWechatFromDock">
+            <div class="icon-circle">
+              <svg viewBox="0 0 24 24">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+            </div>
+            <span class="icon-label">聊天</span>
+          </div>
+          <div class="app-icon" id="goToSettingsFromDock">
+            <div class="icon-circle">
+              <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M12 1v4m0 14v4M4.22 4.22l2.83 2.83m9.9 9.9l2.83 2.83M1 12h4m14 0h4M4.22 19.78l2.83-2.83m9.9-9.9l2.83-2.83"/>
+              </svg>
+            </div>
+            <span class="icon-label">设置</span>
+          </div>
         </div>
       </div>
     </div>
@@ -1146,15 +1214,10 @@ musicFileInput.addEventListener('change', function(e) {
   const file = e.target.files[0];
   if (!file) return;
 
-  // 检查浏览器是否支持该格式
-  const audio = document.createElement('audio');
-  const canPlay = audio.canPlayType(file.type);
-  console.log('MIME type:', file.type, '支持:', canPlay);
-
   // 创建对象 URL
   const url = URL.createObjectURL(file);
   audioPlayer.src = url;
-  audioPlayer.load(); // 强制加载
+  audioPlayer.load();
 
   // 更新 UI
   musicInfo.textContent = `已加载: ${file.name}`;
