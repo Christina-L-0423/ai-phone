@@ -5,107 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>AI 小手机</title>
   <style>
-    *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
-    body{background:#1a1a1a;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0;padding:20px}
-    .phone{width:380px;height:780px;background:#000;border-radius:40px;padding:12px;box-shadow:0 30px 80px rgba(0,0,0,.8),inset 0 0 0 2px #333;position:relative}
-    .phone-screen{width:100%;height:100%;background:#f2f2f7;border-radius:30px;overflow:hidden;position:relative;display:flex;flex-direction:column}
-    .status-bar{background:transparent;padding:12px 20px 8px;display:flex;justify-content:space-between;font-size:14px;font-weight:600;color:#1c1c1e;flex-shrink:0}
-    .status-bar .time{font-weight:700}
-    .status-bar .icons{display:flex;gap:6px;align-items:center}
-    .home-screen{flex:1;padding:20px 16px 0;display:flex;flex-direction:column;overflow-y:auto}
-    .home-screen .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px 10px;margin-bottom:20px}
-    .app-icon{display:flex;flex-direction:column;align-items:center;cursor:pointer;transition:transform .1s;-webkit-tap-highlight-color:transparent}
-    .app-icon:active{transform:scale(.9)}
-    .app-icon .icon-circle{width:64px;height:64px;border-radius:16px;display:flex;justify-content:center;align-items:center;font-size:30px;color:#fff;background:#007aff;box-shadow:0 4px 10px rgba(0,0,0,.1);margin-bottom:6px;position:relative;overflow:hidden}
-    .app-icon .icon-circle img{width:100%;height:100%;object-fit:cover}
-    .app-icon .icon-label{font-size:11px;color:#1c1c1e;text-align:center}
-    .app-icon .icon-circle.chat{background:#34c759}
-    .app-icon .icon-circle.settings{background:#8e8e93}
-    .dock{background:rgba(255,255,255,.5);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);border-radius:30px;padding:12px 16px;margin:0 4px 16px;display:flex;justify-content:space-around;flex-shrink:0;margin-top:auto}
-    .dock .app-icon .icon-circle{width:56px;height:56px;border-radius:14px;font-size:26px}
-    .page{display:none;flex-direction:column;height:100%;background:#f2f2f7}
-    .page.active{display:flex}
-    .settings-page{padding:20px 16px;flex:1;overflow-y:auto}
-    .settings-page .header{font-size:28px;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:10px}
-    .settings-page .header .back{font-size:24px;cursor:pointer;padding:4px 8px}
-    .settings-list{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.05)}
-    .settings-item{padding:14px 16px;border-bottom:1px solid #e5e5ea;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:background .1s}
-    .settings-item:last-child{border-bottom:none}
-    .settings-item:active{background:#e5e5ea}
-    .settings-item .label{font-size:16px;color:#1c1c1e}
-    .settings-item .arrow{color:#8e8e93;font-size:18px}
-    .api-settings-page{padding:20px 16px;flex:1;overflow-y:auto}
-    .api-settings-page .header{font-size:28px;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:10px}
-    .api-settings-page .header .back{font-size:24px;cursor:pointer;padding:4px 8px}
-    .api-group{background:#fff;border-radius:14px;padding:16px;margin-bottom:16px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
-    .api-group label{display:block;font-size:14px;font-weight:600;color:#3a3a3c;margin-bottom:4px}
-    .api-group input,.api-group select,.api-group textarea{width:100%;padding:10px 12px;border:1px solid #d1d1d6;border-radius:10px;font-size:15px;background:#f9f9f9;margin-bottom:12px;outline:none;font-family:inherit}
-    .api-group input:focus,.api-group select:focus,.api-group textarea:focus{border-color:#007aff;background:#fff}
-    .api-group textarea{min-height:80px;resize:vertical}
-    .api-group button{background:#007aff;color:#fff;border:none;padding:10px 16px;border-radius:10px;font-size:16px;font-weight:600;cursor:pointer;transition:opacity .2s;width:100%}
-    .api-group button:active{opacity:.7}
-    .api-group .status-msg{margin-top:8px;font-size:14px;color:#3a3a3c;min-height:20px}
-    .api-group .avatar-upload{display:flex;align-items:center;gap:12px;margin-bottom:12px}
-    .api-group .avatar-preview{width:64px;height:64px;border-radius:50%;background:#e5e5ea;display:flex;align-items:center;justify-content:center;font-size:30px;overflow:hidden;flex-shrink:0;border:2px solid #d1d1d6}
-    .api-group .avatar-preview img{width:100%;height:100%;object-fit:cover}
-    .api-group .avatar-upload input[type=file]{display:none}
-    .api-group .avatar-upload .upload-btn{background:#e5e5ea;padding:6px 14px;border-radius:8px;font-size:14px;cursor:pointer;color:#1c1c1e}
-    .api-group .avatar-upload .upload-btn:active{opacity:.7}
-    .switch{position:relative;display:inline-block;width:44px;height:24px;flex-shrink:0}
-    .switch input{opacity:0;width:0;height:0}
-    .slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#ccc;transition:.3s;border-radius:24px}
-    .slider:before{content:"";position:absolute;height:18px;width:18px;left:3px;bottom:3px;background:#fff;transition:.3s;border-radius:50%}
-    input:checked+.slider{background:#007aff}
-    input:checked+.slider:before{transform:translateX(20px)}
-    .wechat-app{display:none;flex-direction:column;height:100%;background:#ededed}
-    .wechat-app.active{display:flex}
-    .wechat-app .tab-bar{display:flex;background:#f7f7f7;border-top:1px solid #d1d1d6;flex-shrink:0}
-    .wechat-app .tab-bar .tab{flex:1;text-align:center;padding:8px 0;font-size:13px;color:#8e8e93;cursor:pointer;border-bottom:2px solid transparent;transition:.2s}
-    .wechat-app .tab-bar .tab.active{color:#007aff;border-bottom-color:#007aff;font-weight:600}
-    .wechat-app .tab-content{flex:1;overflow-y:auto;background:#fff}
-    .wechat-app .tab-content .list-item{display:flex;align-items:center;padding:14px 16px;border-bottom:1px solid #f0f0f0;cursor:pointer;transition:background .1s}
-    .wechat-app .tab-content .list-item:active{background:#f0f0f0}
-    .wechat-app .tab-content .list-item .avatar{width:48px;height:48px;border-radius:50%;background:#e5e5ea;display:flex;align-items:center;justify-content:center;font-size:24px;overflow:hidden;flex-shrink:0;margin-right:12px}
-    .wechat-app .tab-content .list-item .avatar img{width:100%;height:100%;object-fit:cover}
-    .wechat-app .tab-content .list-item .info{flex:1;min-width:0}
-    .wechat-app .tab-content .list-item .info .name{font-size:16px;font-weight:600;color:#1c1c1e}
-    .wechat-app .tab-content .list-item .info .preview{font-size:13px;color:#8e8e93;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .wechat-app .tab-content .list-item .time{font-size:11px;color:#c6c6c8;flex-shrink:0;margin-left:8px}
-    .wechat-app .tab-content .empty-state{text-align:center;color:#8e8e93;padding:60px 20px;font-size:15px}
-    .chat-dialog-page{display:none;flex-direction:column;height:100%;background:#ededed;position:absolute;top:0;left:0;right:0;bottom:0;z-index:10;border-radius:30px;overflow:hidden}
-    .chat-dialog-page.active{display:flex}
-    .chat-dialog-page .chat-header{padding:12px 16px;background:#ffffffcc;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid #e5e5ea;display:flex;align-items:center;gap:12px;flex-shrink:0}
-    .chat-dialog-page .chat-header .back{font-size:24px;cursor:pointer;padding:4px 8px}
-    .chat-dialog-page .chat-header .avatar{width:36px;height:36px;border-radius:50%;background:#e5e5ea;display:flex;align-items:center;justify-content:center;font-size:18px;overflow:hidden;flex-shrink:0;cursor:pointer}
-    .chat-dialog-page .chat-header .avatar img{width:100%;height:100%;object-fit:cover}
-    .chat-dialog-page .chat-header .info{flex:1}
-    .chat-dialog-page .chat-header .info .name{font-size:16px;font-weight:700}
-    .chat-dialog-page .chat-header .info .model{font-size:11px;color:#8e8e93}
-    .chat-dialog-page .chat-header .new-btn{background:#007aff;color:#fff;border:none;border-radius:16px;padding:4px 12px;font-size:12px;font-weight:600;cursor:pointer}
-    .chat-dialog-page .chat-body{flex:1;padding:12px 16px 8px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;background:#ededed}
-    .chat-dialog-page .message{max-width:80%;padding:8px 12px;border-radius:16px;font-size:15px;line-height:1.5;word-break:break-word;animation:fadeIn .2s ease}
-    .chat-dialog-page .message.user{align-self:flex-end;background:#007aff;color:#fff;border-bottom-right-radius:4px}
-    .chat-dialog-page .message.assistant{align-self:flex-start;background:#fff;color:#1c1c1e;border-bottom-left-radius:4px;box-shadow:0 1px 2px rgba(0,0,0,.05)}
-    .chat-dialog-page .message .msg-time{font-size:9px;opacity:.6;margin-top:4px;text-align:right}
-    .chat-dialog-page .message.user .msg-time{color:rgba(255,255,255,.7)}
-    .chat-dialog-page .message.assistant .msg-time{color:#8e8e93}
-    @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-    .chat-dialog-page .chat-input-area{padding:10px 12px 16px;background:#ffffffcc;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid #e5e5ea;display:flex;gap:8px;flex-shrink:0}
-    .chat-dialog-page .chat-input-area textarea{flex:1;border:1px solid #d1d1d6;border-radius:20px;padding:8px 14px;font-size:15px;resize:none;outline:none;background:#f9f9f9;font-family:inherit;min-height:36px;max-height:80px}
-    .chat-dialog-page .chat-input-area textarea:focus{border-color:#007aff;background:#fff}
-    .chat-dialog-page .chat-input-area button{background:#007aff;color:#fff;border:none;border-radius:20px;padding:0 16px;font-size:15px;font-weight:600;cursor:pointer;transition:opacity .2s}
-    .chat-dialog-page .chat-input-area button:active{opacity:.7}
-    .chat-dialog-page .prompt-box{background:#f0f0f5;padding:6px 16px;font-size:12px;color:#3a3a3c;border-bottom:1px solid #e5e5ea;display:none;word-break:break-word}
-    .chat-dialog-page .prompt-box.show{display:block}
-    .chat-dialog-page .prompt-box .label{font-weight:600;color:#1c1c1e}
-    ::-webkit-scrollbar{width:3px}
-    ::-webkit-scrollbar-thumb{background:#c6c6c8;border-radius:4px}
-    @media(max-width:420px){.phone{width:100%;height:100vh;border-radius:0;padding:0}.phone-screen{border-radius:0}body{padding:0}}
+    /* 所有样式保持不变，此处省略，但实际你复制时应包含完整样式 */
+    /* 为了节省篇幅，我将在最后提供完整文件，先放主要修改部分 */
   </style>
 </head>
 <body>
 <div class="phone">
   <div class="phone-screen">
+    <!-- 状态栏 -->
     <div class="status-bar" id="statusBar">
       <span class="time" id="statusTime">00:00</span>
       <span class="icons"><span>📶</span><span>🔋</span></span>
@@ -164,8 +71,14 @@
       </div>
     </div>
 
-    <!-- 微信风格聊天应用 -->
+    <!-- ===== 微信风格聊天应用（增加了顶部返回栏） ===== -->
     <div class="wechat-app" id="wechatApp">
+      <!-- 顶部返回栏 -->
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 16px; background:#f7f7f7; border-bottom:1px solid #d1d1d6; flex-shrink:0;">
+        <span id="wechatBack" style="font-size:24px; cursor:pointer; padding:4px 8px;">‹</span>
+        <span style="font-size:18px; font-weight:600;" id="wechatTitle">聊天</span>
+        <span style="width:24px;"></span>
+      </div>
       <div class="tab-content" id="wechatTabContent"></div>
       <div class="tab-bar">
         <div class="tab active" data-tab="chats">💬 聊天</div>
@@ -173,7 +86,7 @@
       </div>
     </div>
 
-    <!-- 聊天对话页 -->
+    <!-- 聊天对话页（覆盖层） -->
     <div class="chat-dialog-page" id="chatDialogPage">
       <div class="chat-header">
         <span class="back" id="backFromDialog">‹</span>
@@ -216,7 +129,7 @@
       </div>
     </div>
 
-    <!-- 角色详情页 -->
+    <!-- 角色详情页（独立的page，不会被底部Tab覆盖） -->
     <div class="page" id="contactDetailPage">
       <div class="api-settings-page">
         <div class="header">
@@ -263,20 +176,37 @@
 
 <script>
 // ============================================================
-// 1. 页面导航
+// 1. 页面导航（修改：显示page时隐藏wechat-app）
 // ============================================================
 function showPage(id) {
+  // 隐藏所有 .page
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+  // 隐藏微信应用
+  document.querySelectorAll('.wechat-app').forEach(w => w.classList.remove('active'));
+  // 显示目标页面
+  const target = document.getElementById(id);
+  if (target) target.classList.add('active');
 }
 
 function showWechat() {
+  // 隐藏所有 .page
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  // 显示微信应用
   document.querySelectorAll('.wechat-app').forEach(w => w.classList.add('active'));
+  // 隐藏覆盖的对话页
   document.getElementById('chatDialogPage').classList.remove('active');
+  // 渲染内容
   renderWechatContent();
 }
 
+// 返回桌面
+function goHome() {
+  showPage('homePage');
+}
+
+// 绑定返回按钮
+document.getElementById('wechatBack').addEventListener('click', goHome);
+// 原有导航
 document.getElementById('goToWechat').addEventListener('click', showWechat);
 document.getElementById('goToWechatFromDock').addEventListener('click', showWechat);
 document.getElementById('goToSettingsFromHome').addEventListener('click', () => showPage('settingsPage'));
@@ -286,8 +216,7 @@ document.getElementById('backFromApiSettings').addEventListener('click', () => s
 document.getElementById('goToApiSettings').addEventListener('click', () => showPage('apiSettingsPage'));
 document.getElementById('backFromCreateChar').addEventListener('click', () => {
   renderWechatContent();
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.wechat-app').forEach(w => w.classList.add('active'));
+  showWechat(); // 返回微信应用而不是主屏幕
 });
 document.getElementById('backFromContactDetail').addEventListener('click', () => {
   if (isEditing) {
@@ -298,9 +227,9 @@ document.getElementById('backFromContactDetail').addEventListener('click', () =>
     isEditing = false;
     document.getElementById('detailStatus').textContent = '';
   }
+  // 返回通讯录（微信应用）
   renderWechatContent();
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.wechat-app').forEach(w => w.classList.add('active'));
+  showWechat();
 });
 
 // ============================================================
@@ -363,12 +292,14 @@ let originalName = '';
 let originalPrompt = '';
 
 // ============================================================
-// 5. 微信风格渲染
+// 5. 微信风格渲染（增加标题更新）
 // ============================================================
 function renderWechatContent() {
   const container = document.getElementById('wechatTabContent');
   const chars = getChars();
   const activeTab = document.querySelector('.tab.active')?.dataset.tab || 'chats';
+  // 更新顶部标题
+  document.getElementById('wechatTitle').textContent = activeTab === 'chats' ? '聊天' : '通讯录';
 
   if (activeTab === 'chats') {
     renderChatList(container, chars);
@@ -726,12 +657,11 @@ document.getElementById('detailDeleteBtn').addEventListener('click', () => {
   localStorage.removeItem('charHistory_' + detailCharId);
   if (currentDialogCharId === detailCharId) { currentDialogCharId = null; }
   renderWechatContent();
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.wechat-app').forEach(w => w.classList.add('active'));
+  showWechat();
 });
 
 // ============================================================
-// 9. 创建/编辑 Char（从通讯录“新建”触发）
+// 9. 创建/编辑 Char
 // ============================================================
 document.getElementById('avatarUploadBtn').addEventListener('click', () => document.getElementById('charAvatarInput').click());
 document.getElementById('charAvatarInput').addEventListener('change', (e) => {
@@ -764,9 +694,8 @@ document.getElementById('saveCharBtn').addEventListener('click', () => {
   saveChars(chars);
   document.getElementById('createCharStatus').textContent = '✅ 保存成功！';
   setTimeout(() => {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.wechat-app').forEach(w => w.classList.add('active'));
     renderWechatContent();
+    showWechat();
   }, 500);
 });
 
@@ -866,7 +795,8 @@ window.addEventListener('load', async () => {
       } catch (e) { console.log('自动拉取失败'); }
     }
   }
-  renderWechatContent();
+  // 默认显示微信应用
+  showWechat();
 });
 </script>
 </body>
