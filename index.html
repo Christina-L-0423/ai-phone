@@ -78,7 +78,7 @@
     .wechat-app .tab-content .header-actions button { background:none; border:none; font-size:22px; cursor:pointer; color:#007aff; padding:0 4px; }
     .wechat-app .tab-content .header-actions button:active { opacity:0.6; }
 
-    /* 聊天对话页覆盖层 */
+    /* 聊天对话页 */
     .chat-dialog-page { display:none; flex-direction:column; height:100%; background:#ededed; position:absolute; top:0; left:0; right:0; bottom:0; z-index:10; border-radius:30px; overflow:hidden; }
     .chat-dialog-page.active { display:flex; }
     .chat-dialog-page .chat-header { padding:12px 16px; background:#ffffffcc; backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border-bottom:1px solid #e5e5ea; display:flex; align-items:center; gap:12px; flex-shrink:0; }
@@ -223,29 +223,53 @@
       </div>
     </div>
 
-    <!-- 角色详情页（通讯录点击进入） -->
+    <!-- ===== 角色详情页（通讯录点击进入） ===== -->
+    <!-- 修改开始：详情页改为查看/编辑双模式 -->
     <div class="page" id="contactDetailPage">
       <div class="api-settings-page">
         <div class="header">
           <span class="back" id="backFromContactDetail">‹</span>
           <span id="contactDetailTitle">角色详情</span>
         </div>
-        <div class="api-group">
-          <div style="text-align:center; margin-bottom:12px;">
-            <div class="avatar-preview" id="detailAvatar" style="width:80px;height:80px;margin:0 auto;font-size:36px;">🧑</div>
+        <div class="api-group" id="detailContainer">
+          <!-- 查看模式 -->
+          <div id="viewMode">
+            <div style="text-align:center; margin-bottom:12px;">
+              <div class="avatar-preview" id="detailAvatar" style="width:80px;height:80px;margin:0 auto;font-size:36px;">🧑</div>
+            </div>
+            <div style="margin-bottom:10px;">
+              <label style="font-weight:600;">名字</label>
+              <div id="detailNameDisplay" style="padding:8px 12px; background:#f9f9f9; border-radius:8px; font-size:16px;">未命名</div>
+            </div>
+            <div style="margin-bottom:10px;">
+              <label style="font-weight:600;">人设</label>
+              <div id="detailPromptDisplay" style="padding:8px 12px; background:#f9f9f9; border-radius:8px; font-size:15px; min-height:60px; white-space:pre-wrap;">未设置</div>
+            </div>
+            <div style="display:flex; gap:10px; margin-top:8px;">
+              <button id="detailEditBtn" style="flex:1; background:#007aff;">修改</button>
+              <button id="detailDeleteBtn" style="flex:1; background:#ff3b30;">删除</button>
+            </div>
           </div>
-          <label>名字</label>
-          <input id="detailNameInput" />
-          <label>人设</label>
-          <textarea id="detailPromptInput"></textarea>
-          <div style="display:flex; gap:10px; margin-top:4px;">
-            <button id="detailSaveBtn" style="flex:1;">保存修改</button>
-            <button id="detailDeleteBtn" style="flex:1; background:#ff3b30;">删除角色</button>
+          <!-- 编辑模式（初始隐藏） -->
+          <div id="editMode" style="display:none;">
+            <div style="text-align:center; margin-bottom:12px;">
+              <div class="avatar-preview" id="detailAvatarEdit" style="width:80px;height:80px;margin:0 auto;font-size:36px;">🧑</div>
+            </div>
+            <label>名字</label>
+            <input id="detailNameInput" style="margin-bottom:10px;" />
+            <label>人设</label>
+            <textarea id="detailPromptInput" rows="4" style="margin-bottom:10px;"></textarea>
+            <div style="display:flex; gap:10px;">
+              <button id="detailSaveBtn" style="flex:1; background:#34c759;">保存修改</button>
+              <button id="detailCancelBtn" style="flex:1; background:#8e8e93;">取消修改</button>
+            </div>
           </div>
           <div class="status-msg" id="detailStatus"></div>
         </div>
       </div>
     </div>
+    <!-- 修改结束 -->
+
   </div>
 </div>
 
@@ -276,7 +300,12 @@
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.wechat-app').forEach(w => w.classList.add('active'));
   });
+  // 修改：从详情页返回通讯录
   document.getElementById('backFromContactDetail').addEventListener('click', () => {
+    // 如果处于编辑模式，不保存直接退出（视为取消）
+    if (isEditing) {
+      cancelEditMode();
+    }
     renderWechatContent();
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.wechat-app').forEach(w => w.classList.add('active'));
@@ -337,6 +366,9 @@
   let editingCharId = null;
   let avatarDataUrl = null;
   let detailCharId = null;
+  let isEditing = false; // 详情页是否处于编辑模式
+  let originalName = '';
+  let originalPrompt = '';
 
   // ============================================================
   // 5. 微信风格渲染
@@ -613,38 +645,106 @@
   });
 
   // ============================================================
-  // 8. 通讯录详情（编辑角色）
+  // 8. 通讯录详情（查看/编辑模式）
   // ============================================================
   function openContactDetail(charId) {
     detailCharId = charId;
     const chars = getChars();
     const char = chars.find(c => c.id === charId);
     if (!char) return;
+
+    // 填充查看模式
     document.getElementById('detailAvatar').innerHTML = char.avatar ? `<img src="${char.avatar}" />` : '🧑';
+    document.getElementById('detailNameDisplay').textContent = char.name || '未命名';
+    document.getElementById('detailPromptDisplay').textContent = char.prompt || '未设置人设';
+
+    // 填充编辑模式（隐藏，但预先填入数据）
+    document.getElementById('detailAvatarEdit').innerHTML = char.avatar ? `<img src="${char.avatar}" />` : '🧑';
     document.getElementById('detailNameInput').value = char.name || '';
     document.getElementById('detailPromptInput').value = char.prompt || '';
-    document.getElementById('contactDetailTitle').textContent = '角色详情';
+
+    // 保存原始值用于取消
+    originalName = char.name || '';
+    originalPrompt = char.prompt || '';
+
+    // 显示查看模式，隐藏编辑模式
+    document.getElementById('viewMode').style.display = 'block';
+    document.getElementById('editMode').style.display = 'none';
+    isEditing = false;
     document.getElementById('detailStatus').textContent = '';
+
+    document.getElementById('contactDetailTitle').textContent = '角色详情';
     showPage('contactDetailPage');
   }
 
+  // 点击“修改”按钮
+  document.getElementById('detailEditBtn').addEventListener('click', () => {
+    if (!detailCharId) return;
+    // 切换到编辑模式
+    document.getElementById('viewMode').style.display = 'none';
+    document.getElementById('editMode').style.display = 'block';
+    isEditing = true;
+    // 确保编辑框中的值是最新的
+    const chars = getChars();
+    const char = chars.find(c => c.id === detailCharId);
+    if (char) {
+      document.getElementById('detailNameInput').value = char.name || '';
+      document.getElementById('detailPromptInput').value = char.prompt || '';
+      originalName = char.name || '';
+      originalPrompt = char.prompt || '';
+      document.getElementById('detailAvatarEdit').innerHTML = char.avatar ? `<img src="${char.avatar}" />` : '🧑';
+    }
+    document.getElementById('detailStatus').textContent = '';
+  });
+
+  // 点击“保存修改”
   document.getElementById('detailSaveBtn').addEventListener('click', () => {
     if (!detailCharId) return;
-    const name = document.getElementById('detailNameInput').value.trim();
-    const prompt = document.getElementById('detailPromptInput').value.trim();
-    if (!name) { document.getElementById('detailStatus').textContent = '❌ 请填写名字'; return; }
+    const newName = document.getElementById('detailNameInput').value.trim();
+    const newPrompt = document.getElementById('detailPromptInput').value.trim();
+    if (!newName) {
+      document.getElementById('detailStatus').textContent = '❌ 名字不能为空';
+      return;
+    }
     let chars = getChars();
     const idx = chars.findIndex(c => c.id === detailCharId);
     if (idx !== -1) {
-      chars[idx].name = name;
-      chars[idx].prompt = prompt;
+      chars[idx].name = newName;
+      chars[idx].prompt = newPrompt;
+      // 头像可能在编辑模式下没有变化，但如果有新的avatar上传，暂不支持，保持原样
       saveChars(chars);
+      // 更新查看模式的显示
+      document.getElementById('detailNameDisplay').textContent = newName;
+      document.getElementById('detailPromptDisplay').textContent = newPrompt || '未设置人设';
+      // 同步更新编辑框的原始值
+      originalName = newName;
+      originalPrompt = newPrompt;
       document.getElementById('detailStatus').textContent = '✅ 保存成功！';
-      setTimeout(() => { document.getElementById('detailStatus').textContent = ''; }, 2000);
+      // 退出编辑模式
+      document.getElementById('viewMode').style.display = 'block';
+      document.getElementById('editMode').style.display = 'none';
+      isEditing = false;
+      // 更新聊天列表中的名字（因为可能变了）
       renderWechatContent();
+      // 如果当前在聊天对话中，可能也要更新标题，但暂时不管
+      setTimeout(() => { document.getElementById('detailStatus').textContent = ''; }, 2000);
     }
   });
 
+  // 点击“取消修改”
+  document.getElementById('detailCancelBtn').addEventListener('click', () => {
+    if (!detailCharId) return;
+    // 恢复到原始值
+    document.getElementById('detailNameInput').value = originalName;
+    document.getElementById('detailPromptInput').value = originalPrompt;
+    // 回到查看模式
+    document.getElementById('viewMode').style.display = 'block';
+    document.getElementById('editMode').style.display = 'none';
+    isEditing = false;
+    document.getElementById('detailStatus').textContent = '';
+  });
+
+  // 点击“删除”
   document.getElementById('detailDeleteBtn').addEventListener('click', () => {
     if (!detailCharId) return;
     if (!confirm('确定删除这个角色吗？')) return;
@@ -653,13 +753,27 @@
     saveChars(chars);
     localStorage.removeItem('charHistory_' + detailCharId);
     if (currentDialogCharId === detailCharId) { currentDialogCharId = null; }
+    // 退出详情页，返回通讯录
+    renderWechatContent();
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.wechat-app').forEach(w => w.classList.add('active'));
-    renderWechatContent();
   });
 
+  // 辅助函数：取消编辑（用于点击返回时）
+  function cancelEditMode() {
+    if (isEditing) {
+      // 恢复原始值
+      document.getElementById('detailNameInput').value = originalName;
+      document.getElementById('detailPromptInput').value = originalPrompt;
+      document.getElementById('viewMode').style.display = 'block';
+      document.getElementById('editMode').style.display = 'none';
+      isEditing = false;
+      document.getElementById('detailStatus').textContent = '';
+    }
+  }
+
   // ============================================================
-  // 9. 创建/编辑 Char
+  // 9. 创建/编辑 Char（从通讯录“新建”触发）
   // ============================================================
   document.getElementById('avatarUploadBtn').addEventListener('click', () => document.getElementById('charAvatarInput').click());
   document.getElementById('charAvatarInput').addEventListener('change', (e) => {
