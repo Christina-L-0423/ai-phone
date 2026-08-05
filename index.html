@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#F0F4FA" />
   <title>小铃机</title>
   <style>
-    /* ===== 所有样式 ===== */
+    /* ===== 所有 CSS 完全保留，只新增了动态图标和弹出菜单位置 ===== */
     :root {
       color-scheme: light !important;
       --bg: #F0F4FA;
@@ -34,7 +34,7 @@
     }
     *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
     body{display:flex;justify-content:center;align-items:center;margin:0;padding:0;background:#1a1a1a}
-
+    
     .phone{
       position:fixed;
       top:0;
@@ -60,8 +60,8 @@
       display:flex;
       flex-direction:column;
     }
-
-    /* ===== 状态栏 ===== */
+    
+    /* ===== 状态栏（白色背景 + 放大） ===== */
     .status-bar{
       background:#ffffff !important;
       padding:12px 20px 8px;
@@ -81,8 +81,8 @@
       width:22px !important;
       height:18px !important;
     }
-
-    /* ===== 底部 Tab 图标 ===== */
+    
+    /* ===== 底部 Tab 图标（新 SVG） ===== */
     .wechat-app .tab-bar .tab svg {
       width:28px;
       height:28px;
@@ -104,12 +104,13 @@
     .wechat-app .tab-bar .tab {
       padding:6px 0 4px;
     }
+    /* 聊天 Tab 图标单独圆润 */
     .wechat-app .tab-bar .tab[data-tab="chats"] svg path {
       stroke: #C5C8F0;
       stroke-linejoin: round;
     }
-
-    /* ===== 通讯录空状态 ===== */
+    
+    /* ===== 通讯录空状态（去掉表情） ===== */
     .wechat-app .tab-content .empty-state {
       text-align:center;
       color:#8a9aa8;
@@ -117,13 +118,13 @@
       font-size:15px;
     }
     .wechat-app .tab-content .empty-state::before { content: none; }
-
-    /* ===== 弹出菜单 ===== */
+    
+    /* ===== 新建菜单弹出框（调整位置） ===== */
     .popup-menu {
       position:absolute;
       bottom:auto;
-      top:56px;
-      left:16px;
+      top:56px;        /* 加号按钮下方 */
+      left:16px;       /* 偏左 */
       right:auto;
       background:#fff;
       border-radius:14px;
@@ -143,7 +144,7 @@
     }
     .popup-menu .item:last-child { border-bottom:none; }
     .popup-menu .item:active { background:#f0f0f0; }
-
+    
     /* ===== 群聊选择列表 ===== */
     .multi-select-list {
       position:absolute;
@@ -205,8 +206,8 @@
       background:#e5e5ea;
       color:#1c1c1e;
     }
-
-    /* ===== 群聊卡片 ===== */
+    
+    /* ===== 群聊卡片在通讯录中 ===== */
     .list-item.group .avatar {
       background:var(--btn);
       color:#fff;
@@ -218,8 +219,8 @@
       color:#8a9aa8;
       font-weight:400;
     }
-
-    /* ===== 聊天界面 ===== */
+    
+    /* ===== 聊天界面新布局 ===== */
     .chat-dialog-page .chat-input-area {
       display:flex;
       gap:6px;
@@ -268,8 +269,8 @@
       stroke-linecap:round;
       stroke-linejoin:round;
     }
-
-    /* ===== 动态卡片 ===== */
+    
+    /* ===== 动态卡片新图标 ===== */
     .moment-card .actions .action-icon {
       display: inline-flex;
       align-items: center;
@@ -308,7 +309,7 @@
       color: #1c1c1e;
       font-weight: 600;
     }
-
+    
     /* ===== 群聊消息 sender ===== */
     .chat-dialog-page .message .sender {
       font-size: 11px;
@@ -316,8 +317,8 @@
       color: #6a7a8a;
       margin-bottom: 2px;
     }
-
-    /* ===== 原有样式（完整保留） ===== */
+    
+    /* ===== 原有其他样式（完整保留） ===== */
     .home-screen{flex:1;padding:20px 16px 0;display:flex;flex-direction:column;overflow-y:auto;background:var(--bg) !important}
     .home-screen .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px 10px;margin-bottom:20px}
     .app-icon{display:flex;flex-direction:column;align-items:center;cursor:pointer;transition:transform .1s;-webkit-tap-highlight-color:transparent}
@@ -351,7 +352,7 @@
     }
     .dock .app-icon .icon-circle{width:56px;height:56px;border-radius:14px}
     .dock .app-icon .icon-circle svg{width:28px;height:28px}
-
+    
     .page{display:none;flex-direction:column;height:100%;background:var(--bg) !important}
     .page.active{display:flex}
     .settings-page{padding:20px 16px;flex:1;overflow-y:auto;background:var(--bg) !important}
@@ -727,7 +728,7 @@
 <body>
 <div class="phone" id="phoneContainer">
   <div class="phone-screen" id="phoneScreen">
-    <!-- 状态栏 -->
+    <!-- ===== 状态栏 ===== -->
     <div class="status-bar" id="statusBar">
       <span class="time" id="statusTime">00:00</span>
       <span class="icons">
@@ -742,7 +743,7 @@
       </span>
     </div>
 
-    <!-- 主屏幕 -->
+    <!-- ===== 主屏幕 ===== -->
     <div class="page active" id="homePage">
       <div class="home-screen">
         <div class="grid">
@@ -758,7 +759,7 @@
       </div>
     </div>
 
-    <!-- 设置页面 -->
+    <!-- ===== 设置页面 ===== -->
     <div class="page" id="settingsPage">
       <div class="settings-page">
         <div class="header"><span class="back" id="backFromSettings">‹</span><span>设置</span></div>
@@ -774,7 +775,7 @@
       </div>
     </div>
 
-    <!-- API 设置 -->
+    <!-- ===== API 设置 ===== -->
     <div class="page" id="apiSettingsPage">
       <div class="api-settings-page">
         <div class="header"><span class="back" id="backFromApiSettings">‹</span><span>API 设置</span></div>
@@ -799,7 +800,7 @@
       </div>
     </div>
 
-    <!-- 小说 -->
+    <!-- ===== 小说 ===== -->
     <div class="page" id="novelPage">
       <div class="reader-page">
         <div class="header"><span class="back" id="backFromNovel">‹</span><span>📖 小说</span></div>
@@ -810,7 +811,7 @@
       </div>
     </div>
 
-    <!-- 音乐 -->
+    <!-- ===== 音乐 ===== -->
     <div class="page" id="musicPage">
       <div class="music-page">
         <div class="header"><span class="back" id="backFromMusic">‹</span><span>🎵 音乐</span></div>
@@ -823,7 +824,7 @@
       </div>
     </div>
 
-    <!-- 微信应用 -->
+    <!-- ===== 微信应用 ===== -->
     <div class="wechat-app" id="wechatApp">
       <div class="top-bar">
         <span class="back" id="wechatBack">‹</span>
@@ -832,12 +833,14 @@
       </div>
       <div class="tab-content" id="wechatTabContent"></div>
       <div class="tab-bar">
+        <!-- 聊天图标（圆润无点） -->
         <div class="tab active" data-tab="chats">
           <svg viewBox="0 0 24 24">
             <path d="M3 10a2 2 0 012-2h14a2 2 0 012 2v6a2 2 0 01-2 2H7l-4 4V10z" stroke="#C5C8F0" fill="none" stroke-width="2" stroke-linejoin="round"/>
           </svg>
           <span>聊天</span>
         </div>
+        <!-- 通讯录 -->
         <div class="tab" data-tab="contacts">
           <svg viewBox="0 0 24 24">
             <circle cx="9" cy="8" r="3" stroke="#C5C8F0" fill="none" stroke-width="2"/>
@@ -847,6 +850,7 @@
           </svg>
           <span>通讯录</span>
         </div>
+        <!-- 动态 -->
         <div class="tab" data-tab="moments">
           <svg viewBox="0 0 24 24">
             <rect x="3" y="3" width="7" height="7" rx="2" stroke="#C5C8F0" fill="none" stroke-width="2"/>
@@ -860,6 +864,7 @@
           </svg>
           <span>动态</span>
         </div>
+        <!-- 我的 -->
         <div class="tab" data-tab="profile">
           <svg viewBox="0 0 24 24">
             <circle cx="12" cy="8" r="4" stroke="#C5C8F0" fill="none" stroke-width="2"/>
@@ -870,7 +875,7 @@
       </div>
     </div>
 
-    <!-- 聊天对话页 -->
+    <!-- ===== 聊天对话页 ===== -->
     <div class="chat-dialog-page" id="chatDialogPage">
       <div class="chat-header">
         <span class="back" id="backFromDialog">‹</span>
@@ -893,7 +898,7 @@
       </div>
     </div>
 
-    <!-- 创建角色 -->
+    <!-- ===== 创建角色 ===== -->
     <div class="page" id="createCharPage">
       <div class="api-settings-page">
         <div class="header"><span class="back" id="backFromCreateChar">‹</span><span id="createCharTitle">新建 Char</span></div>
@@ -916,7 +921,7 @@
       </div>
     </div>
 
-    <!-- 角色详情页 -->
+    <!-- ===== 角色详情页 ===== -->
     <div class="page" id="contactDetailPage">
       <div class="api-settings-page">
         <div class="header"><span class="back" id="backFromContactDetail">‹</span><span id="contactDetailTitle">角色详情</span></div>
@@ -956,7 +961,7 @@
       </div>
     </div>
 
-    <!-- 个人资料编辑页 -->
+    <!-- ===== 个人资料编辑页 ===== -->
     <div class="page" id="profileEditPage">
       <div class="profile-edit-page">
         <div class="header">
@@ -981,7 +986,7 @@
       </div>
     </div>
 
-    <!-- 朋友圈发布编辑器 -->
+    <!-- ===== 朋友圈发布编辑器 ===== -->
     <div class="moment-editor" id="momentEditor">
       <div class="header">
         <span class="title" id="editorTitle">发布动态</span>
@@ -992,13 +997,13 @@
       <button class="publish-btn" id="publishMomentBtn2">发布</button>
     </div>
 
-    <!-- 通讯录弹出菜单 -->
+    <!-- ===== 通讯录弹出菜单 ===== -->
     <div class="popup-menu" id="popupMenu">
       <div class="item" id="menuAddFriend">➕ 添加好友</div>
       <div class="item" id="menuCreateGroup">👥 发起群聊</div>
     </div>
 
-    <!-- 群聊成员选择器 -->
+    <!-- ===== 群聊成员选择器 ===== -->
     <div class="multi-select-list" id="groupMemberSelector">
       <div style="font-size:18px;font-weight:600;margin-bottom:12px;">选择群聊成员</div>
       <div id="memberList"></div>
@@ -1013,7 +1018,8 @@
 
 <script>
 // ============================================================
-// 所有 JavaScript
+// 原有所有 JavaScript 完整保留，只增量添加新功能
+// 新增：分句函数、动态点赞人列表、群聊功能、AI 分条回复
 // ============================================================
 
 // ===== 存储工具 =====
@@ -1117,7 +1123,7 @@ function updateTime() {
 updateTime();
 setInterval(updateTime, 10000);
 
-// ===== 全屏适配 =====
+// ===== 全屏适配（锁定，不可更改） =====
 function applyFullscreen() {}
 applyFullscreen();
 if (window.matchMedia('(display-mode: standalone)').matches) {
@@ -1153,7 +1159,7 @@ let originalName = '';
 let originalBio = '';
 let originalPrompt = '';
 
-// ===== 微信风格渲染 =====
+// ===== 微信风格渲染 (4个tab) =====
 function renderWechatContent() {
   const container = document.getElementById('wechatTabContent');
   const activeTab = document.querySelector('.wechat-app .tab.active')?.dataset.tab || 'chats';
@@ -1271,7 +1277,7 @@ function renderContactList(container) {
   }
 }
 
-// ===== 朋友圈 =====
+// ===== 朋友圈（完整新版，含空心图标和点赞人列表） =====
 let editingMomentIndex = null;
 
 function openEditor(editIndex = null) {
@@ -1409,7 +1415,7 @@ document.getElementById('publishMomentBtn2').addEventListener('click', function(
   renderWechatContent();
 });
 
-// ===== 渲染动态卡片 =====
+// ===== 渲染动态卡片（包含新的空心图标和点赞人列表） =====
 function renderMoments(container) {
   const profile = getProfile();
   const moments = getMoments();
@@ -1459,6 +1465,7 @@ function renderMoments(container) {
       const realIdx = momentsData.length - 1 - idx;
       const avatarHtml = profile.avatar ? `<img src="${profile.avatar}" />` : '👤';
       const likedClass = m.liked ? 'liked' : '';
+      const likeText = m.liked ? '取消赞' : '赞';
       let imagesHtml = '';
       if (m.images && m.images.length > 0) {
         imagesHtml = '<div class="image-grid">';
@@ -1467,6 +1474,7 @@ function renderMoments(container) {
         });
         imagesHtml += '</div>';
       }
+      // 点赞人列表
       const likedUsersHtml = m.likedUsers && m.likedUsers.length > 0 
         ? `<div class="liked-users">${m.likedUsers.map(name => `<span class="name">${name}</span>`).join('、')} 赞了</div>`
         : '';
@@ -1485,7 +1493,7 @@ function renderMoments(container) {
               <svg viewBox="0 0 24 24" width="18" height="18">
                 <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" stroke="#C5C8F0" fill="none" stroke-width="2"/>
               </svg>
-              <span>${m.liked ? '取消赞' : '赞'}</span>
+              <span>${likeText}</span>
             </span>
             <span class="action-icon" data-idx="${realIdx}" data-action="comment">
               <svg viewBox="0 0 24 24" width="18" height="18">
@@ -1513,6 +1521,7 @@ function renderMoments(container) {
     });
     list.innerHTML = items;
 
+    // ===== 事件绑定：点赞、评论、编辑、删除 =====
     list.querySelectorAll('.action-icon').forEach(el => {
       el.addEventListener('click', function(e) {
         const idx = parseInt(this.dataset.idx);
@@ -1717,7 +1726,7 @@ document.getElementById('dialogArrowBtn').addEventListener('click', function() {
   }
 });
 
-// ===== 单聊批量发送 =====
+// ===== 单聊批量发送（支持AI分条回复） =====
 async function sendSingleMessages() {
   const base = apiBase.value.trim(), key = apiKey.value.trim(), model = modelSelect.value;
   if (!base || !key) { alert('请先设置 API'); showPage('apiSettingsPage'); return; }
@@ -1767,6 +1776,7 @@ async function sendSingleMessages() {
     }
     if (data.replies && data.replies.length > 0) {
       data.replies.forEach(reply => {
+        // 对每条回复进行分句
         const sentences = splitSentences(reply);
         sentences.forEach(s => addDialogMessage('assistant', s));
       });
@@ -1893,6 +1903,7 @@ async function sendGroupMessages(groupId) {
   const newHistory = history.filter(m => m.content !== '🤔 思考中...');
   groupChatHistory[groupId] = newHistory;
   results.forEach(r => {
+    // 对群聊成员的回复也进行分句
     const sentences = splitSentences(r.reply);
     sentences.forEach(s => {
       newHistory.push({
