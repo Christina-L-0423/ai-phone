@@ -7,8 +7,26 @@
   <style>
     *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
     body{background:#1a1a1a;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0;padding:20px}
-    .phone{width:380px;height:780px;background:#000;border-radius:40px;padding:12px;box-shadow:0 30px 80px rgba(0,0,0,.8),inset 0 0 0 2px #333;position:relative}
-    .phone-screen{width:100%;height:100%;background:#f2f2f7;border-radius:30px;overflow:hidden;position:relative;display:flex;flex-direction:column}
+    /* 手机外壳（默认带黑框） */
+    .phone{
+      width:100%;max-width:420px;aspect-ratio:380/780;height:auto;max-height:95vh;
+      background:#000;border-radius:40px;padding:12px;
+      box-shadow:0 30px 80px rgba(0,0,0,.8),inset 0 0 0 2px #333;
+      position:relative;margin:0 auto;
+      transition: all 0.3s ease;
+    }
+    .phone-screen{
+      width:100%;height:100%;background:#f2f2f7;border-radius:30px;overflow:hidden;
+      position:relative;display:flex;flex-direction:column
+    }
+    /* 全屏模式（无黑框） */
+    .phone.fullscreen{
+      width:100%;height:100vh;max-height:100vh;aspect-ratio:auto;
+      border-radius:0;padding:0;background:#f2f2f7;box-shadow:none;margin:0;
+    }
+    .phone.fullscreen .phone-screen{
+      border-radius:0;
+    }
     .status-bar{background:transparent;padding:12px 20px 8px;display:flex;justify-content:space-between;font-size:14px;font-weight:600;color:#1c1c1e;flex-shrink:0}
     .status-bar .time{font-weight:700}
     .status-bar .icons{display:flex;gap:6px;align-items:center}
@@ -37,6 +55,7 @@
     .api-settings-page{padding:20px 16px;flex:1;overflow-y:auto}
     .api-settings-page .header{font-size:28px;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:10px}
     .api-settings-page .header .back{font-size:24px;cursor:pointer;padding:4px 8px}
+    /* 显示设置页复用 api-group 样式 */
     .api-group{background:#fff;border-radius:14px;padding:16px;margin-bottom:16px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
     .api-group label{display:block;font-size:14px;font-weight:600;color:#3a3a3c;margin-bottom:4px}
     .api-group input,.api-group select,.api-group textarea{width:100%;padding:10px 12px;border:1px solid #d1d1d6;border-radius:10px;font-size:15px;background:#f9f9f9;margin-bottom:12px;outline:none;font-family:inherit}
@@ -103,11 +122,20 @@
     .chat-dialog-page .prompt-box .label{font-weight:600;color:#1c1c1e}
     ::-webkit-scrollbar{width:3px}
     ::-webkit-scrollbar-thumb{background:#c6c6c8;border-radius:4px}
-    @media(max-width:420px){.phone{width:100%;height:100vh;border-radius:0;padding:0}.phone-screen{border-radius:0}body{padding:0}}
+    /* 小屏设备（手机）上全屏显示：如果未启用全屏模式，也尽量撑满 */
+    @media(max-width:420px){
+      body{padding:0}
+      .phone:not(.fullscreen){
+        width:100%;height:100vh;max-height:100vh;aspect-ratio:auto;border-radius:0;padding:0;background:#f2f2f7;box-shadow:none;margin:0;
+      }
+      .phone:not(.fullscreen) .phone-screen{border-radius:0}
+      .status-bar{padding-top:8px}
+    }
+    /* 如果启用全屏模式，在手机上也是一样，但已经通过 .fullscreen 控制了 */
   </style>
 </head>
 <body>
-<div class="phone">
+<div class="phone" id="phoneContainer">
   <div class="phone-screen">
     <div class="status-bar" id="statusBar">
       <span class="time" id="statusTime">00:00</span>
@@ -136,7 +164,7 @@
         <div class="header"><span class="back" id="backFromSettings">‹</span><span>设置</span></div>
         <div class="settings-list">
           <div class="settings-item" id="goToApiSettings"><span class="label">🔑 API 设置</span><span class="arrow">›</span></div>
-          <div class="settings-item"><span class="label">📱 通用</span><span class="arrow">›</span></div>
+          <div class="settings-item" id="goToDisplaySettings"><span class="label">📱 显示设置</span><span class="arrow">›</span></div>
           <div class="settings-item"><span class="label">ℹ️ 关于</span><span class="arrow">›</span></div>
         </div>
       </div>
@@ -167,6 +195,29 @@
       </div>
     </div>
 
+    <!-- 显示设置 -->
+    <div class="page" id="displaySettingsPage">
+      <div class="api-settings-page">
+        <div class="header">
+          <span class="back" id="backFromDisplaySettings">‹</span>
+          <span>显示设置</span>
+        </div>
+        <div class="api-group">
+          <div style="display:flex; align-items:center; justify-content:space-between;">
+            <label style="margin-bottom:0; font-weight:600;">全屏模式</label>
+            <label class="switch">
+              <input type="checkbox" id="fullscreenToggle" />
+              <span class="slider round"></span>
+            </label>
+          </div>
+          <div style="margin-top:8px; font-size:14px; color:#8e8e93;">
+            开启后，界面将充满整个屏幕，无黑色边框；关闭则显示为带黑框的小手机样式。
+          </div>
+          <div class="status-msg" id="displayStatus"></div>
+        </div>
+      </div>
+    </div>
+
     <!-- 微信风格聊天应用 -->
     <div class="wechat-app" id="wechatApp">
       <div class="top-bar">
@@ -181,7 +232,7 @@
       </div>
     </div>
 
-    <!-- 聊天对话页（覆盖层） -->
+    <!-- 聊天对话页 -->
     <div class="chat-dialog-page" id="chatDialogPage">
       <div class="chat-header">
         <span class="back" id="backFromDialog">‹</span>
@@ -274,23 +325,16 @@
 // 1. 导航核心
 // ============================================================
 function showPage(id) {
-  // 隐藏所有 .page
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  // 隐藏微信应用
   document.getElementById('wechatApp').classList.remove('active');
-  // 隐藏聊天对话覆盖层
   document.getElementById('chatDialogPage').classList.remove('active');
-  // 显示目标页面
   const target = document.getElementById(id);
   if (target) target.classList.add('active');
 }
 
 function showWechat() {
-  // 隐藏所有 .page
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  // 显示微信应用
   document.getElementById('wechatApp').classList.add('active');
-  // 隐藏聊天对话覆盖层
   document.getElementById('chatDialogPage').classList.remove('active');
   renderWechatContent();
 }
@@ -311,13 +355,17 @@ document.getElementById('backFromApiSettings').addEventListener('click', () => s
 document.getElementById('goToApiSettings').addEventListener('click', () => showPage('apiSettingsPage'));
 document.getElementById('wechatBack').addEventListener('click', goHome);
 
-// 从创建角色返回通讯录
+// 显示设置
+document.getElementById('goToDisplaySettings').addEventListener('click', () => showPage('displaySettingsPage'));
+document.getElementById('backFromDisplaySettings').addEventListener('click', () => showPage('settingsPage'));
+
+// 创建角色返回通讯录
 document.getElementById('backFromCreateChar').addEventListener('click', () => {
   renderWechatContent();
   showWechat();
 });
 
-// 从角色详情返回通讯录
+// 角色详情返回通讯录
 document.getElementById('backFromContactDetail').addEventListener('click', () => {
   if (isEditing) {
     document.getElementById('detailNameInput').value = originalName;
@@ -343,7 +391,44 @@ updateTime();
 setInterval(updateTime, 10000);
 
 // ============================================================
-// 4. DOM 引用
+// 4. 全屏模式切换
+// ============================================================
+const phoneContainer = document.getElementById('phoneContainer');
+const fullscreenToggle = document.getElementById('fullscreenToggle');
+const displayStatus = document.getElementById('displayStatus');
+
+// 加载保存的状态
+function loadDisplayMode() {
+  const isFullscreen = localStorage.getItem('fullscreenMode') === 'true';
+  fullscreenToggle.checked = isFullscreen;
+  applyDisplayMode(isFullscreen);
+}
+
+function applyDisplayMode(isFullscreen) {
+  if (isFullscreen) {
+    phoneContainer.classList.add('fullscreen');
+  } else {
+    phoneContainer.classList.remove('fullscreen');
+  }
+  // 保存到本地
+  localStorage.setItem('fullscreenMode', isFullscreen ? 'true' : 'false');
+  // 更新状态提示
+  displayStatus.textContent = isFullscreen ? '✅ 全屏模式已启用' : '✅ 带黑框模式已启用';
+  setTimeout(() => {
+    if (displayStatus.textContent.includes('已启用')) displayStatus.textContent = '';
+  }, 2000);
+}
+
+// 监听开关变化
+fullscreenToggle.addEventListener('change', function() {
+  applyDisplayMode(this.checked);
+});
+
+// 初始化
+loadDisplayMode();
+
+// ============================================================
+// 5. DOM 引用（API 设置、流式等）
 // ============================================================
 const apiBase = document.getElementById('apiBase');
 const apiKey = document.getElementById('apiKey');
@@ -360,7 +445,7 @@ streamToggle.addEventListener('change', () => {
 });
 
 // ============================================================
-// 5. 存储工具
+// 6. 存储工具
 // ============================================================
 function getChars() {
   try { return JSON.parse(localStorage.getItem('chars')) || []; } catch (e) { return []; }
@@ -391,7 +476,7 @@ let originalName = '';
 let originalPrompt = '';
 
 // ============================================================
-// 6. 微信风格渲染
+// 7. 微信风格渲染
 // ============================================================
 function renderWechatContent() {
   const container = document.getElementById('wechatTabContent');
@@ -495,7 +580,7 @@ document.querySelectorAll('.wechat-app .tab').forEach(tab => {
 });
 
 // ============================================================
-// 7. 聊天对话（覆盖层）
+// 8. 聊天对话（覆盖层）
 // ============================================================
 function openDialog(char) {
   currentDialogCharId = char.id;
@@ -564,7 +649,7 @@ document.getElementById('backFromDialog').addEventListener('click', () => {
 document.getElementById('dialogNewBtn').addEventListener('click', clearDialogHistory);
 
 // ============================================================
-// 8. 发送消息（对话页）
+// 9. 发送消息（对话页）
 // ============================================================
 document.getElementById('dialogSendBtn').addEventListener('click', async () => {
   const base = apiBase.value.trim(), key = apiKey.value.trim(), model = modelSelect.value;
@@ -667,7 +752,7 @@ document.getElementById('dialogInput').addEventListener('input', function() {
 });
 
 // ============================================================
-// 9. 通讯录详情
+// 10. 通讯录详情
 // ============================================================
 function openContactDetail(charId) {
   detailCharId = charId;
@@ -759,7 +844,7 @@ document.getElementById('detailDeleteBtn').addEventListener('click', () => {
 });
 
 // ============================================================
-// 10. 创建/编辑 Char
+// 11. 创建/编辑 Char
 // ============================================================
 document.getElementById('avatarUploadBtn').addEventListener('click', () => document.getElementById('charAvatarInput').click());
 document.getElementById('charAvatarInput').addEventListener('change', (e) => {
@@ -798,7 +883,7 @@ document.getElementById('saveCharBtn').addEventListener('click', () => {
 });
 
 // ============================================================
-// 11. 设置 & 模型
+// 12. 设置 & 模型
 // ============================================================
 function loadSettings() {
   const savedBase = localStorage.getItem('apiBase');
@@ -858,7 +943,7 @@ modelSelect.addEventListener('change', () => {
 });
 
 // ============================================================
-// 12. 初始化
+// 13. 初始化
 // ============================================================
 window.addEventListener('load', async () => {
   const savedBase = localStorage.getItem('apiBase');
@@ -893,7 +978,7 @@ window.addEventListener('load', async () => {
       } catch (e) { console.log('自动拉取失败'); }
     }
   }
-  // 默认显示主屏幕，而不是微信应用
+  // 默认显示主屏幕
   showPage('homePage');
 });
 </script>
