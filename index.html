@@ -29,7 +29,6 @@
       width:100%;height:100%;background:#E3EEFA !important;border-radius:30px;overflow:hidden;
       position:relative;display:flex;flex-direction:column
     }
-    /* 全屏模式 - 彻底铺满 */
     .phone.fullscreen{
       width:100vw;height:100vh;max-width:100vw;max-height:100vh;aspect-ratio:auto;
       border-radius:0;padding:0;background:#E3EEFA;box-shadow:none;margin:0;
@@ -40,6 +39,7 @@
     .status-bar{background:transparent;padding:12px 20px 8px;display:flex;justify-content:space-between;font-size:14px;font-weight:600;color:#1c1c1e;flex-shrink:0}
     .status-bar .time{font-weight:700}
     .status-bar .icons{display:flex;gap:6px;align-items:center}
+    .status-bar .icons svg { stroke: #C5C8F0; fill: #C5C8F0; }
     .home-screen{flex:1;padding:20px 16px 0;display:flex;flex-direction:column;overflow-y:auto;background:#E3EEFA !important}
     .home-screen .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px 10px;margin-bottom:20px}
     .app-icon{display:flex;flex-direction:column;align-items:center;cursor:pointer;transition:transform .1s;-webkit-tap-highlight-color:transparent}
@@ -147,7 +147,7 @@
     ::-webkit-scrollbar{width:3px}
     ::-webkit-scrollbar-thumb{background:#c6c6c8;border-radius:4px}
 
-    /* 朋友圈卡片样式 */
+    /* 朋友圈卡片 */
     .moment-card {
       background: #ffffffcc;
       backdrop-filter: blur(6px);
@@ -162,57 +162,109 @@
       gap: 10px;
       margin-bottom: 6px;
     }
-    .moment-card .avatar {
-      width: 40px; height: 40px; border-radius: 50%;
-      background: #e5e5ea;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 20px; overflow: hidden;
-    }
-    .moment-card .avatar img{width:100%;height:100%;object-fit:cover}
-    .moment-card .name { font-weight: 600; font-size: 15px; color: #1c1c1e; }
-    .moment-card .time { font-size: 11px; color: #8e8e93; }
-    .moment-card .content { font-size: 15px; line-height:1.5; margin:4px 0 6px; color:#1c1c1e; word-break:break-word; }
-    .moment-card .image { max-width: 100%; border-radius: 10px; margin-top: 6px; max-height: 160px; object-fit: cover; }
+    .moment-card .header .avatar { width:40px; height:40px; border-radius:50%; background:#e5e5ea; display:flex; align-items:center; justify-content:center; font-size:20px; overflow:hidden; flex-shrink:0; }
+    .moment-card .header .avatar img { width:100%; height:100%; object-fit:cover; }
+    .moment-card .header .name { font-weight:600; font-size:15px; color:#1c1c1e; }
+    .moment-card .header .time { font-size:11px; color:#8e8e93; margin-left:auto; }
+    .moment-card .content { font-size:15px; line-height:1.5; margin:4px 0 6px; color:#1c1c1e; word-break:break-word; }
+    .moment-card .image { max-width:100%; border-radius:10px; margin-top:6px; max-height:200px; object-fit:cover; }
+    .moment-card .actions { display:flex; gap:16px; margin-top:8px; border-top:1px solid #e5e5ea; padding-top:8px; font-size:14px; color:#8e8e93; }
+    .moment-card .actions span { cursor:pointer; user-select:none; }
+    .moment-card .actions span:active { opacity:0.6; }
+    .moment-card .actions .liked { color:#007aff; font-weight:600; }
+    .moment-card .comments { margin-top:6px; padding-left:12px; border-left:2px solid #e5e5ea; }
+    .moment-card .comments .comment { font-size:13px; color:#3a3a3c; padding:2px 0; }
+    .moment-card .comments .comment .name { font-weight:600; color:#1c1c1e; }
 
-    .profile-page {
-      padding: 20px 16px;
+    .moments-cover {
+      position:relative;
+      width:100%;
+      height:120px;
+      background:#d1d1d6;
+      border-radius:14px 14px 0 0;
+      overflow:hidden;
+      margin-bottom:10px;
+      display:flex;
+      align-items:flex-end;
+      justify-content:center;
+      cursor:pointer;
+    }
+    .moments-cover img { width:100%; height:100%; object-fit:cover; }
+    .moments-cover .cover-hint {
+      position:absolute;
+      bottom:8px;
+      right:12px;
+      background:rgba(0,0,0,0.4);
+      color:#fff;
+      padding:4px 10px;
+      border-radius:12px;
+      font-size:11px;
+      backdrop-filter:blur(4px);
+    }
+    .moments-profile {
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:0 16px 12px 16px;
+      background:#ffffffcc;
+      backdrop-filter:blur(6px);
+      border-radius:0 0 14px 14px;
+      margin-bottom:12px;
+    }
+    .moments-profile .avatar { width:56px; height:56px; border-radius:50%; background:#e5e5ea; display:flex; align-items:center; justify-content:center; font-size:28px; overflow:hidden; flex-shrink:0; }
+    .moments-profile .avatar img { width:100%; height:100%; object-fit:cover; }
+    .moments-profile .info { flex:1; }
+    .moments-profile .info .name { font-size:17px; font-weight:600; color:#1c1c1e; }
+    .moments-profile .info .sig { font-size:13px; color:#8e8e93; }
+
+    .profile-edit-page {
+      padding:20px 16px;
       flex:1;
       overflow-y:auto;
       background:#E3EEFA !important;
+    }
+    .profile-edit-page .header {
+      font-size:28px;
+      font-weight:700;
+      margin-bottom:20px;
       display:flex;
-      flex-direction:column;
       align-items:center;
+      gap:10px;
     }
-    .profile-page .avatar-large {
-      width: 100px; height: 100px; border-radius: 50%;
-      background: #e5e5ea;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 48px; overflow: hidden;
-      cursor: pointer;
-      margin-bottom: 16px;
-      border: 2px solid rgba(255,255,255,0.4);
+    .profile-edit-page .header .back {
+      font-size:24px;
+      cursor:pointer;
+      padding:4px 8px;
     }
-    .profile-page .avatar-large img{width:100%;height:100%;object-fit:cover}
-    .profile-page .input-group {
-      width: 100%;
-      margin-bottom: 12px;
+    .profile-edit-page .avatar-large {
+      width:100px; height:100px; border-radius:50%;
+      background:#e5e5ea;
+      display:flex; align-items:center; justify-content:center;
+      font-size:48px; overflow:hidden;
+      cursor:pointer;
+      margin:0 auto 16px;
+      border:2px solid rgba(255,255,255,0.4);
     }
-    .profile-page .input-group label {
+    .profile-edit-page .avatar-large img { width:100%; height:100%; object-fit:cover; }
+    .profile-edit-page .input-group {
+      margin-bottom:12px;
+    }
+    .profile-edit-page .input-group label {
       font-size:14px; font-weight:600; color:#3a3a3c; display:block; margin-bottom:4px;
     }
-    .profile-page .input-group input, .profile-page .input-group textarea {
+    .profile-edit-page .input-group input, .profile-edit-page .input-group textarea {
       width:100%; padding:10px 12px; border:1px solid #d1d1d6; border-radius:10px;
       font-size:15px; background:#f9f9f9; outline:none; font-family:inherit;
     }
-    .profile-page .input-group input:focus, .profile-page .input-group textarea:focus {
+    .profile-edit-page .input-group input:focus, .profile-edit-page .input-group textarea:focus {
       border-color:#007aff; background:#fff;
     }
-    .profile-page .input-group textarea { min-height:60px; resize:vertical; }
-    .profile-page .save-btn {
+    .profile-edit-page .input-group textarea { min-height:60px; resize:vertical; }
+    .profile-edit-page .save-btn {
       background:#007aff; color:#fff; border:none; padding:10px 20px;
       border-radius:10px; font-size:16px; font-weight:600; cursor:pointer; width:100%;
     }
-    .profile-page .save-btn:active { opacity:0.7; }
+    .profile-edit-page .save-btn:active { opacity:0.7; }
 
     .reader-page, .music-page {
       padding:20px 16px;
@@ -347,7 +399,16 @@
   <div class="phone-screen">
     <div class="status-bar" id="statusBar">
       <span class="time" id="statusTime">00:00</span>
-      <span class="icons"><span>📶</span><span>🔋</span></span>
+      <span class="icons">
+        <svg width="16" height="12" viewBox="0 0 24 24" stroke="#C5C8F0" fill="#C5C8F0">
+          <path d="M12 18c.8 0 1.5-.7 1.5-1.5S12.8 15 12 15s-1.5.7-1.5 1.5.7 1.5 1.5 1.5zm-3-3c1.7-1.7 4.3-1.7 6 0l1.4-1.4c-2.4-2.4-6.4-2.4-8.8 0L9 15zm-3-3c3.5-3.5 9.5-3.5 13 0l1.4-1.4c-4.4-4.4-11.4-4.4-15.8 0L6 12z"/>
+        </svg>
+        <svg width="20" height="12" viewBox="0 0 24 24" stroke="none" fill="#C5C8F0">
+          <rect x="2" y="6" width="18" height="12" rx="2" stroke="#C5C8F0" stroke-width="1.5" fill="none"/>
+          <path d="M22 10v4" stroke="#C5C8F0" stroke-width="1.5" stroke-linecap="round"/>
+          <rect x="4" y="8" width="12" height="8" rx="1" fill="#C5C8F0"/>
+        </svg>
+      </span>
     </div>
 
     <!-- 主屏幕 -->
@@ -366,7 +427,7 @@
       </div>
     </div>
 
-    <!-- 设置 -->
+    <!-- 设置页面 -->
     <div class="page" id="settingsPage">
       <div class="settings-page">
         <div class="header"><span class="back" id="backFromSettings">‹</span><span>设置</span></div>
@@ -447,7 +508,7 @@
       </div>
     </div>
 
-    <!-- 微信风格聊天应用 (底部4个tab) -->
+    <!-- 微信应用 (4个tab) -->
     <div class="wechat-app" id="wechatApp">
       <div class="top-bar">
         <span class="back" id="wechatBack">‹</span>
@@ -463,7 +524,7 @@
       </div>
     </div>
 
-    <!-- 角色聊天对话页 -->
+    <!-- 聊天对话页 -->
     <div class="chat-dialog-page" id="chatDialogPage">
       <div class="chat-header">
         <span class="back" id="backFromDialog">‹</span>
@@ -500,7 +561,7 @@
       </div>
     </div>
 
-    <!-- 角色详情页（点击头像可修改头像） -->
+    <!-- 角色详情页（点击头像可修改） -->
     <div class="page" id="contactDetailPage">
       <div class="api-settings-page">
         <div class="header"><span class="back" id="backFromContactDetail">‹</span><span id="contactDetailTitle">角色详情</span></div>
@@ -534,12 +595,33 @@
       </div>
     </div>
 
+    <!-- 个人资料编辑页（独立的page） -->
+    <div class="page" id="profileEditPage">
+      <div class="profile-edit-page">
+        <div class="header">
+          <span class="back" id="backFromProfileEdit">‹</span>
+          <span>编辑资料</span>
+        </div>
+        <div class="avatar-large" id="profileEditAvatar">👤</div>
+        <input type="file" id="profileEditAvatarInput" accept="image/*" style="display:none;" />
+        <div class="input-group">
+          <label>昵称</label>
+          <input id="profileEditName" value="我" />
+        </div>
+        <div class="input-group">
+          <label>个性签名</label>
+          <textarea id="profileEditSig">这个人很懒，什么都没写</textarea>
+        </div>
+        <button class="save-btn" id="profileEditSaveBtn">保存修改</button>
+      </div>
+    </div>
+
   </div>
 </div>
 
 <script>
 // ============================================================
-// 核心数据存储
+// 存储工具
 // ============================================================
 function getChars() {
   try { return JSON.parse(localStorage.getItem('chars')) || []; } catch (e) { return []; }
@@ -554,7 +636,7 @@ function saveCharHistory(charId, history) {
   localStorage.setItem('charHistory_' + charId, JSON.stringify(history));
 }
 function getProfile() {
-  try { return JSON.parse(localStorage.getItem('userProfile')) || { name: '我', signature: '这个人很懒，什么都没写' }; } catch (e) { return { name: '我', signature: '这个人很懒，什么都没写' }; }
+  try { return JSON.parse(localStorage.getItem('userProfile')) || { name: '我', signature: '这个人很懒，什么都没写', avatar: null, cover: null }; } catch (e) { return { name: '我', signature: '这个人很懒，什么都没写', avatar: null, cover: null }; }
 }
 function saveProfile(profile) {
   localStorage.setItem('userProfile', JSON.stringify(profile));
@@ -618,8 +700,8 @@ document.getElementById('backFromContactDetail').addEventListener('click', () =>
   }
   renderWechatContent(); showWechat('contacts');
 });
+document.getElementById('backFromProfileEdit').addEventListener('click', () => { renderWechatContent(); showWechat('profile'); });
 
-// Tab 切换
 document.querySelectorAll('.wechat-app .tab').forEach(tab => {
   tab.addEventListener('click', function() {
     document.querySelectorAll('.wechat-app .tab').forEach(t => t.classList.remove('active'));
@@ -691,7 +773,7 @@ let originalName = '';
 let originalPrompt = '';
 
 // ============================================================
-// 微信风格渲染（支持4个tab）
+// 微信风格渲染 (4个tab)
 // ============================================================
 function renderWechatContent() {
   const container = document.getElementById('wechatTabContent');
@@ -786,20 +868,90 @@ function renderContactList(container) {
 
 // ========== 朋友圈 ==========
 function renderMoments(container) {
+  const profile = getProfile();
   const moments = getMoments();
   let html = `
-    <div style="display:flex;justify-content:space-between;align-items:center;background:#E3EEFA;padding:10px 16px;border-bottom:1px solid #e5e5ea;">
-      <span style="font-size:14px;color:#8e8e93;">🌐 朋友圈</span>
-      <button id="newMomentBtn" style="background:#007aff;color:#fff;border:none;border-radius:16px;padding:4px 14px;font-size:14px;cursor:pointer;">+ 发布</button>
+    <!-- 封面 -->
+    <div class="moments-cover" id="coverUpload">
+      ${profile.cover ? `<img src="${profile.cover}" />` : '<div style="width:100%;height:100%;background:linear-gradient(135deg,#a8c0ff,#3f2b96);display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;">点击上传封面</div>'}
+      <div class="cover-hint">点击更换封面</div>
     </div>
+    <input type="file" id="coverFileInput" accept="image/*" style="display:none;" />
+    <!-- 个人信息 -->
+    <div class="moments-profile">
+      <div class="avatar">${profile.avatar ? `<img src="${profile.avatar}" />` : '👤'}</div>
+      <div class="info">
+        <div class="name">${profile.name}</div>
+        <div class="sig">${profile.signature}</div>
+      </div>
+    </div>
+    <!-- 发布按钮 -->
+    <div style="display:flex;justify-content:flex-end;margin-bottom:10px;">
+      <button id="publishMomentBtn" style="background:#007aff;color:#fff;border:none;border-radius:16px;padding:6px 16px;font-size:14px;cursor:pointer;">+ 发布动态</button>
+    </div>
+    <div id="momentsList"></div>
   `;
-  if (moments.length === 0) {
-    html += `<div class="empty-state">📭 还没有动态，点击「发布」分享你的生活</div>`;
+  container.innerHTML = html;
+
+  // 封面上传
+  document.getElementById('coverUpload').addEventListener('click', () => document.getElementById('coverFileInput').click());
+  document.getElementById('coverFileInput').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+      const profile = getProfile();
+      profile.cover = ev.target.result;
+      saveProfile(profile);
+      renderWechatContent();
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // 发布动态
+  document.getElementById('publishMomentBtn').addEventListener('click', function() {
+    const text = prompt('输入动态内容：');
+    if (text === null || text.trim() === '') return;
+    const addImage = confirm('是否添加图片？');
+    if (addImage) {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.onchange = function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+          const moments = getMoments();
+          moments.push({ text: text.trim(), time: Date.now(), image: ev.target.result, likes: 0, liked: false, comments: [] });
+          saveMoments(moments);
+          renderWechatContent();
+        };
+        reader.readAsDataURL(file);
+      };
+      input.click();
+    } else {
+      const moments = getMoments();
+      moments.push({ text: text.trim(), time: Date.now(), image: null, likes: 0, liked: false, comments: [] });
+      saveMoments(moments);
+      renderWechatContent();
+    }
+  });
+
+  // 渲染动态列表
+  const list = document.getElementById('momentsList');
+  const momentsData = getMoments();
+  if (momentsData.length === 0) {
+    list.innerHTML = `<div class="empty-state">还没有动态，发布一条吧</div>`;
   } else {
     const profile = getProfile();
-    moments.slice().reverse().forEach(m => {
+    let items = '';
+    momentsData.slice().reverse().forEach((m, idx) => {
+      const realIdx = momentsData.length - 1 - idx;
       const avatarHtml = profile.avatar ? `<img src="${profile.avatar}" />` : '👤';
-      html += `
+      const likedClass = m.liked ? 'liked' : '';
+      const likeText = m.liked ? '❤️ 取消赞' : '🤍 赞';
+      items += `
         <div class="moment-card">
           <div class="header">
             <div class="avatar">${avatarHtml}</div>
@@ -808,21 +960,45 @@ function renderMoments(container) {
           </div>
           <div class="content">${m.text}</div>
           ${m.image ? `<img src="${m.image}" class="image" />` : ''}
+          <div class="actions">
+            <span class="${likedClass}" data-idx="${realIdx}">${likeText}</span>
+            <span class="comment-btn" data-idx="${realIdx}">💬 评论</span>
+            <span class="delete-btn" data-idx="${realIdx}">🗑️ 删除</span>
+          </div>
+          ${m.comments && m.comments.length > 0 ? `<div class="comments">${m.comments.map(c => `<div class="comment"><span class="name">${c.name || '我'}</span>：${c.text}</div>`).join('')}</div>` : ''}
         </div>
       `;
     });
-  }
-  container.innerHTML = html;
-  const newBtn = document.getElementById('newMomentBtn');
-  if (newBtn) {
-    newBtn.addEventListener('click', () => {
-      const text = prompt('输入你的动态内容：');
-      if (text !== null && text.trim() !== '') {
+    list.innerHTML = items;
+
+    // 点赞
+    list.querySelectorAll('.actions .liked, .actions .comment-btn, .actions .delete-btn').forEach(el => {
+      el.addEventListener('click', function(e) {
+        const idx = parseInt(this.dataset.idx);
         const moments = getMoments();
-        moments.push({ text: text.trim(), time: Date.now(), image: null });
-        saveMoments(moments);
-        renderWechatContent();
-      }
+        if (this.classList.contains('liked') || this.textContent.includes('赞')) {
+          // 点赞切换
+          moments[idx].liked = !moments[idx].liked;
+          moments[idx].likes += moments[idx].liked ? 1 : -1;
+          saveMoments(moments);
+          renderWechatContent();
+        } else if (this.classList.contains('comment-btn')) {
+          const commentText = prompt('输入评论：');
+          if (commentText && commentText.trim() !== '') {
+            const profile = getProfile();
+            moments[idx].comments = moments[idx].comments || [];
+            moments[idx].comments.push({ name: profile.name, text: commentText.trim() });
+            saveMoments(moments);
+            renderWechatContent();
+          }
+        } else if (this.classList.contains('delete-btn')) {
+          if (confirm('确定删除这条动态吗？')) {
+            moments.splice(idx, 1);
+            saveMoments(moments);
+            renderWechatContent();
+          }
+        }
+      });
     });
   }
 }
@@ -831,54 +1007,58 @@ function renderMoments(container) {
 function renderProfile(container) {
   const profile = getProfile();
   container.innerHTML = `
-    <div class="profile-page">
-      <div class="avatar-large" id="profileAvatar">${profile.avatar ? `<img src="${profile.avatar}" />` : '👤'}</div>
-      <input type="file" id="profileAvatarInput" accept="image/*" style="display:none;" />
-      <div class="input-group">
-        <label>昵称</label>
-        <input id="profileNameInput" value="${profile.name}" />
+    <div style="padding:20px 16px;background:#E3EEFA;flex:1;display:flex;flex-direction:column;align-items:center;">
+      <div class="avatar-large" style="width:100px;height:100px;border-radius:50%;background:#e5e5ea;display:flex;align-items:center;justify-content:center;font-size:48px;overflow:hidden;border:2px solid rgba(255,255,255,0.4);margin-bottom:16px;">
+        ${profile.avatar ? `<img src="${profile.avatar}" />` : '👤'}
       </div>
-      <div class="input-group">
-        <label>个性签名</label>
-        <textarea id="profileSigInput">${profile.signature}</textarea>
-      </div>
-      <button class="save-btn" id="profileSaveBtn">保存修改</button>
+      <div style="font-size:20px;font-weight:600;color:#1c1c1e;margin-bottom:4px;">${profile.name}</div>
+      <div style="font-size:14px;color:#8e8e93;margin-bottom:20px;">${profile.signature}</div>
+      <button id="editProfileBtn" style="background:#007aff;color:#fff;border:none;padding:10px 24px;border-radius:20px;font-size:16px;font-weight:600;cursor:pointer;">编辑资料</button>
     </div>
   `;
-
-  // 头像点击上传
-  document.getElementById('profileAvatar').addEventListener('click', () => {
-    document.getElementById('profileAvatarInput').click();
-  });
-  document.getElementById('profileAvatarInput').addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = function(ev) {
-      const dataUrl = ev.target.result;
-      const profile = getProfile();
-      profile.avatar = dataUrl;
-      saveProfile(profile);
-      renderWechatContent();
-    };
-    reader.readAsDataURL(file);
-  });
-
-  // 保存
-  document.getElementById('profileSaveBtn').addEventListener('click', () => {
-    const name = document.getElementById('profileNameInput').value.trim() || '我';
-    const signature = document.getElementById('profileSigInput').value.trim() || '这个人很懒，什么都没写';
+  document.getElementById('editProfileBtn').addEventListener('click', function() {
+    // 打开编辑页
     const profile = getProfile();
-    profile.name = name;
-    profile.signature = signature;
-    saveProfile(profile);
-    alert('✅ 保存成功！');
-    renderWechatContent();
+    document.getElementById('profileEditAvatar').innerHTML = profile.avatar ? `<img src="${profile.avatar}" />` : '👤';
+    document.getElementById('profileEditName').value = profile.name;
+    document.getElementById('profileEditSig').value = profile.signature;
+    showPage('profileEditPage');
   });
 }
 
 // ============================================================
-// 聊天对话功能
+// 个人资料编辑页功能
+// ============================================================
+document.getElementById('profileEditAvatar').addEventListener('click', function() {
+  document.getElementById('profileEditAvatarInput').click();
+});
+document.getElementById('profileEditAvatarInput').addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    const dataUrl = ev.target.result;
+    const profile = getProfile();
+    profile.avatar = dataUrl;
+    saveProfile(profile);
+    document.getElementById('profileEditAvatar').innerHTML = `<img src="${dataUrl}" />`;
+  };
+  reader.readAsDataURL(file);
+});
+document.getElementById('profileEditSaveBtn').addEventListener('click', function() {
+  const name = document.getElementById('profileEditName').value.trim() || '我';
+  const sig = document.getElementById('profileEditSig').value.trim() || '这个人很懒，什么都没写';
+  const profile = getProfile();
+  profile.name = name;
+  profile.signature = sig;
+  saveProfile(profile);
+  alert('✅ 保存成功！');
+  renderWechatContent();
+  showWechat('profile');
+});
+
+// ============================================================
+// 角色聊天功能
 // ============================================================
 function openDialog(char) {
   currentDialogCharId = char.id;
@@ -1038,7 +1218,7 @@ document.getElementById('dialogInput').addEventListener('input', function() {
 });
 
 // ============================================================
-// 通讯录详情（含头像编辑）
+// 角色详情（含头像编辑）
 // ============================================================
 function openContactDetail(charId) {
   detailCharId = charId;
@@ -1061,8 +1241,12 @@ function openContactDetail(charId) {
   showPage('contactDetailPage');
 }
 
-// 点击头像上传（详情页查看模式）
+// 头像上传（仅在编辑模式下有效）
 document.getElementById('detailAvatar').addEventListener('click', function() {
+  if (!isEditing) {
+    alert('请先点击"修改"进入编辑模式');
+    return;
+  }
   if (!detailCharId) return;
   document.getElementById('detailAvatarInput').click();
 });
@@ -1079,8 +1263,6 @@ document.getElementById('detailAvatarInput').addEventListener('change', function
       saveChars(chars);
       document.getElementById('detailAvatar').innerHTML = `<img src="${dataUrl}" />`;
       document.getElementById('detailAvatarEdit').innerHTML = `<img src="${dataUrl}" />`;
-      // 刷新聊天列表
-      renderWechatContent();
     }
   };
   reader.readAsDataURL(file);
