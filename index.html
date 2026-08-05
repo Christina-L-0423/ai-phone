@@ -20,30 +20,34 @@
       background-color: var(--bg) !important;
       color-scheme: light !important;
       height: 100%;
+      width: 100%;
       overflow: hidden;
       margin: 0;
       padding: 0;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
     }
     *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
-    body{display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0;padding:0;background:#1a1a1a}
+    body{display:flex;justify-content:center;align-items:center;margin:0;padding:0;background:#1a1a1a}
     
     /* ===== 手机外壳 - 强制全屏 ===== */
     .phone{
-      width:100vw !important;
-      height:100vh !important;
-      max-width:100vw !important;
-      max-height:100vh !important;
-      aspect-ratio:unset !important;
-      border-radius:0 !important;
-      padding:0 !important;
-      background:var(--bg) !important;
-      box-shadow:none !important;
-      margin:0 !important;
       position:fixed;
       top:0;
       left:0;
       right:0;
       bottom:0;
+      width:100%;
+      height:100%;
+      background:var(--bg) !important;
+      border-radius:0 !important;
+      padding:0 !important;
+      box-shadow:none !important;
+      margin:0 !important;
+      overflow:hidden;
     }
     .phone-screen{
       width:100%;
@@ -58,11 +62,18 @@
     
     /* ===== Edge 浏览器专用修正 ===== */
     @supports (-webkit-touch-callout: none) {
-      .phone { height:100vh !important; }
+      .phone { height:100% !important; }
     }
     /* 针对 Edge 的额外适配 */
     @media screen and (-webkit-min-device-pixel-ratio:0) {
-      .phone { height:100vh !important; }
+      .phone { width:100% !important; height:100% !important; }
+    }
+    /* 确保 Edge 不会出现右侧空白 */
+    .phone {
+      width: 100% !important;
+      max-width: 100% !important;
+      height: 100% !important;
+      max-height: 100% !important;
     }
     
     /* ===== 状态栏 ===== */
@@ -463,19 +474,20 @@
       html, body {
         overflow: hidden;
         height: 100%;
+        width: 100%;
         margin: 0;
         padding: 0;
-      }
-      body {
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
       }
       .phone {
-        width: 100vw !important;
-        height: 100vh !important;
-        max-height: 100vh !important;
-        aspect-ratio: unset !important;
+        width: 100% !important;
+        height: 100% !important;
+        max-width: 100% !important;
+        max-height: 100% !important;
         padding: 0 !important;
         border-radius: 0 !important;
         background: var(--bg) !important;
@@ -526,7 +538,7 @@
       </div>
     </div>
 
-    <!-- 设置页面（移除显示设置项） -->
+    <!-- 设置页面 -->
     <div class="page" id="settingsPage">
       <div class="settings-page">
         <div class="header"><span class="back" id="backFromSettings">‹</span><span>设置</span></div>
@@ -787,7 +799,6 @@ document.getElementById('backFromSettings').addEventListener('click', goHome);
 document.getElementById('backFromApiSettings').addEventListener('click', () => showPage('settingsPage'));
 document.getElementById('goToApiSettings').addEventListener('click', () => showPage('apiSettingsPage'));
 document.getElementById('wechatBack').addEventListener('click', goHome);
-// 移除显示设置相关
 document.getElementById('forceRefreshBtn').addEventListener('click', function() {
   if (confirm('确定要强制刷新页面吗？将重新加载所有资源。')) location.reload(true);
 });
@@ -831,44 +842,22 @@ updateTime();
 setInterval(updateTime, 10000);
 
 // ============================================================
-// 全屏模式 - 强制全屏，专项适配 Edge
+// 全屏模式 - 强制填满，不依赖 vw/vh
 // ============================================================
-const phoneContainer = document.getElementById('phoneContainer');
-const phoneScreen = document.getElementById('phoneScreen');
-
-// 检测 Edge 浏览器
-const isEdge = /Edg/.test(navigator.userAgent);
-
 function applyFullscreen() {
-  const h = window.innerHeight;
-  const w = window.innerWidth;
-  phoneContainer.style.width = w + 'px';
-  phoneContainer.style.height = h + 'px';
-  phoneScreen.style.height = h + 'px';
-  if (isEdge) {
-    // Edge 特殊处理：使用 100dvh 备用
-    phoneContainer.style.height = '100dvh';
-    phoneScreen.style.height = '100dvh';
-  }
+  // 直接使用 body 的宽高，无需额外调整
+  // 所有容器已使用 position:fixed + top/left/right/bottom:0
 }
 
 // 初始适配
 applyFullscreen();
 
-// 窗口变化时重新适配
-window.addEventListener('resize', function() {
-  applyFullscreen();
-});
+// 窗口变化时无需额外操作，因为 position:fixed 会自动适应
 
 // 针对 PWA 模式（display-mode: standalone）
 if (window.matchMedia('(display-mode: standalone)').matches) {
   applyFullscreen();
 }
-
-// 额外监听 orientation change
-window.addEventListener('orientationchange', function() {
-  setTimeout(applyFullscreen, 300);
-});
 
 // ============================================================
 // API 设置
