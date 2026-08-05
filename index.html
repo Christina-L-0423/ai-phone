@@ -143,20 +143,20 @@
     align-items: center;
     justify-content: center;
   }
-  /* 非全屏默认样式：等比例缩放，留出边距，固定大小不受内容影响 */
+  /* 非全屏默认样式：等比例缩小，留出更大边距 */
   .phone {
     width: 100%;
-    max-width: calc(100% - 24px);   /* 左右各留12px */
+    max-width: calc(100% - 48px);   /* 左右各留24px */
     height: auto;
-    max-height: calc(100vh - 100px); /* 上下各留50px */
+    max-height: calc(100vh - 140px); /* 上下各留70px */
     aspect-ratio: 380 / 780;
-    padding: 6px;
+    padding: 4px;
     border-radius: 20px;
     background: #000;
     box-shadow: 0 0 20px rgba(0,0,0,0.5);
     margin: auto;
     overflow: hidden;
-    flex-shrink: 0; /* 防止被压缩 */
+    flex-shrink: 0;
   }
   .phone .phone-screen {
     border-radius: 14px;
