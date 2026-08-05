@@ -1,122 +1,115 @@
-// ===== modules/contacts.js =====
 import { getChars, saveChars, getCharHistory, saveCharHistory } from './utils.js';
-
-let dom = {};
-let detailCharId = null;
-let isEditing = false;
-let originalName = '';
-let originalPrompt = '';
-
-export function initContacts(d) {
-  dom = d;
-  bindEvents();
-}
-
+let dom = {}, detailCharId = null, isEditing = false, originalName = '', originalPrompt = '';
+export function initContacts(d) { dom = d; bindEvents(); }
 function bindEvents() {
-  dom.detailEditBtn.addEventListener('click', () => {
-    if (!detailCharId) return;
-    const chars = getChars();
-    const char = chars.find(c => c.id === detailCharId);
-    if (!char) return;
-    dom.viewMode.style.display = 'none';
-    dom.editMode.style.display = 'block';
-    isEditing = true;
-    dom.detailNameInput.value = char.name || '';
-    dom.detailPromptInput.value = char.prompt || '';
-    originalName = char.name || '';
-    originalPrompt = char.prompt || '';
-    dom.detailAvatarEdit.innerHTML = char.avatar ? `<img src="${char.avatar}" />` : '🧑';
-    dom.detailStatus.textContent = '';
-  });
-
-  dom.detailSaveBtn.addEventListener('click', () => {
-    if (!detailCharId) return;
-    const newName = dom.detailNameInput.value.trim();
-    const newPrompt = dom.detailPromptInput.value.trim();
-    if (!newName) { dom.detailStatus.textContent = '❌ 名字不能为空'; return; }
-    let chars = getChars();
-    const idx = chars.findIndex(c => c.id === detailCharId);
-    if (idx !== -1) {
-      chars[idx].name = newName;
-      chars[idx].prompt = newPrompt;
+  if (dom.detailEditBtn) {
+    dom.detailEditBtn.addEventListener('click', () => {
+      if (!detailCharId) return;
+      const chars = getChars();
+      const char = chars.find(c => c.id === detailCharId);
+      if (!char) return;
+      if (dom.viewMode) dom.viewMode.style.display = 'none';
+      if (dom.editMode) dom.editMode.style.display = 'block';
+      isEditing = true;
+      if (dom.detailNameInput) dom.detailNameInput.value = char.name || '';
+      if (dom.detailPromptInput) dom.detailPromptInput.value = char.prompt || '';
+      originalName = char.name || '';
+      originalPrompt = char.prompt || '';
+      if (dom.detailAvatarEdit) dom.detailAvatarEdit.innerHTML = char.avatar ? `<img src="${char.avatar}" />` : '🧑';
+      if (dom.detailStatus) dom.detailStatus.textContent = '';
+    });
+  }
+  if (dom.detailSaveBtn) {
+    dom.detailSaveBtn.addEventListener('click', () => {
+      if (!detailCharId) return;
+      const newName = dom.detailNameInput?.value?.trim() || '';
+      const newPrompt = dom.detailPromptInput?.value?.trim() || '';
+      if (!newName) { if (dom.detailStatus) dom.detailStatus.textContent = '❌ 名字不能为空'; return; }
+      let chars = getChars();
+      const idx = chars.findIndex(c => c.id === detailCharId);
+      if (idx !== -1) {
+        chars[idx].name = newName;
+        chars[idx].prompt = newPrompt;
+        saveChars(chars);
+        if (dom.detailNameDisplay) dom.detailNameDisplay.textContent = newName;
+        if (dom.detailPromptDisplay) dom.detailPromptDisplay.textContent = newPrompt || '未设置人设';
+        originalName = newName;
+        originalPrompt = newPrompt;
+        if (dom.detailStatus) dom.detailStatus.textContent = '✅ 保存成功！';
+        if (dom.viewMode) dom.viewMode.style.display = 'block';
+        if (dom.editMode) dom.editMode.style.display = 'none';
+        isEditing = false;
+        if (window.renderWechatContent) window.renderWechatContent();
+        setTimeout(() => { if (dom.detailStatus) dom.detailStatus.textContent = ''; }, 2000);
+      }
+    });
+  }
+  if (dom.detailCancelBtn) {
+    dom.detailCancelBtn.addEventListener('click', () => {
+      if (!detailCharId) return;
+      if (dom.detailNameInput) dom.detailNameInput.value = originalName;
+      if (dom.detailPromptInput) dom.detailPromptInput.value = originalPrompt;
+      if (dom.viewMode) dom.viewMode.style.display = 'block';
+      if (dom.editMode) dom.editMode.style.display = 'none';
+      isEditing = false;
+      if (dom.detailStatus) dom.detailStatus.textContent = '';
+    });
+  }
+  if (dom.detailDeleteBtn) {
+    dom.detailDeleteBtn.addEventListener('click', () => {
+      if (!detailCharId) return;
+      if (!confirm('确定删除这个角色吗？')) return;
+      let chars = getChars();
+      chars = chars.filter(c => c.id !== detailCharId);
       saveChars(chars);
-      dom.detailNameDisplay.textContent = newName;
-      dom.detailPromptDisplay.textContent = newPrompt || '未设置人设';
-      originalName = newName;
-      originalPrompt = newPrompt;
-      dom.detailStatus.textContent = '✅ 保存成功！';
-      dom.viewMode.style.display = 'block';
-      dom.editMode.style.display = 'none';
+      localStorage.removeItem('charHistory_' + detailCharId);
+      if (window.currentDialogCharId === detailCharId) window.currentDialogCharId = null;
+      if (dom.viewMode) dom.viewMode.style.display = 'block';
+      if (dom.editMode) dom.editMode.style.display = 'none';
       isEditing = false;
       if (window.renderWechatContent) window.renderWechatContent();
-      setTimeout(() => { dom.detailStatus.textContent = ''; }, 2000);
-    }
-  });
-
-  dom.detailCancelBtn.addEventListener('click', () => {
-    if (!detailCharId) return;
-    dom.detailNameInput.value = originalName;
-    dom.detailPromptInput.value = originalPrompt;
-    dom.viewMode.style.display = 'block';
-    dom.editMode.style.display = 'none';
-    isEditing = false;
-    dom.detailStatus.textContent = '';
-  });
-
-  dom.detailDeleteBtn.addEventListener('click', () => {
-    if (!detailCharId) return;
-    if (!confirm('确定删除这个角色吗？')) return;
-    let chars = getChars();
-    chars = chars.filter(c => c.id !== detailCharId);
-    saveChars(chars);
-    localStorage.removeItem('charHistory_' + detailCharId);
-    if (window.currentDialogCharId === detailCharId) window.currentDialogCharId = null;
-    dom.viewMode.style.display = 'block';
-    dom.editMode.style.display = 'none';
-    isEditing = false;
-    if (window.renderWechatContent) window.renderWechatContent();
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.wechat-app').forEach(w => w.classList.add('active'));
-  });
-
-  dom.backFromContactDetail.addEventListener('click', () => {
-    if (isEditing) {
-      dom.detailNameInput.value = originalName;
-      dom.detailPromptInput.value = originalPrompt;
-      dom.viewMode.style.display = 'block';
-      dom.editMode.style.display = 'none';
-      isEditing = false;
-      dom.detailStatus.textContent = '';
-    }
-    if (window.renderWechatContent) window.renderWechatContent();
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.wechat-app').forEach(w => w.classList.add('active'));
-  });
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.wechat-app').forEach(w => w.classList.add('active'));
+    });
+  }
+  if (dom.backFromContactDetail) {
+    dom.backFromContactDetail.addEventListener('click', () => {
+      if (isEditing) {
+        if (dom.detailNameInput) dom.detailNameInput.value = originalName;
+        if (dom.detailPromptInput) dom.detailPromptInput.value = originalPrompt;
+        if (dom.viewMode) dom.viewMode.style.display = 'block';
+        if (dom.editMode) dom.editMode.style.display = 'none';
+        isEditing = false;
+        if (dom.detailStatus) dom.detailStatus.textContent = '';
+      }
+      if (window.renderWechatContent) window.renderWechatContent();
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.wechat-app').forEach(w => w.classList.add('active'));
+    });
+  }
 }
-
 export function openContactDetail(charId) {
   detailCharId = charId;
   const chars = getChars();
   const char = chars.find(c => c.id === charId);
   if (!char) return;
-  dom.detailAvatar.innerHTML = char.avatar ? `<img src="${char.avatar}" />` : '🧑';
-  dom.detailNameDisplay.textContent = char.name || '未命名';
-  dom.detailPromptDisplay.textContent = char.prompt || '未设置人设';
-  dom.detailAvatarEdit.innerHTML = char.avatar ? `<img src="${char.avatar}" />` : '🧑';
-  dom.detailNameInput.value = char.name || '';
-  dom.detailPromptInput.value = char.prompt || '';
+  if (dom.detailAvatar) dom.detailAvatar.innerHTML = char.avatar ? `<img src="${char.avatar}" />` : '🧑';
+  if (dom.detailNameDisplay) dom.detailNameDisplay.textContent = char.name || '未命名';
+  if (dom.detailPromptDisplay) dom.detailPromptDisplay.textContent = char.prompt || '未设置人设';
+  if (dom.detailAvatarEdit) dom.detailAvatarEdit.innerHTML = char.avatar ? `<img src="${char.avatar}" />` : '🧑';
+  if (dom.detailNameInput) dom.detailNameInput.value = char.name || '';
+  if (dom.detailPromptInput) dom.detailPromptInput.value = char.prompt || '';
   originalName = char.name || '';
   originalPrompt = char.prompt || '';
-  dom.viewMode.style.display = 'block';
-  dom.editMode.style.display = 'none';
+  if (dom.viewMode) dom.viewMode.style.display = 'block';
+  if (dom.editMode) dom.editMode.style.display = 'none';
   isEditing = false;
-  dom.detailStatus.textContent = '';
-  dom.contactDetailTitle.textContent = '角色详情';
-  document.getElementById('contactDetailPage').classList.add('active');
+  if (dom.detailStatus) dom.detailStatus.textContent = '';
+  if (dom.contactDetailTitle) dom.contactDetailTitle.textContent = '角色详情';
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById('contactDetailPage').classList.add('active');
+  const page = document.getElementById('contactDetailPage');
+  if (page) page.classList.add('active');
 }
-
 export function renderContactList(container) {
   const chars = getChars();
   let html = `

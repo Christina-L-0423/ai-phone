@@ -1,15 +1,6 @@
-// ===== modules/char.js =====
 import { getChars, saveChars } from './utils.js';
-
-let dom = {};
-let editingCharId = null;
-let avatarDataUrl = null;
-
-export function initChar(d) {
-  dom = d;
-  bindEvents();
-}
-
+let dom = {}, editingCharId = null, avatarDataUrl = null;
+export function initChar(d) { dom = d; bindEvents(); }
 function bindEvents() {
   dom.avatarUploadBtn.addEventListener('click', () => dom.charAvatarInput.click());
   dom.charAvatarInput.addEventListener('change', (e) => {
@@ -22,7 +13,6 @@ function bindEvents() {
     };
     reader.readAsDataURL(file);
   });
-
   dom.saveCharBtn.addEventListener('click', () => {
     const name = dom.charNameInput.value.trim();
     const prompt = dom.charPromptInput.value.trim();
@@ -48,7 +38,6 @@ function bindEvents() {
     }, 500);
   });
 }
-
 export function openCreateChar() {
   editingCharId = null;
   dom.createCharTitle.textContent = '新建 Char';

@@ -128,36 +128,34 @@
           <span id="contactDetailTitle">角色详情</span>
         </div>
         <div class="api-group" id="detailContainer">
-          <!-- 查看模式 -->
           <div id="viewMode">
             <div style="text-align:center; margin-bottom:12px;">
               <div class="avatar-preview" id="detailAvatar" style="width:80px;height:80px;margin:0 auto;font-size:36px;">🧑</div>
             </div>
             <div style="margin-bottom:10px;">
               <label style="font-weight:600;">名字</label>
-              <div id="detailNameDisplay" style="padding:8px 12px; background:#f9f9f9; border-radius:8px; font-size:16px;">未命名</div>
+              <div id="detailNameDisplay" style="padding:8px 12px;background:#f9f9f9;border-radius:8px;font-size:16px;">未命名</div>
             </div>
             <div style="margin-bottom:10px;">
               <label style="font-weight:600;">人设</label>
-              <div id="detailPromptDisplay" style="padding:8px 12px; background:#f9f9f9; border-radius:8px; font-size:15px; min-height:60px; white-space:pre-wrap;">未设置</div>
+              <div id="detailPromptDisplay" style="padding:8px 12px;background:#f9f9f9;border-radius:8px;font-size:15px;min-height:60px;white-space:pre-wrap;">未设置</div>
             </div>
-            <div style="display:flex; gap:10px; margin-top:8px;">
-              <button id="detailEditBtn" style="flex:1; background:#007aff;">修改</button>
-              <button id="detailDeleteBtn" style="flex:1; background:#ff3b30;">删除</button>
+            <div style="display:flex;gap:10px;margin-top:8px;">
+              <button id="detailEditBtn" style="flex:1;background:#007aff;">修改</button>
+              <button id="detailDeleteBtn" style="flex:1;background:#ff3b30;">删除</button>
             </div>
           </div>
-          <!-- 编辑模式 -->
           <div id="editMode" style="display:none;">
-            <div style="text-align:center; margin-bottom:12px;">
+            <div style="text-align:center;margin-bottom:12px;">
               <div class="avatar-preview" id="detailAvatarEdit" style="width:80px;height:80px;margin:0 auto;font-size:36px;">🧑</div>
             </div>
             <label>名字</label>
             <input id="detailNameInput" style="margin-bottom:10px;" />
             <label>人设</label>
             <textarea id="detailPromptInput" rows="4" style="margin-bottom:10px;"></textarea>
-            <div style="display:flex; gap:10px;">
-              <button id="detailSaveBtn" style="flex:1; background:#34c759;">保存修改</button>
-              <button id="detailCancelBtn" style="flex:1; background:#8e8e93;">取消修改</button>
+            <div style="display:flex;gap:10px;">
+              <button id="detailSaveBtn" style="flex:1;background:#34c759;">保存修改</button>
+              <button id="detailCancelBtn" style="flex:1;background:#8e8e93;">取消修改</button>
             </div>
           </div>
           <div class="status-msg" id="detailStatus"></div>
@@ -165,9 +163,22 @@
       </div>
     </div>
 
-    <!-- 普通聊天（保留兼容） -->
-    <div class="page" id="chatPage" style="display:none;"></div>
-
+    <!-- 普通聊天（保留但隐藏，供后续扩展） -->
+    <div class="page" id="chatPage" style="display:none;">
+      <div class="chat-page">
+        <div class="chat-header">
+          <span class="back" id="backFromChat">‹</span>
+          <span class="title">💬 聊天</span>
+          <span style="font-size:12px; color:#8e8e93; margin-right:4px;" id="modelDisplay2">未选择</span>
+          <button class="new-btn" id="newChatBtn">新对话</button>
+        </div>
+        <div class="chat-body" id="chatMessages"></div>
+        <div class="chat-input-area">
+          <textarea id="userInput" rows="1" placeholder="输入问题..."></textarea>
+          <button id="sendBtn">发送</button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 

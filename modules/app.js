@@ -1,4 +1,3 @@
-// ===== modules/app.js =====
 import { getChars, getSettings } from './utils.js';
 import { initSettings, getCurrentModel } from './settings.js';
 import { initChat, clearChatHistory } from './chat.js';
@@ -6,7 +5,6 @@ import { initChar, openCreateChar } from './char.js';
 import { initContacts, renderContactList, openContactDetail } from './contacts.js';
 import { initDialog, openDialog } from './dialog.js';
 
-// 暴露部分函数给全局（供其他模块调用）
 window.renderWechatContent = renderWechatContent;
 window.openCreateChar = openCreateChar;
 window.openContactDetail = openContactDetail;
@@ -14,13 +12,10 @@ window.openDialog = openDialog;
 window.clearChatHistory = clearChatHistory;
 window.currentDialogCharId = null;
 
-// DOM 引用
 const dom = {};
 
 function initDOM() {
-  // 状态栏
   dom.statusTime = document.getElementById('statusTime');
-  // API设置
   dom.apiBase = document.getElementById('apiBase');
   dom.apiKey = document.getElementById('apiKey');
   dom.modelSelect = document.getElementById('modelSelect');
@@ -30,12 +25,10 @@ function initDOM() {
   dom.modelDisplay = document.getElementById('modelDisplay');
   dom.streamToggle = document.getElementById('streamToggle');
   dom.streamStatus = document.getElementById('streamStatus');
-  // 普通聊天
   dom.chatMessages = document.getElementById('chatMessages');
   dom.userInput = document.getElementById('userInput');
   dom.sendBtn = document.getElementById('sendBtn');
   dom.newChatBtn = document.getElementById('newChatBtn');
-  // Char创建
   dom.charAvatarPreview = document.getElementById('charAvatarPreview');
   dom.charAvatarInput = document.getElementById('charAvatarInput');
   dom.avatarUploadBtn = document.getElementById('avatarUploadBtn');
@@ -44,7 +37,6 @@ function initDOM() {
   dom.saveCharBtn = document.getElementById('saveCharBtn');
   dom.createCharStatus = document.getElementById('createCharStatus');
   dom.createCharTitle = document.getElementById('createCharTitle');
-  // 通讯录详情
   dom.detailAvatar = document.getElementById('detailAvatar');
   dom.detailNameDisplay = document.getElementById('detailNameDisplay');
   dom.detailPromptDisplay = document.getElementById('detailPromptDisplay');
@@ -60,7 +52,6 @@ function initDOM() {
   dom.viewMode = document.getElementById('viewMode');
   dom.editMode = document.getElementById('editMode');
   dom.backFromContactDetail = document.getElementById('backFromContactDetail');
-  // 角色对话
   dom.chatDialogPage = document.getElementById('chatDialogPage');
   dom.dialogAvatar = document.getElementById('dialogAvatar');
   dom.dialogName = document.getElementById('dialogName');
@@ -71,27 +62,26 @@ function initDOM() {
   dom.dialogSendBtn = document.getElementById('dialogSendBtn');
   dom.dialogNewBtn = document.getElementById('dialogNewBtn');
   dom.backFromDialog = document.getElementById('backFromDialog');
-  // 微信内容
   dom.wechatTabContent = document.getElementById('wechatTabContent');
 }
 
-// ===== 页面导航 =====
 function showPage(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+  const target = document.getElementById(id);
+  if (target) target.classList.add('active');
 }
 window.showPage = showPage;
 
 function showWechat() {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.wechat-app').forEach(w => w.classList.add('active'));
-  dom.chatDialogPage.classList.remove('active');
+  if (dom.chatDialogPage) dom.chatDialogPage.classList.remove('active');
   renderWechatContent();
 }
 
-// ===== 微信风格渲染 =====
 function renderWechatContent() {
   const container = dom.wechatTabContent;
+  if (!container) return;
   const chars = getChars();
   const activeTab = document.querySelector('.tab.active')?.dataset.tab || 'chats';
   if (activeTab === 'chats') {
@@ -135,29 +125,33 @@ function renderChatList(container, chars) {
   });
 }
 
-// ===== 初始化 =====
 function init() {
   initDOM();
   initSettings(dom);
-  initChat(dom);
+  if (dom.chatMessages) initChat(dom);
   initChar(dom);
   initContacts(dom);
   initDialog(dom);
 
-  // 状态栏时间
   updateTime();
   setInterval(updateTime, 10000);
 
-  // 绑定主屏幕导航
-  document.getElementById('goToWechat').addEventListener('click', showWechat);
-  document.getElementById('goToWechatFromDock').addEventListener('click', showWechat);
-  document.getElementById('goToSettingsFromHome').addEventListener('click', () => showPage('settingsPage'));
-  document.getElementById('goToSettingsFromDock').addEventListener('click', () => showPage('settingsPage'));
-  document.getElementById('backFromSettings').addEventListener('click', () => showPage('homePage'));
-  document.getElementById('backFromApiSettings').addEventListener('click', () => showPage('settingsPage'));
-  document.getElementById('goToApiSettings').addEventListener('click', () => showPage('apiSettingsPage'));
+  const goToWechat = document.getElementById('goToWechat');
+  const goToWechatFromDock = document.getElementById('goToWechatFromDock');
+  const goToSettingsFromHome = document.getElementById('goToSettingsFromHome');
+  const goToSettingsFromDock = document.getElementById('goToSettingsFromDock');
+  const backFromSettings = document.getElementById('backFromSettings');
+  const backFromApiSettings = document.getElementById('backFromApiSettings');
+  const goToApiSettings = document.getElementById('goToApiSettings');
 
-  // Tab切换
+  if (goToWechat) goToWechat.addEventListener('click', showWechat);
+  if (goToWechatFromDock) goToWechatFromDock.addEventListener('click', showWechat);
+  if (goToSettingsFromHome) goToSettingsFromHome.addEventListener('click', () => showPage('settingsPage'));
+  if (goToSettingsFromDock) goToSettingsFromDock.addEventListener('click', () => showPage('settingsPage'));
+  if (backFromSettings) backFromSettings.addEventListener('click', () => showPage('homePage'));
+  if (backFromApiSettings) backFromApiSettings.addEventListener('click', () => showPage('settingsPage'));
+  if (goToApiSettings) goToApiSettings.addEventListener('click', () => showPage('apiSettingsPage'));
+
   document.querySelectorAll('.tab').forEach(tab => {
     tab.addEventListener('click', function() {
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -166,21 +160,21 @@ function init() {
     });
   });
 
-  // 返回创建角色页
-  document.getElementById('backFromCreateChar').addEventListener('click', () => {
-    renderWechatContent();
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.wechat-app').forEach(w => w.classList.add('active'));
-  });
+  const backFromCreateChar = document.getElementById('backFromCreateChar');
+  if (backFromCreateChar) {
+    backFromCreateChar.addEventListener('click', () => {
+      renderWechatContent();
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.wechat-app').forEach(w => w.classList.add('active'));
+    });
+  }
 
-  // 自动拉取模型
   autoFetchModels();
-
-  // 初始渲染
   renderWechatContent();
 }
 
 function updateTime() {
+  if (!dom.statusTime) return;
   const now = new Date();
   dom.statusTime.textContent = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
 }
@@ -195,7 +189,7 @@ async function autoFetchModels() {
         body: JSON.stringify({ action: 'models', baseUrl: settings.apiBase, apiKey: settings.apiKey })
       });
       const data = await res.json();
-      if (data.models) {
+      if (data.models && dom.modelSelect) {
         dom.modelSelect.innerHTML = '<option value="">请选择</option>';
         data.models.forEach(m => {
           const opt = document.createElement('option');
@@ -211,5 +205,4 @@ async function autoFetchModels() {
   }
 }
 
-// 启动
 document.addEventListener('DOMContentLoaded', init);

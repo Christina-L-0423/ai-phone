@@ -1,5 +1,3 @@
-// ===== modules/utils.js =====
-// 角色存储
 export function getChars() {
   try { return JSON.parse(localStorage.getItem('chars')) || []; } catch (e) { return []; }
 }
@@ -12,8 +10,6 @@ export function getCharHistory(charId) {
 export function saveCharHistory(charId, history) {
   localStorage.setItem('charHistory_' + charId, JSON.stringify(history));
 }
-
-// 设置存储
 export function getSettings() {
   try {
     return {
