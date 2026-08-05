@@ -1,11 +1,9 @@
 // api/chat.js
 export default async function handler(req, res) {
-  // 允许跨域
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  // 处理预检请求
   if (req.method === 'OPTIONS') {
     res.status(200).end();
     return;
@@ -15,7 +13,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: '请使用 POST' });
   }
 
-  const { action, baseUrl, apiKey, model, message } = req.body;
+  const { action, baseUrl, apiKey, model, message, messages } = req.body;
 
   if (!baseUrl || !apiKey) {
     return res.status(400).json({ error: '缺少 API 地址或 Key' });
@@ -34,11 +32,22 @@ export default async function handler(req, res) {
     }
   }
 
-  // 聊天
+  // 聊天（支持多轮对话）
   if (action === 'chat') {
-    if (!model || !message) {
-      return res.status(400).json({ error: '缺少模型或消息' });
+    // 如果传了 messages 数组就用它，否则兼容旧的 message 单条
+    let chatMessages = messages;
+    if (!chatMessages || chatMessages.length === 0) {
+      if (message) {
+        chatMessages = [{ role: 'user', content: message }];
+      } else {
+        return res.status(400).json({ error: '缺少消息内容' });
+      }
     }
+
+    if (!model) {
+      return res.status(400).json({ error: '缺少模型' });
+    }
+
     try {
       const response = await fetch(baseUrl + '/chat/completions', {
         method: 'POST',
@@ -47,8 +56,8 @@ export default async function handler(req, res) {
           'Authorization': `Bearer ${apiKey}`
         },
         body: JSON.stringify({
-          model,
-          messages: [{ role: 'user', content: message }],
+          model: model,
+          messages: chatMessages,
           max_tokens: 1000,
           stream: false
         })
