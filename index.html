@@ -3,12 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="color-scheme" content="light" />
   <title>AI 小手机</title>
   <style>
-    /* 强制浅色模式，防止深色模式干扰 */
-    :root { color-scheme: light; }
+    /* 强制浅色模式，阻止深色反色 */
+    :root { color-scheme: light !important; }
+    html, body {
+      background-color: #E3EEFA !important;
+      color-scheme: light !important;
+    }
     *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
-    body{background:#1a1a1a;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0;padding:20px}
+    body{display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0;padding:20px;background:#1a1a1a}
     /* 手机外壳（默认带黑框） */
     .phone{
       width:100%;max-width:420px;aspect-ratio:380/780;height:auto;max-height:95vh;
@@ -206,7 +211,7 @@
         <div class="settings-list">
           <div class="settings-item" id="goToApiSettings"><span class="label">🔑 API 设置</span><span class="arrow">›</span></div>
           <div class="settings-item" id="goToDisplaySettings"><span class="label">📱 显示设置</span><span class="arrow">›</span></div>
-          <!-- 新增：强制刷新 -->
+          <!-- 强制刷新 -->
           <div class="settings-item" id="forceRefreshBtn">
             <span class="label">🔄 强制刷新</span>
             <span class="arrow">›</span>
@@ -994,9 +999,14 @@ modelSelect.addEventListener('change', () => {
 });
 
 // ============================================================
-// 13. 初始化
+// 13. 初始化（额外强制背景色）
 // ============================================================
 window.addEventListener('load', async () => {
+  // 强制锁定背景色，防止深色模式反色
+  document.documentElement.style.backgroundColor = '#E3EEFA';
+  document.documentElement.style.colorScheme = 'light';
+  document.body.style.backgroundColor = '#E3EEFA';
+
   const savedBase = localStorage.getItem('apiBase');
   const savedKey = localStorage.getItem('apiKey');
   const savedModel = localStorage.getItem('selectedModel');
