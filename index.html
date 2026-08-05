@@ -15,7 +15,6 @@
     }
     *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
     body{display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0;padding:20px;background:#1a1a1a}
-    /* 手机外壳（默认带黑框） */
     .phone{
       width:100%;max-width:420px;aspect-ratio:380/780;height:auto;max-height:95vh;
       background:#000;border-radius:40px;padding:12px;
@@ -27,7 +26,6 @@
       width:100%;height:100%;background:#E3EEFA !important;border-radius:30px;overflow:hidden;
       position:relative;display:flex;flex-direction:column
     }
-    /* 全屏模式（无黑框） */
     .phone.fullscreen{
       width:100%;height:100vh;max-height:100vh;aspect-ratio:auto;
       border-radius:0;padding:0;background:#f2f2f7;box-shadow:none;margin:0;
@@ -45,11 +43,11 @@
     .app-icon .icon-circle{width:64px;height:64px;border-radius:16px;display:flex;justify-content:center;align-items:center;font-size:30px;color:#fff;background:#007aff;box-shadow:0 4px 10px rgba(0,0,0,.1);margin-bottom:6px;position:relative;overflow:hidden}
     .app-icon .icon-circle img{width:100%;height:100%;object-fit:cover}
     .app-icon .icon-label{font-size:11px;color:#1c1c1e;text-align:center}
-    .app-icon .icon-circle.chat{background:#34c759}
-    .app-icon .icon-circle.settings{background:#8e8e93}
-    /* 新增小说和音乐图标颜色为浅紫色偏蓝 */
-    .app-icon .icon-circle.novel{background:#A7A9E6}
-    .app-icon .icon-circle.music{background:#A7A9E6}
+    /* 所有图标统一为浅紫色偏蓝 */
+    .app-icon .icon-circle.chat,
+    .app-icon .icon-circle.settings,
+    .app-icon .icon-circle.novel,
+    .app-icon .icon-circle.music { background: #C5C8F0; }
     .dock{background:rgba(255,255,255,.5);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);border-radius:30px;padding:12px 16px;margin:0 4px 16px;display:flex;justify-content:space-around;flex-shrink:0;margin-top:auto}
     .dock .app-icon .icon-circle{width:56px;height:56px;border-radius:14px;font-size:26px}
     .page{display:none;flex-direction:column;height:100%;background:#E3EEFA !important}
@@ -133,7 +131,7 @@
     ::-webkit-scrollbar{width:3px}
     ::-webkit-scrollbar-thumb{background:#c6c6c8;border-radius:4px}
 
-    /* ===== 小说页面和音乐页面样式 ===== */
+    /* 小说和音乐页面样式 */
     .reader-page, .music-page {
       padding:20px 16px;
       flex:1;
@@ -193,9 +191,9 @@
       background:#007aff;
       color:#fff;
       border:none;
-      padding:8px 24px;
+      padding:10px 30px;
       border-radius:20px;
-      font-size:16px;
+      font-size:18px;
       font-weight:600;
       cursor:pointer;
       margin:0 8px;
@@ -210,7 +208,7 @@
       color:#3a3a3c;
     }
 
-    /* ===== 手机端适配：禁止外部滚动，固定页面 ===== */
+    /* ===== 手机端适配 ===== */
     @media(max-width:420px){
       html, body {
         overflow: hidden;
@@ -223,7 +221,6 @@
         align-items: center;
         justify-content: center;
       }
-      /* 非全屏默认样式：窄黑框 + 等比例缩放，留出边距 */
       .phone {
         width: 100%;
         height: auto;
@@ -241,7 +238,6 @@
         border-radius: 14px;
         overflow: hidden;
       }
-      /* 全屏模式：完全填满，无黑框 */
       .phone.fullscreen {
         width: 100%;
         height: 100vh;
@@ -278,9 +274,7 @@
         <div class="grid">
           <div class="app-icon" id="goToWechat"><div class="icon-circle chat">💬</div><span class="icon-label">聊天</span></div>
           <div class="app-icon" id="goToSettingsFromHome"><div class="icon-circle settings">⚙️</div><span class="icon-label">设置</span></div>
-          <!-- 小说图标 -->
           <div class="app-icon" id="goToNovel"><div class="icon-circle novel">📖</div><span class="icon-label">小说</span></div>
-          <!-- 音乐图标 -->
           <div class="app-icon" id="goToMusic"><div class="icon-circle music">🎵</div><span class="icon-label">音乐</span></div>
         </div>
         <div class="dock">
@@ -382,7 +376,6 @@
           </div>
           <div class="music-controls">
             <button id="playPauseBtn">▶️ 播放</button>
-            <button id="stopBtn">⏹ 停止</button>
           </div>
           <div class="music-info" id="musicInfo">未加载音乐</div>
           <audio id="audioPlayer" style="display:none;"></audio>
@@ -527,32 +520,26 @@ document.getElementById('backFromApiSettings').addEventListener('click', () => s
 document.getElementById('goToApiSettings').addEventListener('click', () => showPage('apiSettingsPage'));
 document.getElementById('wechatBack').addEventListener('click', goHome);
 
-// 显示设置
 document.getElementById('goToDisplaySettings').addEventListener('click', () => showPage('displaySettingsPage'));
 document.getElementById('backFromDisplaySettings').addEventListener('click', () => showPage('settingsPage'));
 
-// 强制刷新
 document.getElementById('forceRefreshBtn').addEventListener('click', function() {
   if (confirm('确定要强制刷新页面吗？将重新加载所有资源。')) {
     location.reload(true);
   }
 });
 
-// 小说导航
 document.getElementById('goToNovel').addEventListener('click', () => showPage('novelPage'));
 document.getElementById('backFromNovel').addEventListener('click', goHome);
 
-// 音乐导航
 document.getElementById('goToMusic').addEventListener('click', () => showPage('musicPage'));
 document.getElementById('backFromMusic').addEventListener('click', goHome);
 
-// 创建角色返回通讯录
 document.getElementById('backFromCreateChar').addEventListener('click', () => {
   renderWechatContent();
   showWechat();
 });
 
-// 角色详情返回通讯录
 document.getElementById('backFromContactDetail').addEventListener('click', () => {
   if (isEditing) {
     document.getElementById('detailNameInput').value = originalName;
@@ -1144,15 +1131,14 @@ novelFileInput.addEventListener('change', function(e) {
 });
 
 // ============================================================
-// 14. 音乐功能
+// 14. 音乐功能（合并播放/暂停为一个按键）
 // ============================================================
 const musicFileInput = document.getElementById('musicFileInput');
 const importMusicBtn = document.getElementById('importMusicBtn');
 const audioPlayer = document.getElementById('audioPlayer');
 const playPauseBtn = document.getElementById('playPauseBtn');
-const stopBtn = document.getElementById('stopBtn');
 const musicInfo = document.getElementById('musicInfo');
-let currentMusicFile = null;
+let isPlaying = false;
 
 importMusicBtn.addEventListener('click', () => musicFileInput.click());
 musicFileInput.addEventListener('change', function(e) {
@@ -1160,8 +1146,9 @@ musicFileInput.addEventListener('change', function(e) {
   if (!file) return;
   const url = URL.createObjectURL(file);
   audioPlayer.src = url;
-  currentMusicFile = file.name;
   musicInfo.textContent = `已加载: ${file.name}`;
+  // 重置播放状态
+  isPlaying = false;
   playPauseBtn.textContent = '▶️ 播放';
 });
 
@@ -1171,22 +1158,29 @@ playPauseBtn.addEventListener('click', function() {
     return;
   }
   if (audioPlayer.paused) {
-    audioPlayer.play();
+    audioPlayer.play().catch(err => {
+      alert('播放失败：' + err.message);
+    });
     this.textContent = '⏸ 暂停';
+    isPlaying = true;
   } else {
     audioPlayer.pause();
     this.textContent = '▶️ 播放';
+    isPlaying = false;
   }
-});
-
-stopBtn.addEventListener('click', function() {
-  audioPlayer.pause();
-  audioPlayer.currentTime = 0;
-  playPauseBtn.textContent = '▶️ 播放';
 });
 
 audioPlayer.addEventListener('ended', function() {
   playPauseBtn.textContent = '▶️ 播放';
+  isPlaying = false;
+  // 可选的：重置进度到开头
+  this.currentTime = 0;
+});
+
+// 监听错误
+audioPlayer.addEventListener('error', function(e) {
+  console.error('音频错误:', e);
+  alert('音频播放出错，请检查文件是否有效');
 });
 
 // ============================================================
