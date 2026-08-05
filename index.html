@@ -5,512 +5,114 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>AI 小手机</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-    }
-    body {
-      background: #1a1a1a;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      margin: 0;
-      padding: 20px;
-    }
-    .phone {
-      width: 380px;
-      height: 780px;
-      background: #000;
-      border-radius: 40px;
-      padding: 12px;
-      box-shadow: 0 30px 80px rgba(0,0,0,0.8), inset 0 0 0 2px #333;
-      position: relative;
-    }
-    .phone-screen {
-      width: 100%;
-      height: 100%;
-      background: #f2f2f7;
-      border-radius: 30px;
-      overflow: hidden;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-    }
-    .status-bar {
-      background: transparent;
-      padding: 12px 20px 8px;
-      display: flex;
-      justify-content: space-between;
-      font-size: 14px;
-      font-weight: 600;
-      color: #1c1c1e;
-      flex-shrink: 0;
-    }
-    .status-bar .time { font-weight: 700; }
-    .status-bar .icons { display: flex; gap: 6px; align-items: center; }
-    .status-bar .icons span { font-size: 14px; }
-    .home-screen {
-      flex: 1;
-      padding: 20px 16px 0;
-      display: flex;
-      flex-direction: column;
-      overflow-y: auto;
-    }
-    .home-screen .grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 20px 10px;
-      margin-bottom: 20px;
-    }
-    .app-icon {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      cursor: pointer;
-      transition: transform 0.1s;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .app-icon:active { transform: scale(0.9); }
-    .app-icon .icon-circle {
-      width: 64px;
-      height: 64px;
-      border-radius: 16px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 30px;
-      color: #fff;
-      background: #007aff;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      margin-bottom: 6px;
-      position: relative;
-      overflow: hidden;
-    }
-    .app-icon .icon-circle img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .app-icon .icon-label {
-      font-size: 11px;
-      color: #1c1c1e;
-      text-align: center;
-    }
-    .app-icon .icon-circle.chat { background: #34c759; }
-    .app-icon .icon-circle.settings { background: #8e8e93; }
-    .app-icon .icon-circle.char { background: #ff6b6b; }
-    .dock {
-      background: rgba(255,255,255,0.5);
-      backdrop-filter: blur(30px);
-      -webkit-backdrop-filter: blur(30px);
-      border-radius: 30px;
-      padding: 12px 16px;
-      margin: 0 4px 16px;
-      display: flex;
-      justify-content: space-around;
-      flex-shrink: 0;
-      margin-top: auto;
-    }
-    .dock .app-icon .icon-circle {
-      width: 56px;
-      height: 56px;
-      border-radius: 14px;
-      font-size: 26px;
-    }
-    .page {
-      display: none;
-      flex-direction: column;
-      height: 100%;
-      background: #f2f2f7;
-    }
-    .page.active { display: flex; }
-    .settings-page {
-      padding: 20px 16px;
-      flex: 1;
-      overflow-y: auto;
-    }
-    .settings-page .header {
-      font-size: 28px;
-      font-weight: 700;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .settings-page .header .back {
-      font-size: 24px;
-      cursor: pointer;
-      padding: 4px 8px;
-    }
-    .settings-list {
-      background: #fff;
-      border-radius: 14px;
-      overflow: hidden;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    }
-    .settings-item {
-      padding: 14px 16px;
-      border-bottom: 1px solid #e5e5ea;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      cursor: pointer;
-      transition: background 0.1s;
-    }
-    .settings-item:last-child { border-bottom: none; }
-    .settings-item:active { background: #e5e5ea; }
-    .settings-item .label { font-size: 16px; color: #1c1c1e; }
-    .settings-item .arrow { color: #8e8e93; font-size: 18px; }
-    .api-settings-page {
-      padding: 20px 16px;
-      flex: 1;
-      overflow-y: auto;
-    }
-    .api-settings-page .header {
-      font-size: 28px;
-      font-weight: 700;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .api-settings-page .header .back {
-      font-size: 24px;
-      cursor: pointer;
-      padding: 4px 8px;
-    }
-    .api-group {
-      background: #fff;
-      border-radius: 14px;
-      padding: 16px;
-      margin-bottom: 16px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    }
-    .api-group label {
-      display: block;
-      font-size: 14px;
-      font-weight: 600;
-      color: #3a3a3c;
-      margin-bottom: 4px;
-    }
-    .api-group input,
-    .api-group select,
-    .api-group textarea {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1px solid #d1d1d6;
-      border-radius: 10px;
-      font-size: 15px;
-      background: #f9f9f9;
-      margin-bottom: 12px;
-      outline: none;
-      font-family: inherit;
-    }
-    .api-group input:focus,
-    .api-group select:focus,
-    .api-group textarea:focus {
-      border-color: #007aff;
-      background: #fff;
-    }
-    .api-group textarea { min-height: 80px; resize: vertical; }
-    .api-group button {
-      background: #007aff;
-      color: #fff;
-      border: none;
-      padding: 10px 16px;
-      border-radius: 10px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: opacity 0.2s;
-      width: 100%;
-    }
-    .api-group button:active { opacity: 0.7; }
-    .api-group .status-msg {
-      margin-top: 8px;
-      font-size: 14px;
-      color: #3a3a3c;
-      min-height: 20px;
-    }
-    .api-group .avatar-upload {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 12px;
-    }
-    .api-group .avatar-preview {
-      width: 64px;
-      height: 64px;
-      border-radius: 50%;
-      background: #e5e5ea;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 30px;
-      overflow: hidden;
-      flex-shrink: 0;
-      border: 2px solid #d1d1d6;
-    }
-    .api-group .avatar-preview img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .api-group .avatar-upload input[type="file"] { display: none; }
-    .api-group .avatar-upload .upload-btn {
-      background: #e5e5ea;
-      padding: 6px 14px;
-      border-radius: 8px;
-      font-size: 14px;
-      cursor: pointer;
-      color: #1c1c1e;
-    }
-    .api-group .avatar-upload .upload-btn:active { opacity: 0.7; }
-
-    /* 角色列表 */
-    .char-list-page {
-      padding: 20px 16px;
-      flex: 1;
-      overflow-y: auto;
-    }
-    .char-list-page .header {
-      font-size: 28px;
-      font-weight: 700;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .char-list-page .header .back {
-      font-size: 24px;
-      cursor: pointer;
-      padding: 4px 8px;
-    }
-    .char-list-page .header .add-btn {
-      font-size: 28px;
-      cursor: pointer;
-      padding: 4px 8px;
-      color: #007aff;
-    }
-    .char-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-    }
-    .char-card {
-      background: #fff;
-      border-radius: 14px;
-      padding: 16px;
-      text-align: center;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-      cursor: pointer;
-      transition: transform 0.1s;
-    }
-    .char-card:active { transform: scale(0.95); }
-    .char-card .avatar {
-      width: 64px;
-      height: 64px;
-      border-radius: 50%;
-      margin: 0 auto 8px;
-      background: #e5e5ea;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 28px;
-      overflow: hidden;
-    }
-    .char-card .avatar img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .char-card .name {
-      font-size: 14px;
-      font-weight: 600;
-      color: #1c1c1e;
-    }
-    .char-card .delete-btn {
-      margin-top: 6px;
-      font-size: 12px;
-      color: #ff3b30;
-      cursor: pointer;
-      background: none;
-      border: none;
-    }
-    .char-card .delete-btn:active { opacity: 0.6; }
-    .char-empty {
-      grid-column: 1 / -1;
-      text-align: center;
-      color: #8e8e93;
-      padding: 40px 0;
-      font-size: 16px;
-    }
-
-    /* 角色聊天 */
-    .char-chat-page {
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-      background: #f2f2f7;
-    }
-    .char-chat-page .chat-header {
-      padding: 16px 20px;
-      background: #ffffffcc;
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-bottom: 1px solid #e5e5ea;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex-shrink: 0;
-    }
-    .char-chat-page .chat-header .back {
-      font-size: 24px;
-      cursor: pointer;
-      padding: 4px 8px;
-    }
-    .char-chat-page .chat-header .avatar {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: #e5e5ea;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      overflow: hidden;
-      flex-shrink: 0;
-    }
-    .char-chat-page .chat-header .avatar img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .char-chat-page .chat-header .info {
-      flex: 1;
-    }
-    .char-chat-page .chat-header .info .name {
-      font-size: 16px;
-      font-weight: 700;
-    }
-    .char-chat-page .chat-header .info .model {
-      font-size: 11px;
-      color: #8e8e93;
-    }
-    .char-chat-page .chat-header .new-btn {
-      background: #007aff;
-      color: #fff;
-      border: none;
-      border-radius: 16px;
-      padding: 4px 12px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .char-chat-page .chat-body {
-      flex: 1;
-      padding: 16px 16px 8px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      background: #f2f2f7;
-    }
-    .message {
-      max-width: 80%;
-      padding: 10px 14px;
-      border-radius: 18px;
-      font-size: 15px;
-      line-height: 1.5;
-      word-break: break-word;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-      animation: fadeIn 0.2s ease;
-    }
-    .message.user {
-      align-self: flex-end;
-      background: #007aff;
-      color: #fff;
-      border-bottom-right-radius: 4px;
-    }
-    .message.assistant {
-      align-self: flex-start;
-      background: #e5e5ea;
-      color: #1c1c1e;
-      border-bottom-left-radius: 4px;
-    }
-    .message .msg-time {
-      font-size: 10px;
-      opacity: 0.6;
-      margin-top: 4px;
-      text-align: right;
-    }
-    .message.user .msg-time { color: rgba(255,255,255,0.7); }
-    .message.assistant .msg-time { color: #3a3a3c; }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .char-chat-page .chat-input-area {
-      padding: 12px 16px 16px;
-      background: #ffffffcc;
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-top: 1px solid #e5e5ea;
-      display: flex;
-      gap: 10px;
-      flex-shrink: 0;
-    }
-    .char-chat-page .chat-input-area textarea {
-      flex: 1;
-      border: 1px solid #d1d1d6;
-      border-radius: 20px;
-      padding: 10px 14px;
-      font-size: 15px;
-      resize: none;
-      outline: none;
-      background: #f9f9f9;
-      font-family: inherit;
-      min-height: 40px;
-      max-height: 100px;
-    }
-    .char-chat-page .chat-input-area textarea:focus {
-      border-color: #007aff;
-      background: #fff;
-    }
-    .char-chat-page .chat-input-area button {
-      background: #007aff;
-      color: #fff;
-      border: none;
-      border-radius: 20px;
-      padding: 0 20px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: opacity 0.2s;
-    }
-    .char-chat-page .chat-input-area button:active { opacity: 0.7; }
-    ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-thumb { background: #c6c6c8; border-radius: 4px; }
-    @media (max-width: 420px) {
-      .phone { width: 100%; height: 100vh; border-radius: 0; padding: 0; }
-      .phone-screen { border-radius: 0; }
-      body { padding: 0; }
-    }
+    /* 所有样式已包含，无需额外修改 */
+    * { margin:0; padding:0; box-sizing:border-box; font-family:system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }
+    body { background:#1a1a1a; display:flex; justify-content:center; align-items:center; min-height:100vh; margin:0; padding:20px; }
+    .phone { width:380px; height:780px; background:#000; border-radius:40px; padding:12px; box-shadow:0 30px 80px rgba(0,0,0,0.8), inset 0 0 0 2px #333; position:relative; }
+    .phone-screen { width:100%; height:100%; background:#f2f2f7; border-radius:30px; overflow:hidden; position:relative; display:flex; flex-direction:column; }
+    .status-bar { background:transparent; padding:12px 20px 8px; display:flex; justify-content:space-between; font-size:14px; font-weight:600; color:#1c1c1e; flex-shrink:0; }
+    .status-bar .time { font-weight:700; }
+    .status-bar .icons { display:flex; gap:6px; align-items:center; }
+    .status-bar .icons span { font-size:14px; }
+    .home-screen { flex:1; padding:20px 16px 0; display:flex; flex-direction:column; overflow-y:auto; }
+    .home-screen .grid { display:grid; grid-template-columns:repeat(4,1fr); gap:20px 10px; margin-bottom:20px; }
+    .app-icon { display:flex; flex-direction:column; align-items:center; cursor:pointer; transition:transform 0.1s; -webkit-tap-highlight-color:transparent; }
+    .app-icon:active { transform:scale(0.9); }
+    .app-icon .icon-circle { width:64px; height:64px; border-radius:16px; display:flex; justify-content:center; align-items:center; font-size:30px; color:#fff; background:#007aff; box-shadow:0 4px 10px rgba(0,0,0,0.1); margin-bottom:6px; position:relative; overflow:hidden; }
+    .app-icon .icon-circle img { width:100%; height:100%; object-fit:cover; }
+    .app-icon .icon-label { font-size:11px; color:#1c1c1e; text-align:center; }
+    .app-icon .icon-circle.chat { background:#34c759; }
+    .app-icon .icon-circle.settings { background:#8e8e93; }
+    .app-icon .icon-circle.char { background:#ff6b6b; }
+    .dock { background:rgba(255,255,255,0.5); backdrop-filter:blur(30px); -webkit-backdrop-filter:blur(30px); border-radius:30px; padding:12px 16px; margin:0 4px 16px; display:flex; justify-content:space-around; flex-shrink:0; margin-top:auto; }
+    .dock .app-icon .icon-circle { width:56px; height:56px; border-radius:14px; font-size:26px; }
+    .page { display:none; flex-direction:column; height:100%; background:#f2f2f7; }
+    .page.active { display:flex; }
+    .settings-page { padding:20px 16px; flex:1; overflow-y:auto; }
+    .settings-page .header { font-size:28px; font-weight:700; margin-bottom:20px; display:flex; align-items:center; gap:10px; }
+    .settings-page .header .back { font-size:24px; cursor:pointer; padding:4px 8px; }
+    .settings-list { background:#fff; border-radius:14px; overflow:hidden; box-shadow:0 2px 10px rgba(0,0,0,0.05); }
+    .settings-item { padding:14px 16px; border-bottom:1px solid #e5e5ea; display:flex; justify-content:space-between; align-items:center; cursor:pointer; transition:background 0.1s; }
+    .settings-item:last-child { border-bottom:none; }
+    .settings-item:active { background:#e5e5ea; }
+    .settings-item .label { font-size:16px; color:#1c1c1e; }
+    .settings-item .arrow { color:#8e8e93; font-size:18px; }
+    .api-settings-page { padding:20px 16px; flex:1; overflow-y:auto; }
+    .api-settings-page .header { font-size:28px; font-weight:700; margin-bottom:20px; display:flex; align-items:center; gap:10px; }
+    .api-settings-page .header .back { font-size:24px; cursor:pointer; padding:4px 8px; }
+    .api-group { background:#fff; border-radius:14px; padding:16px; margin-bottom:16px; box-shadow:0 2px 10px rgba(0,0,0,0.05); }
+    .api-group label { display:block; font-size:14px; font-weight:600; color:#3a3a3c; margin-bottom:4px; }
+    .api-group input, .api-group select, .api-group textarea { width:100%; padding:10px 12px; border:1px solid #d1d1d6; border-radius:10px; font-size:15px; background:#f9f9f9; margin-bottom:12px; outline:none; font-family:inherit; }
+    .api-group input:focus, .api-group select:focus, .api-group textarea:focus { border-color:#007aff; background:#fff; }
+    .api-group textarea { min-height:80px; resize:vertical; }
+    .api-group button { background:#007aff; color:#fff; border:none; padding:10px 16px; border-radius:10px; font-size:16px; font-weight:600; cursor:pointer; transition:opacity 0.2s; width:100%; }
+    .api-group button:active { opacity:0.7; }
+    .api-group .status-msg { margin-top:8px; font-size:14px; color:#3a3a3c; min-height:20px; }
+    .api-group .avatar-upload { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+    .api-group .avatar-preview { width:64px; height:64px; border-radius:50%; background:#e5e5ea; display:flex; align-items:center; justify-content:center; font-size:30px; overflow:hidden; flex-shrink:0; border:2px solid #d1d1d6; }
+    .api-group .avatar-preview img { width:100%; height:100%; object-fit:cover; }
+    .api-group .avatar-upload input[type="file"] { display:none; }
+    .api-group .avatar-upload .upload-btn { background:#e5e5ea; padding:6px 14px; border-radius:8px; font-size:14px; cursor:pointer; color:#1c1c1e; }
+    .api-group .avatar-upload .upload-btn:active { opacity:0.7; }
+    .char-list-page { padding:20px 16px; flex:1; overflow-y:auto; }
+    .char-list-page .header { font-size:28px; font-weight:700; margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; }
+    .char-list-page .header .back { font-size:24px; cursor:pointer; padding:4px 8px; }
+    .char-list-page .header .add-btn { font-size:28px; cursor:pointer; padding:4px 8px; color:#007aff; }
+    .char-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+    .char-card { background:#fff; border-radius:14px; padding:16px; text-align:center; box-shadow:0 2px 10px rgba(0,0,0,0.05); cursor:pointer; transition:transform 0.1s; }
+    .char-card:active { transform:scale(0.95); }
+    .char-card .avatar { width:64px; height:64px; border-radius:50%; margin:0 auto 8px; background:#e5e5ea; display:flex; align-items:center; justify-content:center; font-size:28px; overflow:hidden; }
+    .char-card .avatar img { width:100%; height:100%; object-fit:cover; }
+    .char-card .name { font-size:14px; font-weight:600; color:#1c1c1e; }
+    .char-card .delete-btn { margin-top:6px; font-size:12px; color:#ff3b30; cursor:pointer; background:none; border:none; }
+    .char-card .delete-btn:active { opacity:0.6; }
+    .char-empty { grid-column:1/-1; text-align:center; color:#8e8e93; padding:40px 0; font-size:16px; }
+    .char-chat-page { display:flex; flex-direction:column; height:100%; background:#f2f2f7; }
+    .char-chat-page .chat-header { padding:16px 20px; background:#ffffffcc; backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border-bottom:1px solid #e5e5ea; display:flex; align-items:center; gap:12px; flex-shrink:0; }
+    .char-chat-page .chat-header .back { font-size:24px; cursor:pointer; padding:4px 8px; }
+    .char-chat-page .chat-header .avatar { width:36px; height:36px; border-radius:50%; background:#e5e5ea; display:flex; align-items:center; justify-content:center; font-size:18px; overflow:hidden; flex-shrink:0; }
+    .char-chat-page .chat-header .avatar img { width:100%; height:100%; object-fit:cover; }
+    .char-chat-page .chat-header .info { flex:1; }
+    .char-chat-page .chat-header .info .name { font-size:16px; font-weight:700; }
+    .char-chat-page .chat-header .info .model { font-size:11px; color:#8e8e93; }
+    .char-chat-page .chat-header .new-btn { background:#007aff; color:#fff; border:none; border-radius:16px; padding:4px 12px; font-size:13px; font-weight:600; cursor:pointer; }
+    .char-chat-page .chat-body { flex:1; padding:16px 16px 8px; overflow-y:auto; display:flex; flex-direction:column; gap:10px; background:#f2f2f7; }
+    .message { max-width:80%; padding:10px 14px; border-radius:18px; font-size:15px; line-height:1.5; word-break:break-word; box-shadow:0 1px 3px rgba(0,0,0,0.05); animation:fadeIn 0.2s ease; }
+    .message.user { align-self:flex-end; background:#007aff; color:#fff; border-bottom-right-radius:4px; }
+    .message.assistant { align-self:flex-start; background:#e5e5ea; color:#1c1c1e; border-bottom-left-radius:4px; }
+    .message .msg-time { font-size:10px; opacity:0.6; margin-top:4px; text-align:right; }
+    .message.user .msg-time { color:rgba(255,255,255,0.7); }
+    .message.assistant .msg-time { color:#3a3a3c; }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+    .char-chat-page .chat-input-area { padding:12px 16px 16px; background:#ffffffcc; backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border-top:1px solid #e5e5ea; display:flex; gap:10px; flex-shrink:0; }
+    .char-chat-page .chat-input-area textarea { flex:1; border:1px solid #d1d1d6; border-radius:20px; padding:10px 14px; font-size:15px; resize:none; outline:none; background:#f9f9f9; font-family:inherit; min-height:40px; max-height:100px; }
+    .char-chat-page .chat-input-area textarea:focus { border-color:#007aff; background:#fff; }
+    .char-chat-page .chat-input-area button { background:#007aff; color:#fff; border:none; border-radius:20px; padding:0 20px; font-size:16px; font-weight:600; cursor:pointer; transition:opacity 0.2s; }
+    .char-chat-page .chat-input-area button:active { opacity:0.7; }
+    .chat-page { display:flex; flex-direction:column; height:100%; background:#f2f2f7; }
+    .chat-page .chat-header { padding:16px 20px; background:#ffffffcc; backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border-bottom:1px solid #e5e5ea; display:flex; align-items:center; gap:12px; flex-shrink:0; }
+    .chat-page .chat-header .back { font-size:24px; cursor:pointer; padding:4px 8px; }
+    .chat-page .chat-header .title { font-size:18px; font-weight:700; flex:1; }
+    .chat-page .chat-header .new-btn { background:#007aff; color:#fff; border:none; border-radius:16px; padding:4px 12px; font-size:14px; font-weight:600; cursor:pointer; }
+    .chat-page .chat-body { flex:1; padding:16px 16px 8px; overflow-y:auto; display:flex; flex-direction:column; gap:10px; background:#f2f2f7; }
+    .chat-page .chat-input-area { padding:12px 16px 16px; background:#ffffffcc; backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border-top:1px solid #e5e5ea; display:flex; gap:10px; flex-shrink:0; }
+    .chat-page .chat-input-area textarea { flex:1; border:1px solid #d1d1d6; border-radius:20px; padding:10px 14px; font-size:15px; resize:none; outline:none; background:#f9f9f9; font-family:inherit; min-height:40px; max-height:100px; }
+    .chat-page .chat-input-area textarea:focus { border-color:#007aff; background:#fff; }
+    .chat-page .chat-input-area button { background:#007aff; color:#fff; border:none; border-radius:20px; padding:0 20px; font-size:16px; font-weight:600; cursor:pointer; }
+    ::-webkit-scrollbar { width:4px; }
+    ::-webkit-scrollbar-thumb { background:#c6c6c8; border-radius:4px; }
+    @media (max-width:420px) { .phone { width:100%; height:100vh; border-radius:0; padding:0; } .phone-screen { border-radius:0; } body { padding:0; } }
   </style>
 </head>
 <body>
 <div class="phone">
   <div class="phone-screen">
-    <!-- 状态栏 -->
     <div class="status-bar" id="statusBar">
       <span class="time" id="statusTime">00:00</span>
       <span class="icons"><span>📶</span><span>🔋</span></span>
     </div>
 
-    <!-- ===== 主屏幕 ===== -->
+    <!-- 主屏幕 -->
     <div class="page active" id="homePage">
       <div class="home-screen">
         <div class="grid">
@@ -527,7 +129,7 @@
       </div>
     </div>
 
-    <!-- ===== 设置列表 ===== -->
+    <!-- 设置 -->
     <div class="page" id="settingsPage">
       <div class="settings-page">
         <div class="header"><span class="back" id="backFromSettings">‹</span><span>设置</span></div>
@@ -539,7 +141,7 @@
       </div>
     </div>
 
-    <!-- ===== API 设置 ===== -->
+    <!-- API 设置 -->
     <div class="page" id="apiSettingsPage">
       <div class="api-settings-page">
         <div class="header"><span class="back" id="backFromApiSettings">‹</span><span>API 设置</span></div>
@@ -559,25 +161,24 @@
       </div>
     </div>
 
-    <!-- ===== 普通聊天（无角色） ===== -->
+    <!-- 普通聊天 -->
     <div class="page" id="chatPage">
-      <div class="chat-page" style="display:flex;flex-direction:column;height:100%;background:#f2f2f7;">
-        <div class="chat-header" style="padding:16px 20px;background:#ffffffcc;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid #e5e5ea;display:flex;align-items:center;gap:12px;flex-shrink:0;">
-          <span class="back" id="backFromChat" style="font-size:24px;cursor:pointer;padding:4px 8px;">‹</span>
-          <span class="title" style="font-size:18px;font-weight:700;flex:1;">💬 聊天</span>
-          <span style="font-size:12px;color:#8e8e93;margin-right:4px;" id="modelDisplay">未选择</span>
-          <button class="new-btn" id="newChatBtn" style="background:#007aff;color:#fff;border:none;border-radius:16px;padding:4px 12px;font-size:14px;font-weight:600;cursor:pointer;">新对话</button>
+      <div class="chat-page">
+        <div class="chat-header">
+          <span class="back" id="backFromChat">‹</span>
+          <span class="title">💬 聊天</span>
+          <span style="font-size:12px; color:#8e8e93; margin-right:4px;" id="modelDisplay">未选择</span>
+          <button class="new-btn" id="newChatBtn">新对话</button>
         </div>
-        <div class="chat-body" id="chatMessages" style="flex:1;padding:16px 16px 8px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;background:#f2f2f7;">
-        </div>
-        <div class="chat-input-area" style="padding:12px 16px 16px;background:#ffffffcc;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid #e5e5ea;display:flex;gap:10px;flex-shrink:0;">
-          <textarea id="userInput" rows="1" placeholder="输入问题..." style="flex:1;border:1px solid #d1d1d6;border-radius:20px;padding:10px 14px;font-size:15px;resize:none;outline:none;background:#f9f9f9;font-family:inherit;min-height:40px;max-height:100px;"></textarea>
-          <button id="sendBtn" style="background:#007aff;color:#fff;border:none;border-radius:20px;padding:0 20px;font-size:16px;font-weight:600;cursor:pointer;">发送</button>
+        <div class="chat-body" id="chatMessages"></div>
+        <div class="chat-input-area">
+          <textarea id="userInput" rows="1" placeholder="输入问题..."></textarea>
+          <button id="sendBtn">发送</button>
         </div>
       </div>
     </div>
 
-    <!-- ===== Char 列表 ===== -->
+    <!-- Char 列表 -->
     <div class="page" id="charListPage">
       <div class="char-list-page">
         <div class="header">
@@ -585,13 +186,11 @@
           <span>🧑 Char</span>
           <span class="add-btn" id="goToCreateChar">+</span>
         </div>
-        <div class="char-grid" id="charGrid">
-          <!-- 由 JS 动态渲染 -->
-        </div>
+        <div class="char-grid" id="charGrid"></div>
       </div>
     </div>
 
-    <!-- ===== 创建/编辑 Char ===== -->
+    <!-- 创建 Char -->
     <div class="page" id="createCharPage">
       <div class="api-settings-page">
         <div class="header">
@@ -615,7 +214,7 @@
       </div>
     </div>
 
-    <!-- ===== 角色聊天 ===== -->
+    <!-- 角色聊天 -->
     <div class="page" id="charChatPage">
       <div class="char-chat-page">
         <div class="chat-header">
@@ -627,8 +226,7 @@
           </div>
           <button class="new-btn" id="charChatNewBtn">新对话</button>
         </div>
-        <div class="chat-body" id="charChatMessages">
-        </div>
+        <div class="chat-body" id="charChatMessages"></div>
         <div class="chat-input-area">
           <textarea id="charChatInput" rows="1" placeholder="输入问题..."></textarea>
           <button id="charChatSendBtn">发送</button>
@@ -662,7 +260,16 @@
   document.getElementById('backFromCreateChar').addEventListener('click', () => showPage('charListPage'));
   document.getElementById('backFromCharChat').addEventListener('click', () => showPage('charListPage'));
   document.getElementById('goToApiSettings').addEventListener('click', () => showPage('apiSettingsPage'));
-  document.getElementById('goToCreateChar').addEventListener('click', () => { editingCharId = null; document.getElementById('createCharTitle').textContent = '新建 Char'; document.getElementById('charNameInput').value = ''; document.getElementById('charPromptInput').value = ''; document.getElementById('charAvatarPreview').innerHTML = '🧑'; document.getElementById('charAvatarPreview').querySelector('img')?.remove(); showPage('createCharPage'); });
+  document.getElementById('goToCreateChar').addEventListener('click', () => {
+    editingCharId = null;
+    document.getElementById('createCharTitle').textContent = '新建 Char';
+    document.getElementById('charNameInput').value = '';
+    document.getElementById('charPromptInput').value = '';
+    document.getElementById('charAvatarPreview').innerHTML = '🧑';
+    document.getElementById('charAvatarPreview').querySelector('img')?.remove();
+    avatarDataUrl = null;
+    showPage('createCharPage');
+  });
 
   // ============================================================
   //  2. 状态栏时间
@@ -686,13 +293,11 @@
   const apiStatus = document.getElementById('apiStatus');
   const modelDisplay = document.getElementById('modelDisplay');
 
-  // 普通聊天
   const chatMessages = document.getElementById('chatMessages');
   const userInput = document.getElementById('userInput');
   const sendBtn = document.getElementById('sendBtn');
   const newChatBtn = document.getElementById('newChatBtn');
 
-  // Char
   const charGrid = document.getElementById('charGrid');
   const charNameInput = document.getElementById('charNameInput');
   const charPromptInput = document.getElementById('charPromptInput');
@@ -711,6 +316,7 @@
 
   let editingCharId = null;
   let currentCharId = null;
+  let avatarDataUrl = null;
 
   // ============================================================
   //  4. 存储工具
@@ -729,7 +335,7 @@
   }
 
   // ============================================================
-  //  5. 普通聊天（保留原有功能，无角色）
+  //  5. 普通聊天
   // ============================================================
   let chatHistory = [];
   function loadChatHistory() {
@@ -795,7 +401,7 @@
   newChatBtn.addEventListener('click', clearChatHistory);
 
   // ============================================================
-  //  7. Char 列表渲染
+  //  7. Char 列表
   // ============================================================
   function renderCharGrid() {
     const chars = getChars();
@@ -815,7 +421,6 @@
       `;
     });
     charGrid.innerHTML = html;
-    // 点击卡片进入聊天
     charGrid.querySelectorAll('.char-card').forEach(el => {
       el.addEventListener('click', (e) => {
         if (e.target.classList.contains('delete-btn')) return;
@@ -825,7 +430,6 @@
         if (found) { currentCharId = id; openCharChat(found); }
       });
     });
-    // 删除按钮
     charGrid.querySelectorAll('.delete-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -844,8 +448,6 @@
   // ============================================================
   //  8. 创建/编辑 Char
   // ============================================================
-  let avatarDataUrl = null;
-
   avatarUploadBtn.addEventListener('click', () => charAvatarInput.click());
   charAvatarInput.addEventListener('change', (e) => {
     const file = e.target.files[0];
@@ -865,7 +467,6 @@
     if (!prompt) { createCharStatus.textContent = '❌ 请填写人设'; return; }
     let chars = getChars();
     if (editingCharId) {
-      // 编辑
       const idx = chars.findIndex(c => c.id === editingCharId);
       if (idx !== -1) {
         chars[idx].name = name;
@@ -873,7 +474,6 @@
         if (avatarDataUrl) chars[idx].avatar = avatarDataUrl;
       }
     } else {
-      // 新建
       chars.push({
         id: 'char_' + Date.now(),
         name: name,
@@ -957,22 +557,17 @@
     const char = chars.find(c => c.id === currentCharId);
     if (!char) { alert('角色不存在'); return; }
 
-    // 添加用户消息
     addCharMessage('user', msg);
     charChatInput.value = ''; charChatInput.style.height = 'auto';
 
-    // 获取历史（不含 thinking）
     let history = getCurrentCharHistory();
-    // 构建消息：系统人设 + 历史对话
     const messages = [];
     if (char.prompt) {
       messages.push({ role: 'system', content: char.prompt });
     }
-    // 历史中去除可能残留的 thinking
     const filteredHistory = history.filter(m => m.content !== '🤔 思考中...');
     messages.push(...filteredHistory);
 
-    // 显示思考中
     history.push({ role: 'assistant', content: '🤔 思考中...' });
     saveCurrentCharHistory(history);
     renderCharChatMessages();
@@ -990,7 +585,6 @@
         })
       });
       const data = await res.json();
-      // 移除 thinking
       let h = getCurrentCharHistory();
       if (h.length > 0 && h[h.length-1].content === '🤔 思考中...') {
         h.pop();
@@ -1021,7 +615,7 @@
   charChatNewBtn.addEventListener('click', clearCharHistory);
 
   // ============================================================
-  //  11. 加载设置和模型
+  //  11. 设置 & 模型
   // ============================================================
   function loadSettings() {
     const savedBase = localStorage.getItem('apiBase');
@@ -1090,7 +684,7 @@
   });
 
   // ============================================================
-  //  12. 自动拉取模型 & 渲染
+  //  12. 自动拉取 & 初始化
   // ============================================================
   window.addEventListener('load', async () => {
     const savedBase = localStorage.getItem('apiBase');
