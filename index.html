@@ -30,7 +30,7 @@
       position:relative;display:flex;flex-direction:column
     }
     .phone.fullscreen{
-      width:100vw;height:100vh;max-width:100vw;max-height:100vh;aspect-ratio:auto;
+      width:100dvw;height:100dvh;max-width:100dvw;max-height:100dvh;aspect-ratio:auto;
       border-radius:0;padding:0;background:#E3EEFA;box-shadow:none;margin:0;
     }
     .phone.fullscreen .phone-screen{
@@ -38,7 +38,7 @@
     }
     .status-bar{background:transparent;padding:12px 20px 8px;display:flex;justify-content:space-between;font-size:14px;font-weight:600;color:#1c1c1e;flex-shrink:0}
     .status-bar .time{font-weight:700}
-    .status-bar .icons{display:flex;gap:6px;align-items:center}
+    .status-bar .icons{display:flex;gap:8px;align-items:center}
     .status-bar .icons svg { stroke: #C5C8F0; fill: #C5C8F0; }
     .home-screen{flex:1;padding:20px 16px 0;display:flex;flex-direction:column;overflow-y:auto;background:#E3EEFA !important}
     .home-screen .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px 10px;margin-bottom:20px}
@@ -176,14 +176,15 @@
     .moment-card .comments .comment { font-size:13px; color:#3a3a3c; padding:2px 0; }
     .moment-card .comments .comment .name { font-weight:600; color:#1c1c1e; }
 
+    /* 朋友圈封面 - 铺满左右，上方对齐标题 */
     .moments-cover {
       position:relative;
       width:100%;
       height:120px;
       background:#d1d1d6;
-      border-radius:14px 14px 0 0;
+      border-radius:0;  /* 去掉圆角，与标题栏齐平 */
       overflow:hidden;
-      margin-bottom:10px;
+      margin:0 0 0 0;
       display:flex;
       align-items:flex-end;
       justify-content:center;
@@ -203,17 +204,17 @@
     }
     .moments-profile {
       display:flex;
+      flex-direction:column;
       align-items:center;
-      gap:12px;
       padding:0 16px 12px 16px;
       background:#ffffffcc;
       backdrop-filter:blur(6px);
       border-radius:0 0 14px 14px;
       margin-bottom:12px;
     }
-    .moments-profile .avatar { width:56px; height:56px; border-radius:50%; background:#e5e5ea; display:flex; align-items:center; justify-content:center; font-size:28px; overflow:hidden; flex-shrink:0; }
+    .moments-profile .avatar { width:56px; height:56px; border-radius:50%; background:#e5e5ea; display:flex; align-items:center; justify-content:center; font-size:28px; overflow:hidden; flex-shrink:0; margin-top:-28px; border:2px solid #fff; }
     .moments-profile .avatar img { width:100%; height:100%; object-fit:cover; }
-    .moments-profile .info { flex:1; }
+    .moments-profile .info { text-align:center; margin-top:4px; }
     .moments-profile .info .name { font-size:17px; font-weight:600; color:#1c1c1e; }
     .moments-profile .info .sig { font-size:13px; color:#8e8e93; }
 
@@ -373,9 +374,9 @@
         overflow: hidden;
       }
       .phone.fullscreen {
-        width: 100%;
-        height: 100vh;
-        max-height: 100vh;
+        width: 100dvw;
+        height: 100dvh;
+        max-height: 100dvh;
         aspect-ratio: auto;
         padding: 0;
         border-radius: 0;
@@ -400,10 +401,12 @@
     <div class="status-bar" id="statusBar">
       <span class="time" id="statusTime">00:00</span>
       <span class="icons">
-        <svg width="16" height="12" viewBox="0 0 24 24" stroke="#C5C8F0" fill="#C5C8F0">
+        <!-- WiFi 放大 -->
+        <svg width="20" height="16" viewBox="0 0 24 24" stroke="#C5C8F0" fill="#C5C8F0">
           <path d="M12 18c.8 0 1.5-.7 1.5-1.5S12.8 15 12 15s-1.5.7-1.5 1.5.7 1.5 1.5 1.5zm-3-3c1.7-1.7 4.3-1.7 6 0l1.4-1.4c-2.4-2.4-6.4-2.4-8.8 0L9 15zm-3-3c3.5-3.5 9.5-3.5 13 0l1.4-1.4c-4.4-4.4-11.4-4.4-15.8 0L6 12z"/>
         </svg>
-        <svg width="20" height="12" viewBox="0 0 24 24" stroke="none" fill="#C5C8F0">
+        <!-- 电池 放大 -->
+        <svg width="26" height="16" viewBox="0 0 24 24" stroke="none" fill="#C5C8F0">
           <rect x="2" y="6" width="18" height="12" rx="2" stroke="#C5C8F0" stroke-width="1.5" fill="none"/>
           <path d="M22 10v4" stroke="#C5C8F0" stroke-width="1.5" stroke-linecap="round"/>
           <rect x="4" y="8" width="12" height="8" rx="1" fill="#C5C8F0"/>
@@ -553,6 +556,8 @@
           </div>
           <label>名字</label>
           <input id="charNameInput" placeholder="输入角色名字..." />
+          <label>个性签名</label>
+          <input id="charBioInput" placeholder="一句话描述..." />
           <label>人设（系统提示词）</label>
           <textarea id="charPromptInput" placeholder="例如：你是一个温柔的小助理..."></textarea>
           <button id="saveCharBtn">保存</button>
@@ -561,18 +566,19 @@
       </div>
     </div>
 
-    <!-- 角色详情页（点击头像可修改） -->
+    <!-- 角色详情页 -->
     <div class="page" id="contactDetailPage">
       <div class="api-settings-page">
         <div class="header"><span class="back" id="backFromContactDetail">‹</span><span id="contactDetailTitle">角色详情</span></div>
         <div class="api-group" id="detailContainer">
           <div id="viewMode">
             <div style="text-align:center; margin-bottom:12px;">
-              <div class="avatar-preview" id="detailAvatar" style="width:80px;height:80px;margin:0 auto;font-size:36px;cursor:pointer;">🧑</div>
-              <div style="font-size:12px; color:#8e8e93; margin-top:4px;">点击头像更换</div>
+              <div class="avatar-preview" id="detailAvatar" style="width:80px;height:80px;margin:0 auto;font-size:36px;cursor:default;">🧑</div>
+              <div style="font-size:12px; color:#8e8e93; margin-top:4px;" id="avatarHint">点击修改进入编辑</div>
               <input type="file" id="detailAvatarInput" accept="image/*" style="display:none;" />
             </div>
             <div style="margin-bottom:10px;"><label style="font-weight:600;">名字</label><div id="detailNameDisplay" style="padding:8px 12px;background:#f9f9f9;border-radius:8px;font-size:16px;">未命名</div></div>
+            <div style="margin-bottom:10px;"><label style="font-weight:600;">个性签名</label><div id="detailBioDisplay" style="padding:8px 12px;background:#f9f9f9;border-radius:8px;font-size:15px;">未设置</div></div>
             <div style="margin-bottom:10px;"><label style="font-weight:600;">人设</label><div id="detailPromptDisplay" style="padding:8px 12px;background:#f9f9f9;border-radius:8px;font-size:15px;min-height:60px;white-space:pre-wrap;">未设置</div></div>
             <div style="display:flex;gap:10px;margin-top:8px;">
               <button id="detailEditBtn" style="flex:1;background:#007aff;">修改</button>
@@ -580,9 +586,14 @@
             </div>
           </div>
           <div id="editMode" style="display:none;">
-            <div style="text-align:center;margin-bottom:12px;"><div class="avatar-preview" id="detailAvatarEdit" style="width:80px;height:80px;margin:0 auto;font-size:36px;">🧑</div></div>
+            <div style="text-align:center;margin-bottom:12px;">
+              <div class="avatar-preview" id="detailAvatarEdit" style="width:80px;height:80px;margin:0 auto;font-size:36px;cursor:pointer;">🧑</div>
+              <div style="font-size:12px; color:#8e8e93; margin-top:4px;">点击头像更换</div>
+            </div>
             <label>名字</label>
             <input id="detailNameInput" style="margin-bottom:10px;" />
+            <label>个性签名</label>
+            <input id="detailBioInput" style="margin-bottom:10px;" />
             <label>人设</label>
             <textarea id="detailPromptInput" rows="4" style="margin-bottom:10px;"></textarea>
             <div style="display:flex;gap:10px;">
@@ -595,7 +606,7 @@
       </div>
     </div>
 
-    <!-- 个人资料编辑页（独立的page） -->
+    <!-- 个人资料编辑页 -->
     <div class="page" id="profileEditPage">
       <div class="profile-edit-page">
         <div class="header">
@@ -611,6 +622,10 @@
         <div class="input-group">
           <label>个性签名</label>
           <textarea id="profileEditSig">这个人很懒，什么都没写</textarea>
+        </div>
+        <div class="input-group">
+          <label>我的人设（AI眼中的我）</label>
+          <textarea id="profileEditPersona" placeholder="例如：我是一个喜欢旅行和摄影的人..."></textarea>
         </div>
         <button class="save-btn" id="profileEditSaveBtn">保存修改</button>
       </div>
@@ -636,7 +651,7 @@ function saveCharHistory(charId, history) {
   localStorage.setItem('charHistory_' + charId, JSON.stringify(history));
 }
 function getProfile() {
-  try { return JSON.parse(localStorage.getItem('userProfile')) || { name: '我', signature: '这个人很懒，什么都没写', avatar: null, cover: null }; } catch (e) { return { name: '我', signature: '这个人很懒，什么都没写', avatar: null, cover: null }; }
+  try { return JSON.parse(localStorage.getItem('userProfile')) || { name: '我', signature: '这个人很懒，什么都没写', avatar: null, cover: null, persona: '' }; } catch (e) { return { name: '我', signature: '这个人很懒，什么都没写', avatar: null, cover: null, persona: '' }; }
 }
 function saveProfile(profile) {
   localStorage.setItem('userProfile', JSON.stringify(profile));
@@ -692,6 +707,7 @@ document.getElementById('backFromCreateChar').addEventListener('click', () => { 
 document.getElementById('backFromContactDetail').addEventListener('click', () => {
   if (isEditing) {
     document.getElementById('detailNameInput').value = originalName;
+    document.getElementById('detailBioInput').value = originalBio;
     document.getElementById('detailPromptInput').value = originalPrompt;
     document.getElementById('viewMode').style.display = 'block';
     document.getElementById('editMode').style.display = 'none';
@@ -722,7 +738,7 @@ updateTime();
 setInterval(updateTime, 10000);
 
 // ============================================================
-// 全屏模式
+// 全屏模式 (修复PWA)
 // ============================================================
 const phoneContainer = document.getElementById('phoneContainer');
 const fullscreenToggle = document.getElementById('fullscreenToggle');
@@ -733,13 +749,26 @@ function loadDisplayMode() {
   applyDisplayMode(isFullscreen);
 }
 function applyDisplayMode(isFullscreen) {
-  if (isFullscreen) { phoneContainer.classList.add('fullscreen'); }
-  else { phoneContainer.classList.remove('fullscreen'); }
+  if (isFullscreen) {
+    phoneContainer.classList.add('fullscreen');
+    // 强制刷新高度
+    setTimeout(() => {
+      phoneContainer.style.height = window.innerHeight + 'px';
+    }, 100);
+  } else {
+    phoneContainer.classList.remove('fullscreen');
+    phoneContainer.style.height = '';
+  }
   localStorage.setItem('fullscreenMode', isFullscreen ? 'true' : 'false');
   displayStatus.textContent = isFullscreen ? '✅ 全屏模式已启用' : '✅ 带黑框模式已启用';
   setTimeout(() => { if (displayStatus.textContent.includes('已启用')) displayStatus.textContent = ''; }, 2000);
 }
 fullscreenToggle.addEventListener('change', function() { applyDisplayMode(this.checked); });
+window.addEventListener('resize', function() {
+  if (fullscreenToggle.checked) {
+    phoneContainer.style.height = window.innerHeight + 'px';
+  }
+});
 loadDisplayMode();
 
 // ============================================================
@@ -770,6 +799,7 @@ let avatarDataUrl = null;
 let detailCharId = null;
 let isEditing = false;
 let originalName = '';
+let originalBio = '';
 let originalPrompt = '';
 
 // ============================================================
@@ -835,10 +865,11 @@ function renderContactList(container) {
   } else {
     chars.forEach(c => {
       const avatarHtml = c.avatar ? `<img src="${c.avatar}" />` : '🧑';
+      const bioDisplay = c.bio || '这个人很懒，什么都没写';
       html += `
         <div class="list-item" data-id="${c.id}">
           <div class="avatar">${avatarHtml}</div>
-          <div class="info"><div class="name">${c.name || '未命名'}</div><div class="preview">${c.prompt ? c.prompt.substring(0,30)+'...' : '未设置人设'}</div></div>
+          <div class="info"><div class="name">${c.name || '未命名'}</div><div class="preview">${bioDisplay}</div></div>
         </div>
       `;
     });
@@ -856,6 +887,7 @@ function renderContactList(container) {
       editingCharId = null;
       document.getElementById('createCharTitle').textContent = '新建 Char';
       document.getElementById('charNameInput').value = '';
+      document.getElementById('charBioInput').value = '';
       document.getElementById('charPromptInput').value = '';
       document.getElementById('charAvatarPreview').innerHTML = '🧑';
       document.getElementById('charAvatarPreview').querySelector('img')?.remove();
@@ -877,7 +909,7 @@ function renderMoments(container) {
       <div class="cover-hint">点击更换封面</div>
     </div>
     <input type="file" id="coverFileInput" accept="image/*" style="display:none;" />
-    <!-- 个人信息 -->
+    <!-- 个人信息（头像居中，签名在头像下） -->
     <div class="moments-profile">
       <div class="avatar">${profile.avatar ? `<img src="${profile.avatar}" />` : '👤'}</div>
       <div class="info">
@@ -893,7 +925,6 @@ function renderMoments(container) {
   `;
   container.innerHTML = html;
 
-  // 封面上传
   document.getElementById('coverUpload').addEventListener('click', () => document.getElementById('coverFileInput').click());
   document.getElementById('coverFileInput').addEventListener('change', function(e) {
     const file = e.target.files[0];
@@ -908,7 +939,6 @@ function renderMoments(container) {
     reader.readAsDataURL(file);
   });
 
-  // 发布动态
   document.getElementById('publishMomentBtn').addEventListener('click', function() {
     const text = prompt('输入动态内容：');
     if (text === null || text.trim() === '') return;
@@ -938,7 +968,6 @@ function renderMoments(container) {
     }
   });
 
-  // 渲染动态列表
   const list = document.getElementById('momentsList');
   const momentsData = getMoments();
   if (momentsData.length === 0) {
@@ -971,13 +1000,11 @@ function renderMoments(container) {
     });
     list.innerHTML = items;
 
-    // 点赞
     list.querySelectorAll('.actions .liked, .actions .comment-btn, .actions .delete-btn').forEach(el => {
       el.addEventListener('click', function(e) {
         const idx = parseInt(this.dataset.idx);
         const moments = getMoments();
         if (this.classList.contains('liked') || this.textContent.includes('赞')) {
-          // 点赞切换
           moments[idx].liked = !moments[idx].liked;
           moments[idx].likes += moments[idx].liked ? 1 : -1;
           saveMoments(moments);
@@ -1012,22 +1039,23 @@ function renderProfile(container) {
         ${profile.avatar ? `<img src="${profile.avatar}" />` : '👤'}
       </div>
       <div style="font-size:20px;font-weight:600;color:#1c1c1e;margin-bottom:4px;">${profile.name}</div>
-      <div style="font-size:14px;color:#8e8e93;margin-bottom:20px;">${profile.signature}</div>
+      <div style="font-size:14px;color:#8e8e93;margin-bottom:8px;">${profile.signature}</div>
+      ${profile.persona ? `<div style="font-size:14px;color:#3a3a3c;background:#ffffffcc;padding:8px 12px;border-radius:8px;width:100%;text-align:center;margin-bottom:12px;">🧠 ${profile.persona}</div>` : ''}
       <button id="editProfileBtn" style="background:#007aff;color:#fff;border:none;padding:10px 24px;border-radius:20px;font-size:16px;font-weight:600;cursor:pointer;">编辑资料</button>
     </div>
   `;
   document.getElementById('editProfileBtn').addEventListener('click', function() {
-    // 打开编辑页
     const profile = getProfile();
     document.getElementById('profileEditAvatar').innerHTML = profile.avatar ? `<img src="${profile.avatar}" />` : '👤';
     document.getElementById('profileEditName').value = profile.name;
     document.getElementById('profileEditSig').value = profile.signature;
+    document.getElementById('profileEditPersona').value = profile.persona || '';
     showPage('profileEditPage');
   });
 }
 
 // ============================================================
-// 个人资料编辑页功能
+// 个人资料编辑页
 // ============================================================
 document.getElementById('profileEditAvatar').addEventListener('click', function() {
   document.getElementById('profileEditAvatarInput').click();
@@ -1048,9 +1076,11 @@ document.getElementById('profileEditAvatarInput').addEventListener('change', fun
 document.getElementById('profileEditSaveBtn').addEventListener('click', function() {
   const name = document.getElementById('profileEditName').value.trim() || '我';
   const sig = document.getElementById('profileEditSig').value.trim() || '这个人很懒，什么都没写';
+  const persona = document.getElementById('profileEditPersona').value.trim();
   const profile = getProfile();
   profile.name = name;
   profile.signature = sig;
+  profile.persona = persona;
   saveProfile(profile);
   alert('✅ 保存成功！');
   renderWechatContent();
@@ -1140,6 +1170,11 @@ document.getElementById('dialogSendBtn').addEventListener('click', async () => {
 
   let history = getCharHistory(currentDialogCharId);
   const messages = [];
+  // 加入用户人设（如果有）
+  const profile = getProfile();
+  if (profile.persona) {
+    messages.push({ role: 'system', content: '用户人设：' + profile.persona });
+  }
   if (char.prompt) messages.push({ role: 'system', content: char.prompt });
   const filtered = history.filter(m => m.content !== '🤔 思考中...');
   messages.push(...filtered);
@@ -1218,7 +1253,7 @@ document.getElementById('dialogInput').addEventListener('input', function() {
 });
 
 // ============================================================
-// 角色详情（含头像编辑）
+// 角色详情（含头像编辑，只有编辑模式可换头像）
 // ============================================================
 function openContactDetail(charId) {
   detailCharId = charId;
@@ -1227,21 +1262,25 @@ function openContactDetail(charId) {
   if (!char) return;
   document.getElementById('detailAvatar').innerHTML = char.avatar ? `<img src="${char.avatar}" />` : '🧑';
   document.getElementById('detailNameDisplay').textContent = char.name || '未命名';
-  document.getElementById('detailPromptDisplay').textContent = char.prompt || '未设置人设';
+  document.getElementById('detailBioDisplay').textContent = char.bio || '未设置';
+  document.getElementById('detailPromptDisplay').textContent = char.prompt || '未设置';
   document.getElementById('detailAvatarEdit').innerHTML = char.avatar ? `<img src="${char.avatar}" />` : '🧑';
   document.getElementById('detailNameInput').value = char.name || '';
+  document.getElementById('detailBioInput').value = char.bio || '';
   document.getElementById('detailPromptInput').value = char.prompt || '';
   originalName = char.name || '';
+  originalBio = char.bio || '';
   originalPrompt = char.prompt || '';
   document.getElementById('viewMode').style.display = 'block';
   document.getElementById('editMode').style.display = 'none';
   isEditing = false;
   document.getElementById('detailStatus').textContent = '';
   document.getElementById('contactDetailTitle').textContent = '角色详情';
+  document.getElementById('avatarHint').textContent = '点击修改进入编辑';
   showPage('contactDetailPage');
 }
 
-// 头像上传（仅在编辑模式下有效）
+// 头像上传仅在编辑模式
 document.getElementById('detailAvatar').addEventListener('click', function() {
   if (!isEditing) {
     alert('请先点击"修改"进入编辑模式');
@@ -1273,12 +1312,15 @@ document.getElementById('detailEditBtn').addEventListener('click', () => {
   document.getElementById('viewMode').style.display = 'none';
   document.getElementById('editMode').style.display = 'block';
   isEditing = true;
+  document.getElementById('avatarHint').textContent = '点击头像更换';
   const chars = getChars();
   const char = chars.find(c => c.id === detailCharId);
   if (char) {
     document.getElementById('detailNameInput').value = char.name || '';
+    document.getElementById('detailBioInput').value = char.bio || '';
     document.getElementById('detailPromptInput').value = char.prompt || '';
     originalName = char.name || '';
+    originalBio = char.bio || '';
     originalPrompt = char.prompt || '';
     document.getElementById('detailAvatarEdit').innerHTML = char.avatar ? `<img src="${char.avatar}" />` : '🧑';
   }
@@ -1287,21 +1329,25 @@ document.getElementById('detailEditBtn').addEventListener('click', () => {
 document.getElementById('detailSaveBtn').addEventListener('click', () => {
   if (!detailCharId) return;
   const newName = document.getElementById('detailNameInput').value.trim();
+  const newBio = document.getElementById('detailBioInput').value.trim();
   const newPrompt = document.getElementById('detailPromptInput').value.trim();
   if (!newName) { document.getElementById('detailStatus').textContent = '❌ 名字不能为空'; return; }
   let chars = getChars();
   const idx = chars.findIndex(c => c.id === detailCharId);
   if (idx !== -1) {
     chars[idx].name = newName;
+    chars[idx].bio = newBio;
     chars[idx].prompt = newPrompt;
     saveChars(chars);
     document.getElementById('detailNameDisplay').textContent = newName;
-    document.getElementById('detailPromptDisplay').textContent = newPrompt || '未设置人设';
-    originalName = newName; originalPrompt = newPrompt;
+    document.getElementById('detailBioDisplay').textContent = newBio || '未设置';
+    document.getElementById('detailPromptDisplay').textContent = newPrompt || '未设置';
+    originalName = newName; originalBio = newBio; originalPrompt = newPrompt;
     document.getElementById('detailStatus').textContent = '✅ 保存成功！';
     document.getElementById('viewMode').style.display = 'block';
     document.getElementById('editMode').style.display = 'none';
     isEditing = false;
+    document.getElementById('avatarHint').textContent = '点击修改进入编辑';
     renderWechatContent();
     setTimeout(() => { document.getElementById('detailStatus').textContent = ''; }, 2000);
   }
@@ -1309,10 +1355,12 @@ document.getElementById('detailSaveBtn').addEventListener('click', () => {
 document.getElementById('detailCancelBtn').addEventListener('click', () => {
   if (!detailCharId) return;
   document.getElementById('detailNameInput').value = originalName;
+  document.getElementById('detailBioInput').value = originalBio;
   document.getElementById('detailPromptInput').value = originalPrompt;
   document.getElementById('viewMode').style.display = 'block';
   document.getElementById('editMode').style.display = 'none';
   isEditing = false;
+  document.getElementById('avatarHint').textContent = '点击修改进入编辑';
   document.getElementById('detailStatus').textContent = '';
 });
 document.getElementById('detailDeleteBtn').addEventListener('click', () => {
@@ -1343,15 +1391,16 @@ document.getElementById('charAvatarInput').addEventListener('change', (e) => {
 });
 document.getElementById('saveCharBtn').addEventListener('click', () => {
   const name = document.getElementById('charNameInput').value.trim();
+  const bio = document.getElementById('charBioInput').value.trim();
   const prompt = document.getElementById('charPromptInput').value.trim();
   if (!name) { document.getElementById('createCharStatus').textContent = '❌ 请填写名字'; return; }
   if (!prompt) { document.getElementById('createCharStatus').textContent = '❌ 请填写人设'; return; }
   let chars = getChars();
   if (editingCharId) {
     const idx = chars.findIndex(c => c.id === editingCharId);
-    if (idx !== -1) { chars[idx].name = name; chars[idx].prompt = prompt; if (avatarDataUrl) chars[idx].avatar = avatarDataUrl; }
+    if (idx !== -1) { chars[idx].name = name; chars[idx].bio = bio; chars[idx].prompt = prompt; if (avatarDataUrl) chars[idx].avatar = avatarDataUrl; }
   } else {
-    chars.push({ id: 'char_' + Date.now(), name, prompt, avatar: avatarDataUrl || null, created: Date.now() });
+    chars.push({ id: 'char_' + Date.now(), name, bio, prompt, avatar: avatarDataUrl || null, created: Date.now() });
   }
   saveChars(chars);
   document.getElementById('createCharStatus').textContent = '✅ 保存成功！';
