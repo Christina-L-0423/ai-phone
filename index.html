@@ -122,23 +122,34 @@
     ::-webkit-scrollbar{width:3px}
     ::-webkit-scrollbar-thumb{background:#c6c6c8;border-radius:4px}
 
-    /* ===== 手机端适配：关闭全屏时显示窄黑框 ===== */
+    /* ===== 手机端适配：关闭全屏时显示窄黑框，并留出上下边距避免遮挡 ===== */
     @media(max-width:420px){
       body{padding:0}
-      /* 非全屏默认样式：窄黑框 */
+      /* 非全屏默认样式：窄黑框 + 上下留空 */
       .phone{
-        width:100%;height:100vh;max-height:100vh;aspect-ratio:auto;
-        padding:8px; /* 缩小黑框宽度，看起来像细边框 */
+        width:100%;
+        height:calc(100vh - 60px); /* 上下各留 30px 避开浏览器导航栏 */
+        max-height:calc(100vh - 60px);
+        aspect-ratio:auto;
+        padding:8px;
         border-radius:20px;
         background:#000;
         box-shadow:0 0 20px rgba(0,0,0,0.5);
+        margin:auto;
       }
       .phone .phone-screen{
         border-radius:14px;
       }
-      /* 全屏模式：完全去掉黑框 */
+      /* 全屏模式：完全去掉黑框，且填满屏幕 */
       .phone.fullscreen{
-        padding:0;border-radius:0;background:#f2f2f7;box-shadow:none;
+        width:100%;
+        height:100vh;
+        max-height:100vh;
+        padding:0;
+        border-radius:0;
+        background:#f2f2f7;
+        box-shadow:none;
+        margin:0;
       }
       .phone.fullscreen .phone-screen{
         border-radius:0;
