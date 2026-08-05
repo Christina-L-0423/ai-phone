@@ -86,6 +86,13 @@
       background: #007aff;
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
       margin-bottom: 6px;
+      position: relative;
+      overflow: hidden;
+    }
+    .app-icon .icon-circle img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
     .app-icon .icon-label {
       font-size: 11px;
@@ -94,6 +101,7 @@
     }
     .app-icon .icon-circle.chat { background: #34c759; }
     .app-icon .icon-circle.settings { background: #8e8e93; }
+    .app-icon .icon-circle.char { background: #ff6b6b; }
     .dock {
       background: rgba(255,255,255,0.5);
       backdrop-filter: blur(30px);
@@ -188,7 +196,9 @@
       color: #3a3a3c;
       margin-bottom: 4px;
     }
-    .api-group input, .api-group select {
+    .api-group input,
+    .api-group select,
+    .api-group textarea {
       width: 100%;
       padding: 10px 12px;
       border: 1px solid #d1d1d6;
@@ -197,11 +207,15 @@
       background: #f9f9f9;
       margin-bottom: 12px;
       outline: none;
+      font-family: inherit;
     }
-    .api-group input:focus, .api-group select:focus {
+    .api-group input:focus,
+    .api-group select:focus,
+    .api-group textarea:focus {
       border-color: #007aff;
       background: #fff;
     }
+    .api-group textarea { min-height: 80px; resize: vertical; }
     .api-group button {
       background: #007aff;
       color: #fff;
@@ -221,13 +235,128 @@
       color: #3a3a3c;
       min-height: 20px;
     }
-    .chat-page {
+    .api-group .avatar-upload {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .api-group .avatar-preview {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: #e5e5ea;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+      overflow: hidden;
+      flex-shrink: 0;
+      border: 2px solid #d1d1d6;
+    }
+    .api-group .avatar-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .api-group .avatar-upload input[type="file"] { display: none; }
+    .api-group .avatar-upload .upload-btn {
+      background: #e5e5ea;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      color: #1c1c1e;
+    }
+    .api-group .avatar-upload .upload-btn:active { opacity: 0.7; }
+
+    /* 角色列表 */
+    .char-list-page {
+      padding: 20px 16px;
+      flex: 1;
+      overflow-y: auto;
+    }
+    .char-list-page .header {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .char-list-page .header .back {
+      font-size: 24px;
+      cursor: pointer;
+      padding: 4px 8px;
+    }
+    .char-list-page .header .add-btn {
+      font-size: 28px;
+      cursor: pointer;
+      padding: 4px 8px;
+      color: #007aff;
+    }
+    .char-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .char-card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 16px;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+    .char-card:active { transform: scale(0.95); }
+    .char-card .avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      margin: 0 auto 8px;
+      background: #e5e5ea;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      overflow: hidden;
+    }
+    .char-card .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .char-card .name {
+      font-size: 14px;
+      font-weight: 600;
+      color: #1c1c1e;
+    }
+    .char-card .delete-btn {
+      margin-top: 6px;
+      font-size: 12px;
+      color: #ff3b30;
+      cursor: pointer;
+      background: none;
+      border: none;
+    }
+    .char-card .delete-btn:active { opacity: 0.6; }
+    .char-empty {
+      grid-column: 1 / -1;
+      text-align: center;
+      color: #8e8e93;
+      padding: 40px 0;
+      font-size: 16px;
+    }
+
+    /* 角色聊天 */
+    .char-chat-page {
       display: flex;
       flex-direction: column;
       height: 100%;
       background: #f2f2f7;
     }
-    .chat-page .chat-header {
+    .char-chat-page .chat-header {
       padding: 16px 20px;
       background: #ffffffcc;
       backdrop-filter: blur(20px);
@@ -238,28 +367,50 @@
       gap: 12px;
       flex-shrink: 0;
     }
-    .chat-page .chat-header .back {
+    .char-chat-page .chat-header .back {
       font-size: 24px;
       cursor: pointer;
       padding: 4px 8px;
     }
-    .chat-page .chat-header .title {
+    .char-chat-page .chat-header .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #e5e5ea;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       font-size: 18px;
-      font-weight: 700;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .char-chat-page .chat-header .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .char-chat-page .chat-header .info {
       flex: 1;
     }
-    .chat-page .chat-header .new-btn {
+    .char-chat-page .chat-header .info .name {
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .char-chat-page .chat-header .info .model {
+      font-size: 11px;
+      color: #8e8e93;
+    }
+    .char-chat-page .chat-header .new-btn {
       background: #007aff;
       color: #fff;
       border: none;
       border-radius: 16px;
       padding: 4px 12px;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 600;
       cursor: pointer;
     }
-    .chat-page .chat-header .new-btn:active { opacity: 0.7; }
-    .chat-page .chat-body {
+    .char-chat-page .chat-body {
       flex: 1;
       padding: 16px 16px 8px;
       overflow-y: auto;
@@ -268,7 +419,6 @@
       gap: 10px;
       background: #f2f2f7;
     }
-    /* 气泡样式 */
     .message {
       max-width: 80%;
       padding: 10px 14px;
@@ -303,7 +453,7 @@
       from { opacity: 0; transform: translateY(8px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    .chat-page .chat-input-area {
+    .char-chat-page .chat-input-area {
       padding: 12px 16px 16px;
       background: #ffffffcc;
       backdrop-filter: blur(20px);
@@ -313,7 +463,7 @@
       gap: 10px;
       flex-shrink: 0;
     }
-    .chat-page .chat-input-area textarea {
+    .char-chat-page .chat-input-area textarea {
       flex: 1;
       border: 1px solid #d1d1d6;
       border-radius: 20px;
@@ -326,11 +476,11 @@
       min-height: 40px;
       max-height: 100px;
     }
-    .chat-page .chat-input-area textarea:focus {
+    .char-chat-page .chat-input-area textarea:focus {
       border-color: #007aff;
       background: #fff;
     }
-    .chat-page .chat-input-area button {
+    .char-chat-page .chat-input-area button {
       background: #007aff;
       color: #fff;
       border: none;
@@ -341,7 +491,7 @@
       cursor: pointer;
       transition: opacity 0.2s;
     }
-    .chat-page .chat-input-area button:active { opacity: 0.7; }
+    .char-chat-page .chat-input-area button:active { opacity: 0.7; }
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-thumb { background: #c6c6c8; border-radius: 4px; }
     @media (max-width: 420px) {
@@ -360,23 +510,24 @@
       <span class="icons"><span>📶</span><span>🔋</span></span>
     </div>
 
-    <!-- 主屏幕 -->
+    <!-- ===== 主屏幕 ===== -->
     <div class="page active" id="homePage">
       <div class="home-screen">
         <div class="grid">
           <div class="app-icon" id="goToChat"><div class="icon-circle chat">💬</div><span class="icon-label">聊天</span></div>
+          <div class="app-icon" id="goToCharList"><div class="icon-circle char">🧑</div><span class="icon-label">Char</span></div>
           <div class="app-icon" id="goToSettingsFromHome"><div class="icon-circle settings">⚙️</div><span class="icon-label">设置</span></div>
           <div class="app-icon"><div class="icon-circle" style="background:#ff9500;">📁</div><span class="icon-label">文件</span></div>
-          <div class="app-icon"><div class="icon-circle" style="background:#ff2d55;">🎵</div><span class="icon-label">音乐</span></div>
         </div>
         <div class="dock">
           <div class="app-icon" id="goToChatFromDock"><div class="icon-circle chat">💬</div><span class="icon-label">聊天</span></div>
+          <div class="app-icon" id="goToCharListFromDock"><div class="icon-circle char">🧑</div><span class="icon-label">Char</span></div>
           <div class="app-icon" id="goToSettingsFromDock"><div class="icon-circle settings">⚙️</div><span class="icon-label">设置</span></div>
         </div>
       </div>
     </div>
 
-    <!-- 设置列表 -->
+    <!-- ===== 设置列表 ===== -->
     <div class="page" id="settingsPage">
       <div class="settings-page">
         <div class="header"><span class="back" id="backFromSettings">‹</span><span>设置</span></div>
@@ -388,7 +539,7 @@
       </div>
     </div>
 
-    <!-- API 设置 -->
+    <!-- ===== API 设置 ===== -->
     <div class="page" id="apiSettingsPage">
       <div class="api-settings-page">
         <div class="header"><span class="back" id="backFromApiSettings">‹</span><span>API 设置</span></div>
@@ -408,21 +559,79 @@
       </div>
     </div>
 
-    <!-- 聊天 -->
+    <!-- ===== 普通聊天（无角色） ===== -->
     <div class="page" id="chatPage">
-      <div class="chat-page">
-        <div class="chat-header">
-          <span class="back" id="backFromChat">‹</span>
-          <span class="title">💬 聊天</span>
-          <span style="font-size:12px; color:#8e8e93; margin-right:4px;" id="modelDisplay">未选择</span>
-          <button class="new-btn" id="newChatBtn">新对话</button>
+      <div class="chat-page" style="display:flex;flex-direction:column;height:100%;background:#f2f2f7;">
+        <div class="chat-header" style="padding:16px 20px;background:#ffffffcc;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid #e5e5ea;display:flex;align-items:center;gap:12px;flex-shrink:0;">
+          <span class="back" id="backFromChat" style="font-size:24px;cursor:pointer;padding:4px 8px;">‹</span>
+          <span class="title" style="font-size:18px;font-weight:700;flex:1;">💬 聊天</span>
+          <span style="font-size:12px;color:#8e8e93;margin-right:4px;" id="modelDisplay">未选择</span>
+          <button class="new-btn" id="newChatBtn" style="background:#007aff;color:#fff;border:none;border-radius:16px;padding:4px 12px;font-size:14px;font-weight:600;cursor:pointer;">新对话</button>
         </div>
-        <div class="chat-body" id="chatMessages">
-          <!-- 消息会由 JavaScript 动态渲染 -->
+        <div class="chat-body" id="chatMessages" style="flex:1;padding:16px 16px 8px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;background:#f2f2f7;">
+        </div>
+        <div class="chat-input-area" style="padding:12px 16px 16px;background:#ffffffcc;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid #e5e5ea;display:flex;gap:10px;flex-shrink:0;">
+          <textarea id="userInput" rows="1" placeholder="输入问题..." style="flex:1;border:1px solid #d1d1d6;border-radius:20px;padding:10px 14px;font-size:15px;resize:none;outline:none;background:#f9f9f9;font-family:inherit;min-height:40px;max-height:100px;"></textarea>
+          <button id="sendBtn" style="background:#007aff;color:#fff;border:none;border-radius:20px;padding:0 20px;font-size:16px;font-weight:600;cursor:pointer;">发送</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== Char 列表 ===== -->
+    <div class="page" id="charListPage">
+      <div class="char-list-page">
+        <div class="header">
+          <span class="back" id="backFromCharList">‹</span>
+          <span>🧑 Char</span>
+          <span class="add-btn" id="goToCreateChar">+</span>
+        </div>
+        <div class="char-grid" id="charGrid">
+          <!-- 由 JS 动态渲染 -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 创建/编辑 Char ===== -->
+    <div class="page" id="createCharPage">
+      <div class="api-settings-page">
+        <div class="header">
+          <span class="back" id="backFromCreateChar">‹</span>
+          <span id="createCharTitle">新建 Char</span>
+        </div>
+        <div class="api-group">
+          <label>头像</label>
+          <div class="avatar-upload">
+            <div class="avatar-preview" id="charAvatarPreview">🧑</div>
+            <label class="upload-btn" id="avatarUploadBtn">选择图片</label>
+            <input type="file" id="charAvatarInput" accept="image/*" />
+          </div>
+          <label>名字</label>
+          <input id="charNameInput" placeholder="输入角色名字..." />
+          <label>人设（系统提示词）</label>
+          <textarea id="charPromptInput" placeholder="例如：你是一个温柔的小助理，喜欢用可爱的语气说话..."></textarea>
+          <button id="saveCharBtn">保存</button>
+          <div class="status-msg" id="createCharStatus"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 角色聊天 ===== -->
+    <div class="page" id="charChatPage">
+      <div class="char-chat-page">
+        <div class="chat-header">
+          <span class="back" id="backFromCharChat">‹</span>
+          <div class="avatar" id="charChatAvatar">🧑</div>
+          <div class="info">
+            <div class="name" id="charChatName">角色</div>
+            <div class="model" id="charChatModel">未选择</div>
+          </div>
+          <button class="new-btn" id="charChatNewBtn">新对话</button>
+        </div>
+        <div class="chat-body" id="charChatMessages">
         </div>
         <div class="chat-input-area">
-          <textarea id="userInput" rows="1" placeholder="输入问题..."></textarea>
-          <button id="sendBtn">发送</button>
+          <textarea id="charChatInput" rows="1" placeholder="输入问题..."></textarea>
+          <button id="charChatSendBtn">发送</button>
         </div>
       </div>
     </div>
@@ -430,93 +639,390 @@
 </div>
 
 <script>
-  // ==================== 页面导航 ====================
-  const homePage = document.getElementById('homePage');
-  const settingsPage = document.getElementById('settingsPage');
-  const apiSettingsPage = document.getElementById('apiSettingsPage');
-  const chatPage = document.getElementById('chatPage');
-
-  function showPage(pageId) {
+  // ============================================================
+  //  1. 页面导航
+  // ============================================================
+  function showPage(id) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById(pageId).classList.add('active');
-    if (pageId === 'chatPage') renderMessages();
+    document.getElementById(id).classList.add('active');
+    if (id === 'charListPage') renderCharGrid();
+    if (id === 'charChatPage') renderCharChatMessages();
   }
 
   document.getElementById('goToChat').addEventListener('click', () => showPage('chatPage'));
   document.getElementById('goToChatFromDock').addEventListener('click', () => showPage('chatPage'));
+  document.getElementById('goToCharList').addEventListener('click', () => showPage('charListPage'));
+  document.getElementById('goToCharListFromDock').addEventListener('click', () => showPage('charListPage'));
   document.getElementById('goToSettingsFromHome').addEventListener('click', () => showPage('settingsPage'));
   document.getElementById('goToSettingsFromDock').addEventListener('click', () => showPage('settingsPage'));
   document.getElementById('backFromSettings').addEventListener('click', () => showPage('homePage'));
   document.getElementById('backFromApiSettings').addEventListener('click', () => showPage('settingsPage'));
   document.getElementById('backFromChat').addEventListener('click', () => showPage('homePage'));
+  document.getElementById('backFromCharList').addEventListener('click', () => showPage('homePage'));
+  document.getElementById('backFromCreateChar').addEventListener('click', () => showPage('charListPage'));
+  document.getElementById('backFromCharChat').addEventListener('click', () => showPage('charListPage'));
   document.getElementById('goToApiSettings').addEventListener('click', () => showPage('apiSettingsPage'));
+  document.getElementById('goToCreateChar').addEventListener('click', () => { editingCharId = null; document.getElementById('createCharTitle').textContent = '新建 Char'; document.getElementById('charNameInput').value = ''; document.getElementById('charPromptInput').value = ''; document.getElementById('charAvatarPreview').innerHTML = '🧑'; document.getElementById('charAvatarPreview').querySelector('img')?.remove(); showPage('createCharPage'); });
 
-  // ==================== 状态栏时间 ====================
+  // ============================================================
+  //  2. 状态栏时间
+  // ============================================================
   function updateTime() {
     const now = new Date();
-    const h = String(now.getHours()).padStart(2,'0');
-    const m = String(now.getMinutes()).padStart(2,'0');
-    document.getElementById('statusTime').textContent = h + ':' + m;
+    document.getElementById('statusTime').textContent =
+      String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
   }
   updateTime();
   setInterval(updateTime, 10000);
 
-  // ==================== DOM 引用 ====================
+  // ============================================================
+  //  3. DOM 引用
+  // ============================================================
   const apiBase = document.getElementById('apiBase');
   const apiKey = document.getElementById('apiKey');
   const modelSelect = document.getElementById('modelSelect');
   const fetchModelsBtn = document.getElementById('fetchModelsBtn');
   const saveApiBtn = document.getElementById('saveApiBtn');
   const apiStatus = document.getElementById('apiStatus');
+  const modelDisplay = document.getElementById('modelDisplay');
+
+  // 普通聊天
   const chatMessages = document.getElementById('chatMessages');
   const userInput = document.getElementById('userInput');
   const sendBtn = document.getElementById('sendBtn');
-  const modelDisplay = document.getElementById('modelDisplay');
   const newChatBtn = document.getElementById('newChatBtn');
 
-  // ==================== 聊天历史（核心） ====================
+  // Char
+  const charGrid = document.getElementById('charGrid');
+  const charNameInput = document.getElementById('charNameInput');
+  const charPromptInput = document.getElementById('charPromptInput');
+  const charAvatarPreview = document.getElementById('charAvatarPreview');
+  const charAvatarInput = document.getElementById('charAvatarInput');
+  const avatarUploadBtn = document.getElementById('avatarUploadBtn');
+  const saveCharBtn = document.getElementById('saveCharBtn');
+  const createCharStatus = document.getElementById('createCharStatus');
+  const charChatAvatar = document.getElementById('charChatAvatar');
+  const charChatName = document.getElementById('charChatName');
+  const charChatModel = document.getElementById('charChatModel');
+  const charChatMessages = document.getElementById('charChatMessages');
+  const charChatInput = document.getElementById('charChatInput');
+  const charChatSendBtn = document.getElementById('charChatSendBtn');
+  const charChatNewBtn = document.getElementById('charChatNewBtn');
+
+  let editingCharId = null;
+  let currentCharId = null;
+
+  // ============================================================
+  //  4. 存储工具
+  // ============================================================
+  function getChars() {
+    try { return JSON.parse(localStorage.getItem('chars')) || []; } catch (e) { return []; }
+  }
+  function saveChars(chars) {
+    localStorage.setItem('chars', JSON.stringify(chars));
+  }
+  function getCharHistory(charId) {
+    try { return JSON.parse(localStorage.getItem('charHistory_' + charId)) || []; } catch (e) { return []; }
+  }
+  function saveCharHistory(charId, history) {
+    localStorage.setItem('charHistory_' + charId, JSON.stringify(history));
+  }
+
+  // ============================================================
+  //  5. 普通聊天（保留原有功能，无角色）
+  // ============================================================
   let chatHistory = [];
-
-  function loadHistory() {
-    try {
-      const saved = localStorage.getItem('chatHistory');
-      if (saved) chatHistory = JSON.parse(saved);
-      else chatHistory = [];
-    } catch (e) { chatHistory = []; }
+  function loadChatHistory() {
+    try { const s = localStorage.getItem('chatHistory'); chatHistory = s ? JSON.parse(s) : []; } catch (e) { chatHistory = []; }
   }
-  function saveHistory() {
-    localStorage.setItem('chatHistory', JSON.stringify(chatHistory));
-  }
-
-  function renderMessages() {
+  function saveChatHistory() { localStorage.setItem('chatHistory', JSON.stringify(chatHistory)); }
+  function renderChatMessages() {
     if (!chatMessages) return;
     if (chatHistory.length === 0) {
-      chatMessages.innerHTML = `<div style="color:#8e8e93; text-align:center; padding:40px 0; font-size:16px;">开始新的对话吧 💬</div>`;
+      chatMessages.innerHTML = `<div style="color:#8e8e93;text-align:center;padding:40px 0;font-size:16px;">开始新的对话吧 💬</div>`;
       return;
     }
     let html = '';
     chatHistory.forEach(msg => {
-      const time = new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
-      html += `<div class="message ${msg.role}">${msg.content}<div class="msg-time">${time}</div></div>`;
+      const t = new Date().toLocaleTimeString('zh-CN', { hour:'2-digit', minute:'2-digit' });
+      html += `<div class="message ${msg.role}">${msg.content}<div class="msg-time">${t}</div></div>`;
     });
     chatMessages.innerHTML = html;
     chatMessages.scrollTop = chatMessages.scrollHeight;
   }
-
-  function addMessage(role, content) {
+  function addChatMessage(role, content) {
     chatHistory.push({ role, content });
-    saveHistory();
-    renderMessages();
+    saveChatHistory();
+    renderChatMessages();
   }
-
-  function clearHistory() {
-    if (chatHistory.length > 0 && !confirm('确定要清空所有聊天记录吗？')) return;
+  function clearChatHistory() {
+    if (chatHistory.length > 0 && !confirm('确定清空聊天记录吗？')) return;
     chatHistory = [];
-    saveHistory();
-    renderMessages();
+    saveChatHistory();
+    renderChatMessages();
+  }
+  loadChatHistory();
+
+  // ============================================================
+  //  6. 发送普通消息
+  // ============================================================
+  sendBtn.addEventListener('click', async () => {
+    const base = apiBase.value.trim(), key = apiKey.value.trim(), model = modelSelect.value, msg = userInput.value.trim();
+    if (!base || !key) { alert('请先设置 API'); showPage('apiSettingsPage'); return; }
+    if (!model) { alert('请先选择模型'); return; }
+    if (!msg) { alert('请输入问题'); return; }
+    addChatMessage('user', msg);
+    userInput.value = ''; userInput.style.height = 'auto';
+    chatHistory.push({ role: 'assistant', content: '🤔 思考中...' });
+    saveChatHistory();
+    renderChatMessages();
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'chat', baseUrl: base, apiKey: key, model, messages: chatHistory.filter(m => m.content !== '🤔 思考中...') })
+      });
+      const data = await res.json();
+      chatHistory.pop(); saveChatHistory();
+      if (data.reply) addChatMessage('assistant', data.reply);
+      else addChatMessage('assistant', '❌ 无回复');
+    } catch (e) {
+      chatHistory.pop(); saveChatHistory();
+      addChatMessage('assistant', '❌ 出错：' + e.message);
+    }
+  });
+  userInput.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendBtn.click(); } });
+  userInput.addEventListener('input', () => { userInput.style.height = 'auto'; userInput.style.height = userInput.scrollHeight + 'px'; });
+  newChatBtn.addEventListener('click', clearChatHistory);
+
+  // ============================================================
+  //  7. Char 列表渲染
+  // ============================================================
+  function renderCharGrid() {
+    const chars = getChars();
+    if (chars.length === 0) {
+      charGrid.innerHTML = `<div class="char-empty">还没有角色，点右上角 + 创建</div>`;
+      return;
+    }
+    let html = '';
+    chars.forEach(c => {
+      const avatarHtml = c.avatar ? `<img src="${c.avatar}" />` : '🧑';
+      html += `
+        <div class="char-card" data-id="${c.id}">
+          <div class="avatar">${avatarHtml}</div>
+          <div class="name">${c.name || '未命名'}</div>
+          <button class="delete-btn" data-id="${c.id}">删除</button>
+        </div>
+      `;
+    });
+    charGrid.innerHTML = html;
+    // 点击卡片进入聊天
+    charGrid.querySelectorAll('.char-card').forEach(el => {
+      el.addEventListener('click', (e) => {
+        if (e.target.classList.contains('delete-btn')) return;
+        const id = el.dataset.id;
+        const chars = getChars();
+        const found = chars.find(c => c.id === id);
+        if (found) { currentCharId = id; openCharChat(found); }
+      });
+    });
+    // 删除按钮
+    charGrid.querySelectorAll('.delete-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = btn.dataset.id;
+        if (!confirm('确定删除这个角色吗？')) return;
+        let chars = getChars();
+        chars = chars.filter(c => c.id !== id);
+        saveChars(chars);
+        localStorage.removeItem('charHistory_' + id);
+        renderCharGrid();
+        if (currentCharId === id) { currentCharId = null; }
+      });
+    });
   }
 
-  // ==================== 本地存储（设置） ====================
+  // ============================================================
+  //  8. 创建/编辑 Char
+  // ============================================================
+  let avatarDataUrl = null;
+
+  avatarUploadBtn.addEventListener('click', () => charAvatarInput.click());
+  charAvatarInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      avatarDataUrl = ev.target.result;
+      charAvatarPreview.innerHTML = `<img src="${avatarDataUrl}" />`;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  saveCharBtn.addEventListener('click', () => {
+    const name = charNameInput.value.trim();
+    const prompt = charPromptInput.value.trim();
+    if (!name) { createCharStatus.textContent = '❌ 请填写名字'; return; }
+    if (!prompt) { createCharStatus.textContent = '❌ 请填写人设'; return; }
+    let chars = getChars();
+    if (editingCharId) {
+      // 编辑
+      const idx = chars.findIndex(c => c.id === editingCharId);
+      if (idx !== -1) {
+        chars[idx].name = name;
+        chars[idx].prompt = prompt;
+        if (avatarDataUrl) chars[idx].avatar = avatarDataUrl;
+      }
+    } else {
+      // 新建
+      chars.push({
+        id: 'char_' + Date.now(),
+        name: name,
+        prompt: prompt,
+        avatar: avatarDataUrl || null,
+        created: Date.now()
+      });
+    }
+    saveChars(chars);
+    createCharStatus.textContent = '✅ 保存成功！';
+    setTimeout(() => showPage('charListPage'), 500);
+  });
+
+  // ============================================================
+  //  9. 角色聊天
+  // ============================================================
+  function openCharChat(char) {
+    charChatAvatar.innerHTML = char.avatar ? `<img src="${char.avatar}" />` : '🧑';
+    charChatName.textContent = char.name || '未命名';
+    const modelName = modelSelect.value || '未选择';
+    charChatModel.textContent = '模型: ' + modelName;
+    currentCharId = char.id;
+    renderCharChatMessages();
+    showPage('charChatPage');
+  }
+
+  function getCurrentCharHistory() {
+    if (!currentCharId) return [];
+    return getCharHistory(currentCharId);
+  }
+  function saveCurrentCharHistory(history) {
+    if (!currentCharId) return;
+    saveCharHistory(currentCharId, history);
+  }
+
+  function renderCharChatMessages() {
+    if (!charChatMessages) return;
+    const history = getCurrentCharHistory();
+    if (history.length === 0) {
+      charChatMessages.innerHTML = `<div style="color:#8e8e93;text-align:center;padding:40px 0;font-size:16px;">开始和角色聊天吧 💬</div>`;
+      return;
+    }
+    let html = '';
+    history.forEach(msg => {
+      const t = new Date().toLocaleTimeString('zh-CN', { hour:'2-digit', minute:'2-digit' });
+      html += `<div class="message ${msg.role}">${msg.content}<div class="msg-time">${t}</div></div>`;
+    });
+    charChatMessages.innerHTML = html;
+    charChatMessages.scrollTop = charChatMessages.scrollHeight;
+  }
+
+  function addCharMessage(role, content) {
+    if (!currentCharId) return;
+    const history = getCurrentCharHistory();
+    history.push({ role, content });
+    saveCurrentCharHistory(history);
+    renderCharChatMessages();
+  }
+
+  function clearCharHistory() {
+    if (!currentCharId) return;
+    const history = getCurrentCharHistory();
+    if (history.length > 0 && !confirm('确定清空该角色的聊天记录吗？')) return;
+    saveCurrentCharHistory([]);
+    renderCharChatMessages();
+  }
+
+  // ============================================================
+  //  10. 发送角色消息
+  // ============================================================
+  charChatSendBtn.addEventListener('click', async () => {
+    const base = apiBase.value.trim();
+    const key = apiKey.value.trim();
+    const model = modelSelect.value;
+    const msg = charChatInput.value.trim();
+    if (!base || !key) { alert('请先设置 API'); showPage('apiSettingsPage'); return; }
+    if (!model) { alert('请先选择模型'); return; }
+    if (!msg) { alert('请输入问题'); return; }
+    if (!currentCharId) { alert('没有选中的角色'); return; }
+    const chars = getChars();
+    const char = chars.find(c => c.id === currentCharId);
+    if (!char) { alert('角色不存在'); return; }
+
+    // 添加用户消息
+    addCharMessage('user', msg);
+    charChatInput.value = ''; charChatInput.style.height = 'auto';
+
+    // 获取历史（不含 thinking）
+    let history = getCurrentCharHistory();
+    // 构建消息：系统人设 + 历史对话
+    const messages = [];
+    if (char.prompt) {
+      messages.push({ role: 'system', content: char.prompt });
+    }
+    // 历史中去除可能残留的 thinking
+    const filteredHistory = history.filter(m => m.content !== '🤔 思考中...');
+    messages.push(...filteredHistory);
+
+    // 显示思考中
+    history.push({ role: 'assistant', content: '🤔 思考中...' });
+    saveCurrentCharHistory(history);
+    renderCharChatMessages();
+
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'chat',
+          baseUrl: base,
+          apiKey: key,
+          model,
+          messages: messages
+        })
+      });
+      const data = await res.json();
+      // 移除 thinking
+      let h = getCurrentCharHistory();
+      if (h.length > 0 && h[h.length-1].content === '🤔 思考中...') {
+        h.pop();
+        saveCurrentCharHistory(h);
+      }
+      if (data.reply) {
+        addCharMessage('assistant', data.reply);
+      } else {
+        addCharMessage('assistant', '❌ 无回复');
+      }
+    } catch (e) {
+      let h = getCurrentCharHistory();
+      if (h.length > 0 && h[h.length-1].content === '🤔 思考中...') {
+        h.pop();
+        saveCurrentCharHistory(h);
+      }
+      addCharMessage('assistant', '❌ 出错：' + e.message);
+    }
+  });
+
+  charChatInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); charChatSendBtn.click(); }
+  });
+  charChatInput.addEventListener('input', () => {
+    charChatInput.style.height = 'auto';
+    charChatInput.style.height = charChatInput.scrollHeight + 'px';
+  });
+  charChatNewBtn.addEventListener('click', clearCharHistory);
+
+  // ============================================================
+  //  11. 加载设置和模型
+  // ============================================================
   function loadSettings() {
     const savedBase = localStorage.getItem('apiBase');
     const savedKey = localStorage.getItem('apiKey');
@@ -524,8 +1030,8 @@
     if (savedBase) apiBase.value = savedBase;
     if (savedKey) apiKey.value = savedKey;
     if (savedModel) {
-      window._savedModel = savedModel;
       modelDisplay.textContent = savedModel;
+      window._savedModel = savedModel;
     }
   }
   function saveSettings(includeModel = false) {
@@ -539,9 +1045,7 @@
     setTimeout(() => { if (apiStatus.textContent === '✅ 已保存') apiStatus.textContent = '就绪'; }, 2000);
   }
   loadSettings();
-  loadHistory();
 
-  // ==================== 拉取模型 ====================
   fetchModelsBtn.addEventListener('click', async () => {
     const base = apiBase.value.trim();
     const key = apiKey.value.trim();
@@ -585,78 +1089,9 @@
     }
   });
 
-  // ==================== 发送消息（支持多轮） ====================
-  sendBtn.addEventListener('click', async () => {
-    const base = apiBase.value.trim();
-    const key = apiKey.value.trim();
-    const model = modelSelect.value;
-    const msg = userInput.value.trim();
-    if (!base || !key) { alert('请先设置 API 地址和 Key'); showPage('apiSettingsPage'); return; }
-    if (!model) { alert('请先拉取并选择模型'); showPage('apiSettingsPage'); return; }
-    if (!msg) { alert('请输入问题'); return; }
-    
-    // 添加用户消息到历史
-    addMessage('user', msg);
-    userInput.value = '';
-    userInput.style.height = 'auto';
-
-    // 显示“思考中”
-    const thinkingMsg = { role: 'assistant', content: '🤔 思考中...' };
-    chatHistory.push(thinkingMsg);
-    saveHistory();
-    renderMessages();
-
-    try {
-      // 发送完整历史（除了最后一条“思考中”，或者直接发送前面所有，AI回复后替换）
-      // 更稳健：先把 thinking 弹出来，如果报错则替换为错误信息
-      const messagesToSend = chatHistory.filter(m => m.content !== '🤔 思考中...');
-      
-      const res = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          action: 'chat', 
-          baseUrl: base, 
-          apiKey: key, 
-          model, 
-          messages: messagesToSend 
-        })
-      });
-      const data = await res.json();
-      
-      // 移除“思考中”
-      chatHistory.pop();
-      saveHistory();
-
-      if (data.reply) {
-        addMessage('assistant', data.reply);
-      } else {
-        addMessage('assistant', '❌ 没有收到回复');
-      }
-    } catch (e) {
-      // 移除“思考中”
-      chatHistory.pop();
-      saveHistory();
-      addMessage('assistant', '❌ 出错：' + e.message);
-    }
-  });
-
-  userInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      sendBtn.click();
-    }
-  });
-  // 自动调整输入框高度
-  userInput.addEventListener('input', () => {
-    userInput.style.height = 'auto';
-    userInput.style.height = userInput.scrollHeight + 'px';
-  });
-
-  // ==================== 新对话 ====================
-  newChatBtn.addEventListener('click', clearHistory);
-
-  // ==================== 自动拉取模型 ====================
+  // ============================================================
+  //  12. 自动拉取模型 & 渲染
+  // ============================================================
   window.addEventListener('load', async () => {
     const savedBase = localStorage.getItem('apiBase');
     const savedKey = localStorage.getItem('apiKey');
@@ -666,41 +1101,35 @@
     if (savedModel) {
       modelDisplay.textContent = savedModel;
       if (savedBase && savedKey) {
-        await autoFetchAndSelect(savedBase, savedKey, savedModel);
+        try {
+          const res = await fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'models', baseUrl: savedBase, apiKey: savedKey })
+          });
+          const data = await res.json();
+          if (data.models) {
+            modelSelect.innerHTML = '<option value="">请选择</option>';
+            data.models.forEach(m => {
+              const opt = document.createElement('option');
+              opt.value = m.id || m;
+              opt.textContent = m.id || m;
+              modelSelect.appendChild(opt);
+            });
+            if ([...modelSelect.options].some(opt => opt.value === savedModel)) {
+              modelSelect.value = savedModel;
+              modelDisplay.textContent = savedModel;
+              localStorage.setItem('selectedModel', savedModel);
+            }
+            apiStatus.textContent = `✅ 自动拉取 ${data.models.length} 个模型`;
+            setTimeout(() => { if (apiStatus.textContent.includes('自动拉取')) apiStatus.textContent = '就绪'; }, 3000);
+          }
+        } catch (e) { console.log('自动拉取失败'); }
       }
     }
-    // 如果有聊天历史，渲染出来
-    renderMessages();
+    renderChatMessages();
+    renderCharGrid();
   });
-
-  async function autoFetchAndSelect(base, key, model) {
-    try {
-      const res = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'models', baseUrl: base, apiKey: key })
-      });
-      const data = await res.json();
-      if (data.models) {
-        modelSelect.innerHTML = '<option value="">请选择</option>';
-        data.models.forEach(m => {
-          const opt = document.createElement('option');
-          opt.value = m.id || m;
-          opt.textContent = m.id || m;
-          modelSelect.appendChild(opt);
-        });
-        if ([...modelSelect.options].some(opt => opt.value === model)) {
-          modelSelect.value = model;
-          modelDisplay.textContent = model;
-          localStorage.setItem('selectedModel', model);
-        }
-        apiStatus.textContent = `✅ 自动拉取 ${data.models.length} 个模型`;
-        setTimeout(() => { if (apiStatus.textContent.includes('自动拉取')) apiStatus.textContent = '就绪'; }, 3000);
-      }
-    } catch (e) {
-      console.log('自动拉取失败，可手动拉取');
-    }
-  }
 </script>
 </body>
 </html>
