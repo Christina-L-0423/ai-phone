@@ -935,6 +935,17 @@
     renderChatMessages();
     renderCharGrid();
   });
+  // 修复“+”按钮事件（确保创建角色功能正常）
+document.getElementById('goToCreateChar').addEventListener('click', function() {
+  editingCharId = null;
+  document.getElementById('createCharTitle').textContent = '新建 Char';
+  document.getElementById('charNameInput').value = '';
+  document.getElementById('charPromptInput').value = '';
+  document.getElementById('charAvatarPreview').innerHTML = '🧑';
+  document.getElementById('charAvatarPreview').querySelector('img')?.remove();
+  avatarDataUrl = null;
+  showPage('createCharPage');
+});
 </script>
 </body>
 </html>
