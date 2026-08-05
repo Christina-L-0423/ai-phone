@@ -1,1429 +1,784 @@
 <!DOCTYPE html>
 <html lang="zh-CN" style="background-color: #E3EEFA !important; color-scheme: light !important;">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <meta name="color-scheme" content="light" />
-    <meta name="theme-color" content="#E3EEFA" />
-    <title>小铃机</title>
-    <style>
-        :root {
-            color-scheme: light !important;
-        }
-
-        html,
-        body {
-            background-color: #E3EEFA !important;
-            color-scheme: light !important;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif
-        }
-
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-            background: #1a1a1a
-        }
-
-        .phone {
-            width: 100%;
-            max-width: 420px;
-            aspect-ratio: 380/780;
-            height: auto;
-            max-height: 95vh;
-            background: #000;
-            border-radius: 40px;
-            padding: 12px;
-            box-shadow: 0 30px 80px rgba(0, 0, 0, .8), inset 0 0 0 2px #333;
-            position: relative;
-            margin: 0 auto;
-            transition: all 0.3s ease;
-        }
-
-        .phone-screen {
-            width: 100%;
-            height: 100%;
-            background: #E3EEFA !important;
-            border-radius: 30px;
-            overflow: hidden;
-            position: relative;
-            display: flex;
-            flex-direction: column
-        }
-
-        .phone.fullscreen {
-            width: 100%;
-            height: 100vh;
-            max-height: 100vh;
-            aspect-ratio: auto;
-            border-radius: 0;
-            padding: 0;
-            background: #f2f2f7;
-            box-shadow: none;
-            margin: 0;
-        }
-
-        .phone.fullscreen .phone-screen {
-            border-radius: 0;
-            background: #E3EEFA !important;
-        }
-
-        .status-bar {
-            background: transparent;
-            padding: 12px 20px 8px;
-            display: flex;
-            justify-content: space-between;
-            font-size: 14px;
-            font-weight: 600;
-            color: #1c1c1e;
-            flex-shrink: 0
-        }
-
-        .status-bar .time {
-            font-weight: 700
-        }
-
-        .status-bar .icons {
-            display: flex;
-            gap: 6px;
-            align-items: center
-        }
-
-        .home-screen {
-            flex: 1;
-            padding: 20px 16px 0;
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-            background: #E3EEFA !important
-        }
-
-        .home-screen .grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px 10px;
-            margin-bottom: 20px
-        }
-
-        .app-icon {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            cursor: pointer;
-            transition: transform .1s;
-            -webkit-tap-highlight-color: transparent
-        }
-
-        .app-icon:active {
-            transform: scale(.9)
-        }
-
-        .app-icon .icon-circle {
-            width: 64px;
-            height: 64px;
-            border-radius: 16px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-            margin-bottom: 6px;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.2s;
-        }
-
-        .app-icon .icon-circle svg {
-            width: 32px;
-            height: 32px;
-            display: block;
-        }
-
-        .app-icon .icon-label {
-            font-size: 11px;
-            color: #1c1c1e;
-            text-align: center
-        }
-
-        .dock {
-            background: rgba(255, 255, 255, .5);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            border-radius: 30px;
-            padding: 12px 16px;
-            margin: 0 4px 16px;
-            display: flex;
-            justify-content: space-around;
-            flex-shrink: 0;
-            margin-top: auto
-        }
-
-        .dock .app-icon .icon-circle {
-            width: 56px;
-            height: 56px;
-            border-radius: 14px
-        }
-
-        .dock .app-icon .icon-circle svg {
-            width: 28px;
-            height: 28px
-        }
-
-        .page {
-            display: none;
-            flex-direction: column;
-            height: 100%;
-            background: #E3EEFA !important
-        }
-
-        .page.active {
-            display: flex
-        }
-
-        .settings-page {
-            padding: 20px 16px;
-            flex: 1;
-            overflow-y: auto;
-            background: #E3EEFA !important
-        }
-
-        .settings-page .header {
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px
-        }
-
-        .settings-page .header .back {
-            font-size: 24px;
-            cursor: pointer;
-            padding: 4px 8px
-        }
-
-        .settings-list {
-            background: #fff;
-            border-radius: 14px;
-            overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, .05)
-        }
-
-        .settings-item {
-            padding: 14px 16px;
-            border-bottom: 1px solid #e5e5ea;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            transition: background .1s
-        }
-
-        .settings-item:last-child {
-            border-bottom: none
-        }
-
-        .settings-item:active {
-            background: #e5e5ea
-        }
-
-        .settings-item .label {
-            font-size: 16px;
-            color: #1c1c1e
-        }
-
-        .settings-item .arrow {
-            color: #8e8e93;
-            font-size: 18px
-        }
-
-        .api-settings-page {
-            padding: 20px 16px;
-            flex: 1;
-            overflow-y: auto;
-            background: #E3EEFA !important
-        }
-
-        .api-settings-page .header {
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px
-        }
-
-        .api-settings-page .header .back {
-            font-size: 24px;
-            cursor: pointer;
-            padding: 4px 8px
-        }
-
-        .api-group {
-            background: #fff;
-            border-radius: 14px;
-            padding: 16px;
-            margin-bottom: 16px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, .05)
-        }
-
-        .api-group label {
-            display: block;
-            font-size: 14px;
-            font-weight: 600;
-            color: #3a3a3c;
-            margin-bottom: 4px
-        }
-
-        .api-group input,
-        .api-group select,
-        .api-group textarea {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #d1d1d6;
-            border-radius: 10px;
-            font-size: 15px;
-            background: #f9f9f9;
-            margin-bottom: 12px;
-            outline: none;
-            font-family: inherit
-        }
-
-        .api-group input:focus,
-        .api-group select:focus,
-        .api-group textarea:focus {
-            border-color: #007aff;
-            background: #fff
-        }
-
-        .api-group textarea {
-            min-height: 80px;
-            resize: vertical
-        }
-
-        .api-group button {
-            background: #007aff;
-            color: #fff;
-            border: none;
-            padding: 10px 16px;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: opacity .2s;
-            width: 100%
-        }
-
-        .api-group button:active {
-            opacity: .7
-        }
-
-        .api-group .status-msg {
-            margin-top: 8px;
-            font-size: 14px;
-            color: #3a3a3c;
-            min-height: 20px
-        }
-
-        .api-group .avatar-upload {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 12px
-        }
-
-        .api-group .avatar-preview {
-            width: 64px;
-            height: 64px;
-            border-radius: 50%;
-            background: #e5e5ea;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 30px;
-            overflow: hidden;
-            flex-shrink: 0;
-            border: 2px solid #d1d1d6
-        }
-
-        .api-group .avatar-preview img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover
-        }
-
-        .api-group .avatar-upload input[type=file] {
-            display: none
-        }
-
-        .api-group .avatar-upload .upload-btn {
-            background: #e5e5ea;
-            padding: 6px 14px;
-            border-radius: 8px;
-            font-size: 14px;
-            cursor: pointer;
-            color: #1c1c1e
-        }
-
-        .api-group .avatar-upload .upload-btn:active {
-            opacity: .7
-        }
-
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 44px;
-            height: 24px;
-            flex-shrink: 0
-        }
-
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0
-        }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: #ccc;
-            transition: .3s;
-            border-radius: 24px
-        }
-
-        .slider:before {
-            content: "";
-            position: absolute;
-            height: 18px;
-            width: 18px;
-            left: 3px;
-            bottom: 3px;
-            background: #fff;
-            transition: .3s;
-            border-radius: 50%
-        }
-
-        input:checked+.slider {
-            background: #007aff
-        }
-
-        input:checked+.slider:before {
-            transform: translateX(20px)
-        }
-
-        .wechat-app {
-            display: none;
-            flex-direction: column;
-            height: 100%;
-            background: #E3EEFA !important
-        }
-
-        .wechat-app.active {
-            display: flex
-        }
-
-        .wechat-app .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 16px;
-            background: #E3EEFA !important;
-            border-bottom: 1px solid #d1d1d6;
-            flex-shrink: 0
-        }
-
-        .wechat-app .top-bar .back {
-            font-size: 24px;
-            cursor: pointer;
-            padding: 4px 8px
-        }
-
-        .wechat-app .top-bar .title {
-            font-size: 18px;
-            font-weight: 600
-        }
-
-        .wechat-app .tab-bar {
-            display: flex;
-            background: #f7f7f7;
-            border-top: 1px solid #d1d1d6;
-            flex-shrink: 0
-        }
-
-        .wechat-app .tab-bar .tab {
-            flex: 1;
-            text-align: center;
-            padding: 8px 0;
-            font-size: 13px;
-            color: #8e8e93;
-            cursor: pointer;
-            border-bottom: 2px solid transparent;
-            transition: .2s
-        }
-
-        .wechat-app .tab-bar .tab.active {
-            color: #007aff;
-            border-bottom-color: #007aff;
-            font-weight: 600
-        }
-
-        .wechat-app .tab-content {
-            flex: 1;
-            overflow-y: auto;
-            background: #fff
-        }
-
-        .wechat-app .tab-content .list-item {
-            display: flex;
-            align-items: center;
-            padding: 14px 16px;
-            border-bottom: 1px solid #f0f0f0;
-            cursor: pointer;
-            transition: background .1s
-        }
-
-        .wechat-app .tab-content .list-item:active {
-            background: #f0f0f0
-        }
-
-        .wechat-app .tab-content .list-item .avatar {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: #e5e5ea;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            overflow: hidden;
-            flex-shrink: 0;
-            margin-right: 12px
-        }
-
-        .wechat-app .tab-content .list-item .avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover
-        }
-
-        .wechat-app .tab-content .list-item .info {
-            flex: 1;
-            min-width: 0
-        }
-
-        .wechat-app .tab-content .list-item .info .name {
-            font-size: 16px;
-            font-weight: 600;
-            color: #1c1c1e
-        }
-
-        .wechat-app .tab-content .list-item .info .preview {
-            font-size: 13px;
-            color: #8e8e93;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis
-        }
-
-        .wechat-app .tab-content .list-item .time {
-            font-size: 11px;
-            color: #c6c6c8;
-            flex-shrink: 0;
-            margin-left: 8px
-        }
-
-        .wechat-app .tab-content .empty-state {
-            text-align: center;
-            color: #8e8e93;
-            padding: 60px 20px;
-            font-size: 15px
-        }
-
-        .chat-dialog-page {
-            display: none;
-            flex-direction: column;
-            height: 100%;
-            background: #ededed;
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: 10;
-            border-radius: 30px;
-            overflow: hidden
-        }
-
-        .chat-dialog-page.active {
-            display: flex
-        }
-
-        .chat-dialog-page .chat-header {
-            padding: 12px 16px;
-            background: #ffffffcc;
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid #e5e5ea;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex-shrink: 0
-        }
-
-        .chat-dialog-page .chat-header .back {
-            font-size: 24px;
-            cursor: pointer;
-            padding: 4px 8px
-        }
-
-        .chat-dialog-page .chat-header .avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: #e5e5ea;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            overflow: hidden;
-            flex-shrink: 0;
-            cursor: pointer
-        }
-
-        .chat-dialog-page .chat-header .avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover
-        }
-
-        .chat-dialog-page .chat-header .info {
-            flex: 1
-        }
-
-        .chat-dialog-page .chat-header .info .name {
-            font-size: 16px;
-            font-weight: 700
-        }
-
-        .chat-dialog-page .chat-header .info .model {
-            font-size: 11px;
-            color: #8e8e93
-        }
-
-        .chat-dialog-page .chat-header .new-btn {
-            background: #007aff;
-            color: #fff;
-            border: none;
-            border-radius: 16px;
-            padding: 4px 12px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer
-        }
-
-        .chat-dialog-page .chat-body {
-            flex: 1;
-            padding: 12px 16px 8px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            background: #ededed
-        }
-
-        .chat-dialog-page .message {
-            max-width: 80%;
-            padding: 8px 12px;
-            border-radius: 16px;
-            font-size: 15px;
-            line-height: 1.5;
-            word-break: break-word;
-            animation: fadeIn .2s ease
-        }
-
-        .chat-dialog-page .message.user {
-            align-self: flex-end;
-            background: #007aff;
-            color: #fff;
-            border-bottom-right-radius: 4px
-        }
-
-        .chat-dialog-page .message.assistant {
-            align-self: flex-start;
-            background: #fff;
-            color: #1c1c1e;
-            border-bottom-left-radius: 4px;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, .05)
-        }
-
-        .chat-dialog-page .message .msg-time {
-            font-size: 9px;
-            opacity: .6;
-            margin-top: 4px;
-            text-align: right
-        }
-
-        .chat-dialog-page .message.user .msg-time {
-            color: rgba(255, 255, 255, .7)
-        }
-
-        .chat-dialog-page .message.assistant .msg-time {
-            color: #8e8e93
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(6px)
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0)
-            }
-        }
-
-        .chat-dialog-page .chat-input-area {
-            padding: 10px 12px 16px;
-            background: #ffffffcc;
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-top: 1px solid #e5e5ea;
-            display: flex;
-            gap: 8px;
-            flex-shrink: 0
-        }
-
-        .chat-dialog-page .chat-input-area textarea {
-            flex: 1;
-            border: 1px solid #d1d1d6;
-            border-radius: 20px;
-            padding: 8px 14px;
-            font-size: 15px;
-            resize: none;
-            outline: none;
-            background: #f9f9f9;
-            font-family: inherit;
-            min-height: 36px;
-            max-height: 80px
-        }
-
-        .chat-dialog-page .chat-input-area textarea:focus {
-            border-color: #007aff;
-            background: #fff
-        }
-
-        .chat-dialog-page .chat-input-area button {
-            background: #007aff;
-            color: #fff;
-            border: none;
-            border-radius: 20px;
-            padding: 0 16px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: opacity .2s
-        }
-
-        .chat-dialog-page .chat-input-area button:active {
-            opacity: .7
-        }
-
-        .chat-dialog-page .prompt-box {
-            background: #f0f0f5;
-            padding: 6px 16px;
-            font-size: 12px;
-            color: #3a3a3c;
-            border-bottom: 1px solid #e5e5ea;
-            display: none;
-            word-break: break-word
-        }
-
-        .chat-dialog-page .prompt-box.show {
-            display: block
-        }
-
-        .chat-dialog-page .prompt-box .label {
-            font-weight: 600;
-            color: #1c1c1e
-        }
-
-        ::-webkit-scrollbar {
-            width: 3px
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #c6c6c8;
-            border-radius: 4px
-        }
-
-        .reader-page,
-        .music-page {
-            padding: 20px 16px;
-            flex: 1;
-            overflow-y: auto;
-            background: #E3EEFA !important;
-        }
-
-        .reader-page .header,
-        .music-page .header {
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .reader-page .header .back,
-        .music-page .header .back {
-            font-size: 24px;
-            cursor: pointer;
-            padding: 4px 8px;
-        }
-
-        .reader-page .content-area,
-        .music-page .content-area {
-            background: #fff;
-            border-radius: 14px;
-            padding: 16px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, .05);
-            min-height: 200px;
-        }
-
-        .reader-page .content-area .file-input-wrap,
-        .music-page .content-area .file-input-wrap {
-            text-align: center;
-            margin-bottom: 16px;
-        }
-
-        .reader-page .content-area .file-input-wrap button,
-        .music-page .content-area .file-input-wrap button {
-            background: #007aff;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .reader-page .content-area .file-input-wrap button:active,
-        .music-page .content-area .file-input-wrap button:active {
-            opacity: .7;
-        }
-
-        .reader-page .content-area .novel-content {
-            white-space: pre-wrap;
-            font-size: 16px;
-            line-height: 1.6;
-            color: #1c1c1e;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .music-page .content-area .music-controls {
-            text-align: center;
-            margin-top: 16px;
-        }
-
-        .music-page .content-area .music-controls button {
-            background: #007aff;
-            color: #fff;
-            border: none;
-            padding: 10px 30px;
-            border-radius: 20px;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
-            margin: 0 8px;
-        }
-
-        .music-page .content-area .music-controls button:active {
-            opacity: .7;
-        }
-
-        .music-page .content-area .music-info {
-            text-align: center;
-            margin-top: 12px;
-            font-size: 14px;
-            color: #3a3a3c;
-        }
-
-        @media(max-width:420px) {
-
-            html,
-            body {
-                overflow: hidden;
-                height: 100%;
-                margin: 0;
-                padding: 0;
-            }
-
-            body {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-
-            .phone {
-                width: 100%;
-                height: auto;
-                max-height: calc(100vh - 60px);
-                aspect-ratio: 380 / 780;
-                padding: 8px;
-                border-radius: 20px;
-                background: #000;
-                box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-                margin: auto;
-                overflow: hidden;
-                flex-shrink: 0;
-            }
-
-            .phone .phone-screen {
-                border-radius: 14px;
-                overflow: hidden;
-            }
-
-            .phone.fullscreen {
-                width: 100%;
-                height: 100vh;
-                max-height: 100vh;
-                aspect-ratio: auto;
-                padding: 0;
-                border-radius: 0;
-                background: #E3EEFA !important;
-                box-shadow: none;
-                margin: 0;
-                overflow: hidden;
-                flex-shrink: 0;
-            }
-
-            .phone.fullscreen .phone-screen {
-                border-radius: 0;
-            }
-
-            .status-bar {
-                padding-top: 8px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="color-scheme" content="light" />
+  <meta name="theme-color" content="#E3EEFA" />
+  <title>小铃机</title>
+  <style>
+    :root { color-scheme: light !important; }
+    html, body {
+      background-color: #E3EEFA !important;
+      color-scheme: light !important;
+      height: 100%;
+      overflow: hidden;
+    }
+    *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
+    body{display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0;padding:20px;background:#1a1a1a}
+    .phone{
+      width:100%;max-width:420px;aspect-ratio:380/780;height:auto;max-height:95vh;
+      background:#000;border-radius:40px;padding:12px;
+      box-shadow:0 30px 80px rgba(0,0,0,.8),inset 0 0 0 2px #333;
+      position:relative;margin:0 auto;
+      transition: all 0.3s ease;
+    }
+    .phone-screen{
+      width:100%;height:100%;background:#E3EEFA !important;border-radius:30px;overflow:hidden;
+      position:relative;display:flex;flex-direction:column
+    }
+    /* 全屏模式 - 修复铺满 */
+    .phone.fullscreen{
+      width:100%;height:100vh;max-height:100vh;aspect-ratio:auto;
+      border-radius:0;padding:0;background:#f2f2f7;box-shadow:none;margin:0;
+    }
+    .phone.fullscreen .phone-screen{
+      border-radius:0;background:#E3EEFA !important;height:100%;width:100%;
+    }
+    .status-bar{background:transparent;padding:12px 20px 8px;display:flex;justify-content:space-between;font-size:14px;font-weight:600;color:#1c1c1e;flex-shrink:0}
+    .status-bar .time{font-weight:700}
+    .status-bar .icons{display:flex;gap:6px;align-items:center}
+    .home-screen{flex:1;padding:20px 16px 0;display:flex;flex-direction:column;overflow-y:auto;background:#E3EEFA !important}
+    .home-screen .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px 10px;margin-bottom:20px}
+    .app-icon{display:flex;flex-direction:column;align-items:center;cursor:pointer;transition:transform .1s;-webkit-tap-highlight-color:transparent}
+    .app-icon:active{transform:scale(.9)}
+    .app-icon .icon-circle{
+      width:64px;height:64px;border-radius:16px;
+      display:flex;justify-content:center;align-items:center;
+      background: rgba(255,255,255,0.2);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.3);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      margin-bottom:6px;
+      position:relative;
+      overflow:hidden;
+      transition: all 0.2s;
+    }
+    .app-icon .icon-circle svg {
+      width: 34px;  /* 稍微放大确保视觉统一 */
+      height: 34px;
+      display: block;
+    }
+    .app-icon .icon-label{font-size:11px;color:#1c1c1e;text-align:center}
+    .dock{background:rgba(255,255,255,.5);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);border-radius:30px;padding:12px 16px;margin:0 4px 16px;display:flex;justify-content:space-around;flex-shrink:0;margin-top:auto}
+    .dock .app-icon .icon-circle{width:56px;height:56px;border-radius:14px}
+    .dock .app-icon .icon-circle svg{width:28px;height:28px}
+    .page{display:none;flex-direction:column;height:100%;background:#E3EEFA !important}
+    .page.active{display:flex}
+    .settings-page{padding:20px 16px;flex:1;overflow-y:auto;background:#E3EEFA !important}
+    .settings-page .header{font-size:28px;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:10px}
+    .settings-page .header .back{font-size:24px;cursor:pointer;padding:4px 8px}
+    .settings-list{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+    .settings-item{padding:14px 16px;border-bottom:1px solid #e5e5ea;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:background .1s}
+    .settings-item:last-child{border-bottom:none}
+    .settings-item:active{background:#e5e5ea}
+    .settings-item .label{font-size:16px;color:#1c1c1e}
+    .settings-item .arrow{color:#8e8e93;font-size:18px}
+    .api-settings-page{padding:20px 16px;flex:1;overflow-y:auto;background:#E3EEFA !important}
+    .api-settings-page .header{font-size:28px;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:10px}
+    .api-settings-page .header .back{font-size:24px;cursor:pointer;padding:4px 8px}
+    .api-group{background:#fff;border-radius:14px;padding:16px;margin-bottom:16px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+    .api-group label{display:block;font-size:14px;font-weight:600;color:#3a3a3c;margin-bottom:4px}
+    .api-group input,.api-group select,.api-group textarea{width:100%;padding:10px 12px;border:1px solid #d1d1d6;border-radius:10px;font-size:15px;background:#f9f9f9;margin-bottom:12px;outline:none;font-family:inherit}
+    .api-group input:focus,.api-group select:focus,.api-group textarea:focus{border-color:#007aff;background:#fff}
+    .api-group textarea{min-height:80px;resize:vertical}
+    .api-group button{background:#007aff;color:#fff;border:none;padding:10px 16px;border-radius:10px;font-size:16px;font-weight:600;cursor:pointer;transition:opacity .2s;width:100%}
+    .api-group button:active{opacity:.7}
+    .api-group .status-msg{margin-top:8px;font-size:14px;color:#3a3a3c;min-height:20px}
+    .api-group .avatar-upload{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+    .api-group .avatar-preview{width:64px;height:64px;border-radius:50%;background:#e5e5ea;display:flex;align-items:center;justify-content:center;font-size:30px;overflow:hidden;flex-shrink:0;border:2px solid #d1d1d6}
+    .api-group .avatar-preview img{width:100%;height:100%;object-fit:cover}
+    .api-group .avatar-upload input[type=file]{display:none}
+    .api-group .avatar-upload .upload-btn{background:#e5e5ea;padding:6px 14px;border-radius:8px;font-size:14px;cursor:pointer;color:#1c1c1e}
+    .api-group .avatar-upload .upload-btn:active{opacity:.7}
+    .switch{position:relative;display:inline-block;width:44px;height:24px;flex-shrink:0}
+    .switch input{opacity:0;width:0;height:0}
+    .slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#ccc;transition:.3s;border-radius:24px}
+    .slider:before{content:"";position:absolute;height:18px;width:18px;left:3px;bottom:3px;background:#fff;transition:.3s;border-radius:50%}
+    input:checked+.slider{background:#007aff}
+    input:checked+.slider:before{transform:translateX(20px)}
+    .wechat-app{display:none;flex-direction:column;height:100%;background:#E3EEFA !important}
+    .wechat-app.active{display:flex}
+    .wechat-app .top-bar{display:flex;justify-content:space-between;align-items:center;padding:8px 16px;background:#E3EEFA !important;border-bottom:1px solid #d1d1d6;flex-shrink:0}
+    .wechat-app .top-bar .back{font-size:24px;cursor:pointer;padding:4px 8px}
+    .wechat-app .top-bar .title{font-size:18px;font-weight:600}
+    .wechat-app .tab-bar{display:flex;background:#f7f7f7;border-top:1px solid #d1d1d6;flex-shrink:0}
+    .wechat-app .tab-bar .tab{flex:1;text-align:center;padding:8px 0;font-size:13px;color:#8e8e93;cursor:pointer;border-bottom:2px solid transparent;transition:.2s}
+    .wechat-app .tab-bar .tab.active{color:#007aff;border-bottom-color:#007aff;font-weight:600}
+    .wechat-app .tab-content{flex:1;overflow-y:auto;background:#E3EEFA !important} /* 背景透明 */
+    .wechat-app .tab-content .list-item{display:flex;align-items:center;padding:14px 16px;border-bottom:1px solid #e5e5ea;cursor:pointer;transition:background .1s;background:#ffffffcc;backdrop-filter:blur(6px);border-radius:10px;margin-bottom:6px;box-shadow:0 1px 4px rgba(0,0,0,0.04)}
+    .wechat-app .tab-content .list-item:active{background:#e5e5ea}
+    .wechat-app .tab-content .list-item .avatar{width:48px;height:48px;border-radius:50%;background:#e5e5ea;display:flex;align-items:center;justify-content:center;font-size:24px;overflow:hidden;flex-shrink:0;margin-right:12px}
+    .wechat-app .tab-content .list-item .avatar img{width:100%;height:100%;object-fit:cover}
+    .wechat-app .tab-content .list-item .info{flex:1;min-width:0}
+    .wechat-app .tab-content .list-item .info .name{font-size:16px;font-weight:600;color:#1c1c1e}
+    .wechat-app .tab-content .list-item .info .preview{font-size:13px;color:#8e8e93;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .wechat-app .tab-content .list-item .time{font-size:11px;color:#c6c6c8;flex-shrink:0;margin-left:8px}
+    .wechat-app .tab-content .empty-state{text-align:center;color:#8e8e93;padding:60px 20px;font-size:15px}
+    .chat-dialog-page{display:none;flex-direction:column;height:100%;background:#E3EEFA !important;position:absolute;top:0;left:0;right:0;bottom:0;z-index:10;border-radius:30px;overflow:hidden}
+    .chat-dialog-page.active{display:flex}
+    .chat-dialog-page .chat-header{padding:12px 16px;background:#ffffffcc;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid #e5e5ea;display:flex;align-items:center;gap:12px;flex-shrink:0}
+    .chat-dialog-page .chat-header .back{font-size:24px;cursor:pointer;padding:4px 8px}
+    .chat-dialog-page .chat-header .avatar{width:36px;height:36px;border-radius:50%;background:#e5e5ea;display:flex;align-items:center;justify-content:center;font-size:18px;overflow:hidden;flex-shrink:0;cursor:pointer}
+    .chat-dialog-page .chat-header .avatar img{width:100%;height:100%;object-fit:cover}
+    .chat-dialog-page .chat-header .info{flex:1}
+    .chat-dialog-page .chat-header .info .name{font-size:16px;font-weight:700}
+    .chat-dialog-page .chat-header .info .model{font-size:11px;color:#8e8e93}
+    .chat-dialog-page .chat-header .new-btn{background:#007aff;color:#fff;border:none;border-radius:16px;padding:4px 12px;font-size:12px;font-weight:600;cursor:pointer}
+    .chat-dialog-page .chat-body{flex:1;padding:12px 16px 8px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;background:#E3EEFA !important}
+    .chat-dialog-page .message{max-width:80%;padding:8px 12px;border-radius:16px;font-size:15px;line-height:1.5;word-break:break-word;animation:fadeIn .2s ease}
+    .chat-dialog-page .message.user{align-self:flex-end;background:#007aff;color:#fff;border-bottom-right-radius:4px}
+    .chat-dialog-page .message.assistant{align-self:flex-start;background:#fff;color:#1c1c1e;border-bottom-left-radius:4px;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+    .chat-dialog-page .message .msg-time{font-size:9px;opacity:.6;margin-top:4px;text-align:right}
+    .chat-dialog-page .message.user .msg-time{color:rgba(255,255,255,.7)}
+    .chat-dialog-page .message.assistant .msg-time{color:#8e8e93}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+    .chat-dialog-page .chat-input-area{padding:10px 12px 16px;background:#ffffffcc;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid #e5e5ea;display:flex;gap:8px;flex-shrink:0}
+    .chat-dialog-page .chat-input-area textarea{flex:1;border:1px solid #d1d1d6;border-radius:20px;padding:8px 14px;font-size:15px;resize:none;outline:none;background:#f9f9f9;font-family:inherit;min-height:36px;max-height:80px}
+    .chat-dialog-page .chat-input-area textarea:focus{border-color:#007aff;background:#fff}
+    .chat-dialog-page .chat-input-area button{background:#007aff;color:#fff;border:none;border-radius:20px;padding:0 16px;font-size:15px;font-weight:600;cursor:pointer;transition:opacity .2s}
+    .chat-dialog-page .chat-input-area button:active{opacity:.7}
+    .chat-dialog-page .prompt-box{background:#f0f0f5;padding:6px 16px;font-size:12px;color:#3a3a3c;border-bottom:1px solid #e5e5ea;display:none;word-break:break-word}
+    .chat-dialog-page .prompt-box.show{display:block}
+    .chat-dialog-page .prompt-box .label{font-weight:600;color:#1c1c1e}
+    ::-webkit-scrollbar{width:3px}
+    ::-webkit-scrollbar-thumb{background:#c6c6c8;border-radius:4px}
+
+    .reader-page, .music-page {
+      padding:20px 16px;
+      flex:1;
+      overflow-y:auto;
+      background:#E3EEFA !important;
+    }
+    .reader-page .header, .music-page .header {
+      font-size:28px;
+      font-weight:700;
+      margin-bottom:20px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .reader-page .header .back, .music-page .header .back {
+      font-size:24px;
+      cursor:pointer;
+      padding:4px 8px;
+    }
+    .reader-page .content-area, .music-page .content-area {
+      background:#ffffffcc;
+      backdrop-filter:blur(10px);
+      border-radius:14px;
+      padding:16px;
+      box-shadow:0 2px 10px rgba(0,0,0,.05);
+      min-height:200px;
+    }
+    .reader-page .content-area .file-input-wrap, .music-page .content-area .file-input-wrap {
+      text-align:center;
+      margin-bottom:16px;
+    }
+    .reader-page .content-area .file-input-wrap button, .music-page .content-area .file-input-wrap button {
+      background:#007aff;
+      color:#fff;
+      border:none;
+      padding:10px 20px;
+      border-radius:10px;
+      font-size:16px;
+      font-weight:600;
+      cursor:pointer;
+    }
+    .reader-page .content-area .file-input-wrap button:active, .music-page .content-area .file-input-wrap button:active {
+      opacity:.7;
+    }
+    .reader-page .content-area .novel-content {
+      white-space:pre-wrap;
+      font-size:16px;
+      line-height:1.6;
+      color:#1c1c1e;
+      max-height:400px;
+      overflow-y:auto;
+    }
+    .music-page .content-area .music-controls {
+      text-align:center;
+      margin-top:16px;
+    }
+    .music-page .content-area .music-controls button {
+      background:#007aff;
+      color:#fff;
+      border:none;
+      padding:10px 30px;
+      border-radius:20px;
+      font-size:18px;
+      font-weight:600;
+      cursor:pointer;
+      margin:0 8px;
+    }
+    .music-page .content-area .music-controls button:active {
+      opacity:.7;
+    }
+    .music-page .content-area .music-info {
+      text-align:center;
+      margin-top:12px;
+      font-size:14px;
+      color:#3a3a3c;
+    }
+
+    @media(max-width:420px){
+      html, body {
+        overflow: hidden;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .phone {
+        width: 100%;
+        height: auto;
+        max-height: calc(100vh - 60px);
+        aspect-ratio: 380 / 780;
+        padding: 8px;
+        border-radius: 20px;
+        background: #000;
+        box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        margin: auto;
+        overflow: hidden;
+        flex-shrink:0;
+      }
+      .phone .phone-screen {
+        border-radius: 14px;
+        overflow: hidden;
+      }
+      /* 全屏模式在手机上完全填满 */
+      .phone.fullscreen {
+        width: 100%;
+        height: 100vh;
+        max-height: 100vh;
+        aspect-ratio: auto;
+        padding: 0;
+        border-radius: 0;
+        background: #E3EEFA !important;
+        box-shadow: none;
+        margin: 0;
+        overflow: hidden;
+        flex-shrink:0;
+      }
+      .phone.fullscreen .phone-screen {
+        border-radius: 0;
+      }
+      .status-bar {
+        padding-top: 8px;
+      }
+    }
+  </style>
 </head>
-
 <body>
-    <div class="phone" id="phoneContainer">
-        <div class="phone-screen">
-            <div class="status-bar" id="statusBar">
-                <span class="time" id="statusTime">00:00</span>
-                <span class="icons"><span>📶</span><span>🔋</span></span>
-            </div>
-
-            <!-- 主屏幕 -->
-            <div class="page active" id="homePage">
-                <div class="home-screen">
-                    <div class="grid">
-                        <!-- 聊天图标（纯气泡） -->
-                        <div class="app-icon" id="goToWechat">
-                            <div class="icon-circle">
-                                <svg viewBox="0 0 24 24">
-                                    <path
-                                        d="M4 10.5 C4 6, 7.5 4, 12 4 C16.5 4, 20 6, 20 10.5 C20 15, 16.5 17, 12 17 L10.5 20 L9 17 C7.5 17, 4 15, 4 10.5 Z"
-                                        fill="#C5C8F0" stroke="none" />
-                                </svg>
-                            </div>
-                            <span class="icon-label">聊天</span>
-                        </div>
-
-                        <!-- 设置图标 -->
-                        <div class="app-icon" id="goToSettingsFromHome">
-                            <div class="icon-circle">
-                                <svg viewBox="0 0 24 24">
-                                    <path
-                                        d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8z"
-                                        fill="#C5C8F0" />
-                                    <circle cx="12" cy="12" r="3" fill="#C5C8F0" />
-                                </svg>
-                            </div>
-                            <span class="icon-label">设置</span>
-                        </div>
-
-                        <!-- 小说图标 -->
-                        <div class="app-icon" id="goToNovel">
-                            <div class="icon-circle">
-                                <svg viewBox="0 0 24 24">
-                                    <path d="M3 5a2 2 0 012-2h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5z"
-                                        fill="#C5C8F0" />
-                                    <path d="M3 9h18" stroke="#fff" stroke-width="1.5" stroke-linecap="round" />
-                                    <path d="M7 13h4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" />
-                                </svg>
-                            </div>
-                            <span class="icon-label">小说</span>
-                        </div>
-
-                        <!-- 音乐图标 -->
-                        <div class="app-icon" id="goToMusic">
-                            <div class="icon-circle">
-                                <svg viewBox="0 0 24 24">
-                                    <path d="M9 18V5l10-3v13" stroke="#C5C8F0" stroke-width="2" fill="none"
-                                        stroke-linecap="round" stroke-linejoin="round" />
-                                    <circle cx="6" cy="18" r="3" fill="#C5C8F0" stroke="none" />
-                                    <circle cx="16" cy="16" r="3" fill="#C5C8F0" stroke="none" />
-                                </svg>
-                            </div>
-                            <span class="icon-label">音乐</span>
-                        </div>
-                    </div>
-
-                    <!-- Dock -->
-                    <div class="dock">
-                        <div class="app-icon" id="goToWechatFromDock">
-                            <div class="icon-circle">
-                                <svg viewBox="0 0 24 24">
-                                    <path
-                                        d="M4 10.5 C4 6, 7.5 4, 12 4 C16.5 4, 20 6, 20 10.5 C20 15, 16.5 17, 12 17 L10.5 20 L9 17 C7.5 17, 4 15, 4 10.5 Z"
-                                        fill="#C5C8F0" stroke="none" />
-                                </svg>
-                            </div>
-                            <span class="icon-label">聊天</span>
-                        </div>
-                        <div class="app-icon" id="goToSettingsFromDock">
-                            <div class="icon-circle">
-                                <svg viewBox="0 0 24 24">
-                                    <path
-                                        d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8z"
-                                        fill="#C5C8F0" />
-                                    <circle cx="12" cy="12" r="3" fill="#C5C8F0" />
-                                </svg>
-                            </div>
-                            <span class="icon-label">设置</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 设置 -->
-            <div class="page" id="settingsPage">
-                <div class="settings-page">
-                    <div class="header"><span class="back" id="backFromSettings">‹</span><span>设置</span></div>
-                    <div class="settings-list">
-                        <div class="settings-item" id="goToApiSettings"><span class="label">🔑 API 设置</span><span
-                                class="arrow">›</span></div>
-                        <div class="settings-item" id="goToDisplaySettings"><span class="label">📱 显示设置</span><span
-                                class="arrow">›</span></div>
-                        <div class="settings-item" id="forceRefreshBtn"><span class="label">🔄 强制刷新</span><span
-                                class="arrow">›</span></div>
-                        <div class="settings-item"><span class="label">ℹ️ 关于</span><span class="arrow">›</span></div>
-                        <!-- 版本信息 -->
-                        <div class="settings-item" style="border-bottom: none; cursor: default; background: #f9f9f9;">
-                            <span class="label" style="font-size:13px; color:#8e8e93;">📦 版本信息</span>
-                            <span class="arrow" style="font-size:12px; color:#8e8e93;" id="versionInfo">加载中...</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- API 设置 -->
-            <div class="page" id="apiSettingsPage">
-                <div class="api-settings-page">
-                    <div class="header"><span class="back" id="backFromApiSettings">‹</span><span>API 设置</span></div>
-                    <div class="api-group">
-                        <label>🔗 API 地址</label>
-                        <input id="apiBase" type="text" placeholder="https://api.deepseek.com/v1"
-                            value="https://api.deepseek.com/v1" />
-                        <label>🔑 API Key</label>
-                        <input id="apiKey" type="password" placeholder="sk-..." />
-                        <label>📦 模型</label>
-                        <div style="display:flex; gap:8px;">
-                            <select id="modelSelect" style="flex:1; margin-bottom:0;">
-                                <option value="">请先拉取</option>
-                            </select>
-                            <button id="fetchModelsBtn"
-                                style="width:auto; padding:10px 16px; background:#34c759;">🔄</button>
-                        </div>
-                        <div style="display:flex; align-items:center; gap:12px; margin:12px 0 8px;">
-                            <label style="font-weight:600; margin-bottom:0;">⚡ 流式输出</label>
-                            <label class="switch"><input type="checkbox" id="streamToggle" /><span
-                                    class="slider round"></span></label>
-                            <span style="font-size:13px; color:#8e8e93;" id="streamStatus">关闭</span>
-                        </div>
-                        <div class="status-msg" id="apiStatus">就绪</div>
-                        <button id="saveApiBtn" style="background:#8e8e93; margin-top:8px;">保存设置</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 显示设置 -->
-            <div class="page" id="displaySettingsPage">
-                <div class="api-settings-page">
-                    <div class="header">
-                        <span class="back" id="backFromDisplaySettings">‹</span>
-                        <span>显示设置</span>
-                    </div>
-                    <div class="api-group">
-                        <div style="display:flex; align-items:center; justify-content:space-between;">
-                            <label style="margin-bottom:0; font-weight:600;">全屏模式</label>
-                            <label class="switch">
-                                <input type="checkbox" id="fullscreenToggle" />
-                                <span class="slider round"></span>
-                            </label>
-                        </div>
-                        <div style="margin-top:8px; font-size:14px; color:#8e8e93;">
-                            开启后，界面将充满整个屏幕，无黑色边框；关闭则显示为带黑框的小手机样式。
-                        </div>
-                        <div class="status-msg" id="displayStatus"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 小说页面 -->
-            <div class="page" id="novelPage">
-                <div class="reader-page">
-                    <div class="header">
-                        <span class="back" id="backFromNovel">‹</span>
-                        <span>📖 小说</span>
-                    </div>
-                    <div class="content-area">
-                        <div class="file-input-wrap">
-                            <button id="importNovelBtn">📂 导入小说</button>
-                            <input type="file" id="novelFileInput" accept=".txt" style="display:none;" />
-                        </div>
-                        <div class="novel-content" id="novelContent">点击「导入小说」选择 .txt 文件阅读</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 音乐页面 -->
-            <div class="page" id="musicPage">
-                <div class="music-page">
-                    <div class="header">
-                        <span class="back" id="backFromMusic">‹</span>
-                        <span>🎵 音乐</span>
-                    </div>
-                    <div class="content-area">
-                        <div class="file-input-wrap">
-                            <button id="importMusicBtn">📂 导入 MP3</button>
-                            <input type="file" id="musicFileInput" accept=".mp3" style="display:none;" />
-                        </div>
-                        <div class="music-controls">
-                            <button id="playPauseBtn">▶️ 播放</button>
-                        </div>
-                        <div class="music-info" id="musicInfo">未加载音乐</div>
-                        <audio id="audioPlayer" style="display:none;"></audio>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 微信风格聊天应用 -->
-            <div class="wechat-app" id="wechatApp">
-                <div class="top-bar">
-                    <span class="back" id="wechatBack">‹</span>
-                    <span class="title" id="wechatTitle">聊天</span>
-                    <span style="width:24px;"></span>
-                </div>
-                <div class="tab-content" id="wechatTabContent"></div>
-                <div class="tab-bar">
-                    <div class="tab active" data-tab="chats">💬 聊天</div>
-                    <div class="tab" data-tab="contacts">📇 通讯录</div>
-                </div>
-            </div>
-
-            <!-- 聊天对话页 -->
-            <div class="chat-dialog-page" id="chatDialogPage">
-                <div class="chat-header">
-                    <span class="back" id="backFromDialog">‹</span>
-                    <div class="avatar" id="dialogAvatar">🧑</div>
-                    <div class="info">
-                        <div class="name" id="dialogName">角色</div>
-                        <div class="model" id="dialogModel">未选择</div>
-                    </div>
-                    <button class="new-btn" id="dialogNewBtn">新对话</button>
-                </div>
-                <div class="prompt-box" id="dialogPromptBox"></div>
-                <div class="chat-body" id="dialogMessages"></div>
-                <div class="chat-input-area">
-                    <textarea id="dialogInput" rows="1" placeholder="输入问题..."></textarea>
-                    <button id="dialogSendBtn">发送</button>
-                </div>
-            </div>
-
-            <!-- 创建角色 -->
-            <div class="page" id="createCharPage">
-                <div class="api-settings-page">
-                    <div class="header">
-                        <span class="back" id="backFromCreateChar">‹</span>
-                        <span id="createCharTitle">新建 Char</span>
-                    </div>
-                    <div class="api-group">
-                        <label>头像</label>
-                        <div class="avatar-upload">
-                            <div class="avatar-preview" id="charAvatarPreview">🧑</div>
-                            <label class="upload-btn" id="avatarUploadBtn">选择图片</label>
-                            <input type="file" id="charAvatarInput" accept="image/*" />
-                        </div>
-                        <label>名字</label>
-                        <input id="charNameInput" placeholder="输入角色名字..." />
-                        <label>人设（系统提示词）</label>
-                        <textarea id="charPromptInput" placeholder="例如：你是一个温柔的小助理..."></textarea>
-                        <button id="saveCharBtn">保存</button>
-                        <div class="status-msg" id="createCharStatus"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 角色详情页 -->
-            <div class="page" id="contactDetailPage">
-                <div class="api-settings-page">
-                    <div class="header">
-                        <span class="back" id="backFromContactDetail">‹</span>
-                        <span id="contactDetailTitle">角色详情</span>
-                    </div>
-                    <div class="api-group" id="detailContainer">
-                        <div id="viewMode">
-                            <div style="text-align:center; margin-bottom:12px;">
-                                <div class="avatar-preview" id="detailAvatar"
-                                    style="width:80px;height:80px;margin:0 auto;font-size:36px;">🧑</div>
-                            </div>
-                            <div style="margin-bottom:10px;">
-                                <label style="font-weight:600;">名字</label>
-                                <div id="detailNameDisplay"
-                                    style="padding:8px 12px;background:#f9f9f9;border-radius:8px;font-size:16px;">未命名
-                                </div>
-                            </div>
-                            <div style="margin-bottom:10px;">
-                                <label style="font-weight:600;">人设</label>
-                                <div id="detailPromptDisplay"
-                                    style="padding:8px 12px;background:#f9f9f9;border-radius:8px;font-size:15px;min-height:60px;white-space:pre-wrap;">
-                                    未设置</div>
-                            </div>
-                            <div style="display:flex;gap:10px;margin-top:8px;">
-                                <button id="detailEditBtn" style="flex:1;background:#007aff;">修改</button>
-                                <button id="detailDeleteBtn" style="flex:1;background:#ff3b30;">删除</button>
-                            </div>
-                        </div>
-                        <div id="editMode" style="display:none;">
-                            <div style="text-align:center;margin-bottom:12px;">
-                                <div class="avatar-preview" id="detailAvatarEdit"
-                                    style="width:80px;height:80px;margin:0 auto;font-size:36px;">🧑</div>
-                            </div>
-                            <label>名字</label>
-                            <input id="detailNameInput" style="margin-bottom:10px;" />
-                            <label>人设</label>
-                            <textarea id="detailPromptInput" rows="4" style="margin-bottom:10px;"></textarea>
-                            <div style="display:flex;gap:10px;">
-                                <button id="detailSaveBtn" style="flex:1;background:#34c759;">保存修改</button>
-                                <button id="detailCancelBtn" style="flex:1;background:#8e8e93;">取消修改</button>
-                            </div>
-                        </div>
-                        <div class="status-msg" id="detailStatus"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
+<div class="phone" id="phoneContainer">
+  <div class="phone-screen">
+    <div class="status-bar" id="statusBar">
+      <span class="time" id="statusTime">00:00</span>
+      <span class="icons"><span>📶</span><span>🔋</span></span>
     </div>
 
-    <script>
-        // ============================================================
-        // 1. 导航核心
-        // ============================================================
-        function showPage(id) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById('wechatApp').classList.remove('active');
-            document.getElementById('chatDialogPage').classList.remove('active');
-            const target = document.getElementById(id);
-            if (target) target.classList.add('active');
-        }
+    <!-- 主屏幕 -->
+    <div class="page active" id="homePage">
+      <div class="home-screen">
+        <div class="grid">
+          <!-- 聊天图标（椭圆+三角） -->
+          <div class="app-icon" id="goToWechat">
+            <div class="icon-circle">
+              <svg viewBox="0 0 24 24">
+                <path d="M4 10.5 C4 6, 7.5 4, 12 4 C16.5 4, 20 6, 20 10.5 C20 15, 16.5 17, 12 17 L10.5 20 L9 17 C7.5 17, 4 15, 4 10.5 Z" fill="#C5C8F0" stroke="none"/>
+              </svg>
+            </div>
+            <span class="icon-label">聊天</span>
+          </div>
 
-        function showWechat() {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById('wechatApp').classList.add('active');
-            document.getElementById('chatDialogPage').classList.remove('active');
-            renderWechatContent();
-        }
+          <!-- 设置图标 -->
+          <div class="app-icon" id="goToSettingsFromHome">
+            <div class="icon-circle">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8z" fill="#C5C8F0"/>
+                <circle cx="12" cy="12" r="3" fill="#C5C8F0"/>
+              </svg>
+            </div>
+            <span class="icon-label">设置</span>
+          </div>
 
-        function goHome() {
-            showPage('homePage');
-        }
+          <!-- 小说图标 -->
+          <div class="app-icon" id="goToNovel">
+            <div class="icon-circle">
+              <svg viewBox="0 0 24 24">
+                <path d="M3 5a2 2 0 012-2h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5z" fill="#C5C8F0"/>
+                <path d="M3 9h18" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M7 13h4" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <span class="icon-label">小说</span>
+          </div>
 
-        document.getElementById('goToWechat').addEventListener('click', showWechat);
-        document.getElementById('goToWechatFromDock').addEventListener('click', showWechat);
-        document.getElementById('goToSettingsFromHome').addEventListener('click', () => showPage('settingsPage'));
-        document.getElementById('goToSettingsFromDock').addEventListener('click', () => showPage('settingsPage'));
-        document.getElementById('backFromSettings').addEventListener('click', goHome);
-        document.getElementById('backFromApiSettings').addEventListener('click', () => showPage('settingsPage'));
-        document.getElementById('goToApiSettings').addEventListener('click', () => showPage('apiSettingsPage'));
-        document.getElementById('wechatBack').addEventListener('click', goHome);
+          <!-- 音乐图标 -->
+          <div class="app-icon" id="goToMusic">
+            <div class="icon-circle">
+              <svg viewBox="0 0 24 24">
+                <path d="M9 18V5l10-3v13" stroke="#C5C8F0" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="6" cy="18" r="3" fill="#C5C8F0" stroke="none"/>
+                <circle cx="16" cy="16" r="3" fill="#C5C8F0" stroke="none"/>
+              </svg>
+            </div>
+            <span class="icon-label">音乐</span>
+          </div>
 
-        document.getElementById('goToDisplaySettings').addEventListener('click', () => showPage('displaySettingsPage'));
-        document.getElementById('backFromDisplaySettings').addEventListener('click', () => showPage('settingsPage'));
+          <!-- 朋友圈图标（新增） -->
+          <div class="app-icon" id="goToMoments">
+            <div class="icon-circle">
+              <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" fill="#C5C8F0" stroke="none"/>
+                <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2z" fill="none" stroke="#fff" stroke-width="2"/>
+                <circle cx="8" cy="10" r="1.5" fill="#fff"/>
+                <circle cx="12" cy="10" r="1.5" fill="#fff"/>
+                <circle cx="16" cy="10" r="1.5" fill="#fff"/>
+                <path d="M6 16 L18 16" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <span class="icon-label">朋友圈</span>
+          </div>
 
-        document.getElementById('forceRefreshBtn').addEventListener('click', function () {
-            if (confirm('确定要强制刷新页面吗？将重新加载所有资源。')) {
-                location.reload(true);
-            }
-        });
+          <!-- 我的图标（新增） -->
+          <div class="app-icon" id="goToProfile">
+            <div class="icon-circle">
+              <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="8" r="4" fill="#C5C8F0" stroke="none"/>
+                <path d="M4 20 C4 16, 8 14, 12 14 C16 14, 20 16, 20 20" fill="#C5C8F0" stroke="none"/>
+              </svg>
+            </div>
+            <span class="icon-label">我的</span>
+          </div>
+        </div>
 
-        document.getElementById('goToNovel').addEventListener('click', () => showPage('novelPage'));
-        document.getElementById('backFromNovel').addEventListener('click', goHome);
+        <!-- Dock -->
+        <div class="dock">
+          <div class="app-icon" id="goToWechatFromDock">
+            <div class="icon-circle">
+              <svg viewBox="0 0 24 24">
+                <path d="M4 10.5 C4 6, 7.5 4, 12 4 C16.5 4, 20 6, 20 10.5 C20 15, 16.5 17, 12 17 L10.5 20 L9 17 C7.5 17, 4 15, 4 10.5 Z" fill="#C5C8F0" stroke="none"/>
+              </svg>
+            </div>
+            <span class="icon-label">聊天</span>
+          </div>
+          <div class="app-icon" id="goToSettingsFromDock">
+            <div class="icon-circle">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8z" fill="#C5C8F0"/>
+                <circle cx="12" cy="12" r="3" fill="#C5C8F0"/>
+              </svg>
+            </div>
+            <span class="icon-label">设置</span>
+          </div>
+        </div>
+      </div>
+    </div>
 
-        document.getElementById('goToMusic').addEventListener('click', () => showPage('musicPage'));
-        document.getElementById('backFromMusic').addEventListener('click', goHome);
+    <!-- 设置 -->
+    <div class="page" id="settingsPage">
+      <div class="settings-page">
+        <div class="header"><span class="back" id="backFromSettings">‹</span><span>设置</span></div>
+        <div class="settings-list">
+          <div class="settings-item" id="goToApiSettings"><span class="label">🔑 API 设置</span><span class="arrow">›</span></div>
+          <div class="settings-item" id="goToDisplaySettings"><span class="label">📱 显示设置</span><span class="arrow">›</span></div>
+          <div class="settings-item" id="forceRefreshBtn"><span class="label">🔄 强制刷新</span><span class="arrow">›</span></div>
+          <div class="settings-item"><span class="label">ℹ️ 关于</span><span class="arrow">›</span></div>
+          <div class="settings-item" style="border-bottom: none; cursor: default; background: #f9f9f9;">
+            <span class="label" style="font-size:13px; color:#8e8e93;">📦 版本信息</span>
+            <span class="arrow" style="font-size:12px; color:#8e8e93;" id="versionInfo">加载中...</span>
+          </div>
+        </div>
+      </div>
+    </div>
 
-        document.getElementById('backFromCreateChar').addEventListener('click', () => {
-            renderWechatContent();
-            showWechat();
-        });
+    <!-- API 设置 -->
+    <div class="page" id="apiSettingsPage">
+      <div class="api-settings-page">
+        <div class="header"><span class="back" id="backFromApiSettings">‹</span><span>API 设置</span></div>
+        <div class="api-group">
+          <label>🔗 API 地址</label>
+          <input id="apiBase" type="text" placeholder="https://api.deepseek.com/v1" value="https://api.deepseek.com/v1" />
+          <label>🔑 API Key</label>
+          <input id="apiKey" type="password" placeholder="sk-..." />
+          <label>📦 模型</label>
+          <div style="display:flex; gap:8px;">
+            <select id="modelSelect" style="flex:1; margin-bottom:0;"><option value="">请先拉取</option></select>
+            <button id="fetchModelsBtn" style="width:auto; padding:10px 16px; background:#34c759;">🔄</button>
+          </div>
+          <div style="display:flex; align-items:center; gap:12px; margin:12px 0 8px;">
+            <label style="font-weight:600; margin-bottom:0;">⚡ 流式输出</label>
+            <label class="switch"><input type="checkbox" id="streamToggle" /><span class="slider round"></span></label>
+            <span style="font-size:13px; color:#8e8e93;" id="streamStatus">关闭</span>
+          </div>
+          <div class="status-msg" id="apiStatus">就绪</div>
+          <button id="saveApiBtn" style="background:#8e8e93; margin-top:8px;">保存设置</button>
+        </div>
+      </div>
+    </div>
 
-        document.getElementById('backFromContactDetail').addEventListener('click', () => {
-            if (isEditing) {
-                document.getElementById('detailNameInput').value = originalName;
-                document.getElementById('detailPromptInput').value = originalPrompt;
-                document.getElementById('viewMode').style.display = 'block';
-                document.getElementById('editMode').style.display = 'none';
-                isEditing = false;
-                document.getElementById('detailStatus').textContent = '';
-            }
-            renderWechatContent();
-            showWechat();
-        });
+    <!-- 显示设置 -->
+    <div class="page" id="displaySettingsPage">
+      <div class="api-settings-page">
+        <div class="header">
+          <span class="back" id="backFromDisplaySettings">‹</span>
+          <span>显示设置</span>
+        </div>
+        <div class="api-group">
+          <div style="display:flex; align-items:center; justify-content:space-between;">
+            <label style="margin-bottom:0; font-weight:600;">全屏模式</label>
+            <label class="switch">
+              <input type="checkbox" id="fullscreenToggle" />
+              <span class="slider round"></span>
+            </label>
+          </div>
+          <div style="margin-top:8px; font-size:14px; color:#8e8e93;">
+            开启后，界面将充满整个屏幕，无黑色边框；关闭则显示为带黑框的小手机样式。
+          </div>
+          <div class="status-msg" id="displayStatus"></div>
+        </div>
+      </div>
+    </div>
 
-        // ============================================================
-        // 2. 状态栏时间
-        // ============================================================
-        function updateTime() {
-            const now = new Date();
-            document.getElementById('statusTime').textContent =
-                String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
-        }
-        updateTime();
-        setInterval(updateTime, 10000);
+    <!-- 小说页面 -->
+    <div class="page" id="novelPage">
+      <div class="reader-page">
+        <div class="header">
+          <span class="back" id="backFromNovel">‹</span>
+          <span>📖 小说</span>
+        </div>
+        <div class="content-area">
+          <div class="file-input-wrap">
+            <button id="importNovelBtn">📂 导入小说</button>
+            <input type="file" id="novelFileInput" accept=".txt" style="display:none;" />
+          </div>
+          <div class="novel-content" id="novelContent">点击「导入小说」选择 .txt 文件阅读</div>
+        </div>
+      </div>
+    </div>
 
-        // ============================================================
-        // 3. 全屏模式切换
-        // ============================================================
-        const phoneContainer = document.getElementById('phoneContainer');
-        const fullscreenToggle = document.getElementById('fullscreenToggle');
-        const displayStatus = document.getElementById('displayStatus');
+    <!-- 音乐页面 -->
+    <div class="page" id="musicPage">
+      <div class="music-page">
+        <div class="header">
+          <span class="back" id="backFromMusic">‹</span>
+          <span>🎵 音乐</span>
+        </div>
+        <div class="content-area">
+          <div class="file-input-wrap">
+            <button id="importMusicBtn">📂 导入 MP3</button>
+            <input type="file" id="musicFileInput" accept=".mp3" style="display:none;" />
+          </div>
+          <div class="music-controls">
+            <button id="playPauseBtn">▶️ 播放</button>
+          </div>
+          <div class="music-info" id="musicInfo">未加载音乐</div>
+          <audio id="audioPlayer" style="display:none;"></audio>
+        </div>
+      </div>
+    </div>
 
-        function loadDisplayMode() {
-            const isFullscreen = localStorage.getItem('fullscreenMode') === 'true';
-            fullscreenToggle.checked = isFullscreen;
-            applyDisplayMode(isFullscreen);
-        }
+    <!-- 微信风格聊天应用 -->
+    <div class="wechat-app" id="wechatApp">
+      <div class="top-bar">
+        <span class="back" id="wechatBack">‹</span>
+        <span class="title" id="wechatTitle">聊天</span>
+        <span style="width:24px;"></span>
+      </div>
+      <div class="tab-content" id="wechatTabContent"></div>
+      <div class="tab-bar">
+        <div class="tab active" data-tab="chats">💬 聊天</div>
+        <div class="tab" data-tab="contacts">📇 通讯录</div>
+      </div>
+    </div>
 
-        function applyDisplayMode(isFullscreen) {
-            if (isFullscreen) {
-                phoneContainer.classList.add('fullscreen');
-            } else {
-                phoneContainer.classList.remove('fullscreen');
-            }
-            localStorage.setItem('fullscreenMode', isFullscreen ? 'true' : 'false');
-            displayStatus.textContent = isFullscreen ? '✅ 全屏模式已启用' : '✅ 带黑框模式已启用';
-            setTimeout(() => {
-                if (displayStatus.textContent.includes('已启用')) displayStatus.textContent = '';
-            }, 2000);
-        }
+    <!-- 聊天对话页 -->
+    <div class="chat-dialog-page" id="chatDialogPage">
+      <div class="chat-header">
+        <span class="back" id="backFromDialog">‹</span>
+        <div class="avatar" id="dialogAvatar">🧑</div>
+        <div class="info">
+          <div class="name" id="dialogName">角色</div>
+          <div class="model" id="dialogModel">未选择</div>
+        </div>
+        <button class="new-btn" id="dialogNewBtn">新对话</button>
+      </div>
+      <div class="prompt-box" id="dialogPromptBox"></div>
+      <div class="chat-body" id="dialogMessages"></div>
+      <div class="chat-input-area">
+        <textarea id="dialogInput" rows="1" placeholder="输入问题..."></textarea>
+        <button id="dialogSendBtn">发送</button>
+      </div>
+    </div>
 
-        fullscreenToggle.addEventListener('change', function () {
-            applyDisplayMode(this.checked);
-        });
+    <!-- 创建角色 -->
+    <div class="page" id="createCharPage">
+      <div class="api-settings-page">
+        <div class="header">
+          <span class="back" id="backFromCreateChar">‹</span>
+          <span id="createCharTitle">新建 Char</span>
+        </div>
+        <div class="api-group">
+          <label>头像</label>
+          <div class="avatar-upload">
+            <div class="avatar-preview" id="charAvatarPreview">🧑</div>
+            <label class="upload-btn" id="avatarUploadBtn">选择图片</label>
+            <input type="file" id="charAvatarInput" accept="image/*" />
+          </div>
+          <label>名字</label>
+          <input id="charNameInput" placeholder="输入角色名字..." />
+          <label>人设（系统提示词）</label>
+          <textarea id="charPromptInput" placeholder="例如：你是一个温柔的小助理..."></textarea>
+          <button id="saveCharBtn">保存</button>
+          <div class="status-msg" id="createCharStatus"></div>
+        </div>
+      </div>
+    </div>
 
-        loadDisplayMode();
+    <!-- 角色详情页 -->
+    <div class="page" id="contactDetailPage">
+      <div class="api-settings-page">
+        <div class="header">
+          <span class="back" id="backFromContactDetail">‹</span>
+          <span id="contactDetailTitle">角色详情</span>
+        </div>
+        <div class="api-group" id="detailContainer">
+          <div id="viewMode">
+            <div style="text-align:center; margin-bottom:12px;">
+              <div class="avatar-preview" id="detailAvatar" style="width:80px;height:80px;margin:0 auto;font-size:36px;">🧑</div>
+            </div>
+            <div style="margin-bottom:10px;">
+              <label style="font-weight:600;">名字</label>
+              <div id="detailNameDisplay" style="padding:8px 12px;background:#f9f9f9;border-radius:8px;font-size:16px;">未命名</div>
+            </div>
+            <div style="margin-bottom:10px;">
+              <label style="font-weight:600;">人设</label>
+              <div id="detailPromptDisplay" style="padding:8px 12px;background:#f9f9f9;border-radius:8px;font-size:15px;min-height:60px;white-space:pre-wrap;">未设置</div>
+            </div>
+            <div style="display:flex;gap:10px;margin-top:8px;">
+              <button id="detailEditBtn" style="flex:1;background:#007aff;">修改</button>
+              <button id="detailDeleteBtn" style="flex:1;background:#ff3b30;">删除</button>
+            </div>
+          </div>
+          <div id="editMode" style="display:none;">
+            <div style="text-align:center;margin-bottom:12px;">
+              <div class="avatar-preview" id="detailAvatarEdit" style="width:80px;height:80px;margin:0 auto;font-size:36px;">🧑</div>
+            </div>
+            <label>名字</label>
+            <input id="detailNameInput" style="margin-bottom:10px;" />
+            <label>人设</label>
+            <textarea id="detailPromptInput" rows="4" style="margin-bottom:10px;"></textarea>
+            <div style="display:flex;gap:10px;">
+              <button id="detailSaveBtn" style="flex:1;background:#34c759;">保存修改</button>
+              <button id="detailCancelBtn" style="flex:1;background:#8e8e93;">取消修改</button>
+            </div>
+          </div>
+          <div class="status-msg" id="detailStatus"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-        // ============================================================
-        // 4. DOM 引用（API 设置、流式等）
-        // ============================================================
-        const apiBase = document.getElementById('apiBase');
-        const apiKey = document.getElementById('apiKey');
-        const modelSelect = document.getElementById('modelSelect');
-        const fetchModelsBtn = document.getElementById('fetchModelsBtn');
-        const saveApiBtn = document.getElementById('saveApiBtn');
-        const apiStatus = document.getElementById('apiStatus');
-        const streamToggle = document.getElementById('streamToggle');
-        const streamStatus = document.getElementById('streamStatus');
+<script>
+// ============================================================
+// 1. 导航核心
+// ============================================================
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('wechatApp').classList.remove('active');
+  document.getElementById('chatDialogPage').classList.remove('active');
+  const target = document.getElementById(id);
+  if (target) target.classList.add('active');
+}
 
-        streamToggle.addEventListener('change', () => {
-            streamStatus.textContent = streamToggle.checked ? '开启' : '关闭';
-            localStorage.setItem('streamEnabled', streamToggle.checked ? 'true' : 'false');
-        });
+function showWechat() {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('wechatApp').classList.add('active');
+  document.getElementById('chatDialogPage').classList.remove('active');
+  renderWechatContent();
+}
 
-        // ============================================================
-        // 5. 存储工具
-        // ============================================================
-        function getChars() {
-            try { return JSON.parse(localStorage.getItem('chars')) || []; } catch (e) { return []; }
-        }
-        function saveChars(chars) {
-            localStorage.setItem('chars', JSON.stringify(chars));
-        }
-        function getCharHistory(charId) {
-            try { return JSON.parse(localStorage.getItem('charHistory_' + charId)) || []; } catch (e) { return []; }
-        }
-        function saveCharHistory(charId, history) {
-            localStorage.setItem('charHistory_' + charId, JSON.stringify(history));
-        }
+function goHome() {
+  showPage('homePage');
+}
 
-        function loadStreamSetting() {
-            const saved = localStorage.getItem('streamEnabled');
-            if (saved === 'true') { streamToggle.checked = true; streamStatus.textContent = '开启'; }
-            else { streamToggle.checked = false; streamStatus.textContent = '关闭'; }
-        }
-        loadStreamSetting();
+document.getElementById('goToWechat').addEventListener('click', showWechat);
+document.getElementById('goToWechatFromDock').addEventListener('click', showWechat);
+document.getElementById('goToSettingsFromHome').addEventListener('click', () => showPage('settingsPage'));
+document.getElementById('goToSettingsFromDock').addEventListener('click', () => showPage('settingsPage'));
+document.getElementById('backFromSettings').addEventListener('click', goHome);
+document.getElementById('backFromApiSettings').addEventListener('click', () => showPage('settingsPage'));
+document.getElementById('goToApiSettings').addEventListener('click', () => showPage('apiSettingsPage'));
+document.getElementById('wechatBack').addEventListener('click', goHome);
 
-        let currentDialogCharId = null;
-        let editingCharId = null;
-        let avatarDataUrl = null;
-        let detailCharId = null;
-        let isEditing = false;
-        let originalName = '';
-        let originalPrompt = '';
+document.getElementById('goToDisplaySettings').addEventListener('click', () => showPage('displaySettingsPage'));
+document.getElementById('backFromDisplaySettings').addEventListener('click', () => showPage('settingsPage'));
 
-        // ============================================================
-        // 6. 微信风格渲染
-        // ============================================================
-        function renderWechatContent() {
-            const container = document.getElementById('wechatTabContent');
-            const chars = getChars();
-            const activeTab = document.querySelector('.wechat-app .tab.active')?.dataset.tab || 'chats';
-            document.getElementById('wechatTitle').textContent = activeTab === 'chats' ? '聊天' : '通讯录';
+document.getElementById('forceRefreshBtn').addEventListener('click', function() {
+  if (confirm('确定要强制刷新页面吗？将重新加载所有资源。')) {
+    location.reload(true);
+  }
+});
 
-            if (activeTab === 'chats') {
-                renderChatList(container, chars);
-            } else {
-                renderContactList(container, chars);
-            }
-        }
+document.getElementById('goToNovel').addEventListener('click', () => showPage('novelPage'));
+document.getElementById('backFromNovel').addEventListener('click', goHome);
 
-        function renderChatList(container, chars) {
-            if (chars.length === 0) {
-                container.innerHTML = `<div class="empty-state">📭 还没有联系人<br>去通讯录添加吧</div>`;
-                return;
-            }
-            let html = `<div style="background:#fff;padding:10px 16px;font-size:14px;color:#8e8e93;border-bottom:1px solid #f0f0f0;">最近聊天</div>`;
-            chars.forEach(c => {
-                const history = getCharHistory(c.id);
-                const lastMsg = history.length > 0 ? history[history.length - 1] : null;
-                const preview = lastMsg ? (lastMsg.content || '') : '暂无消息';
-                const time = lastMsg ? new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }) : '';
-                const avatarHtml = c.avatar ? `<img src="${c.avatar}" />` : '🧑';
-                html += `
+document.getElementById('goToMusic').addEventListener('click', () => showPage('musicPage'));
+document.getElementById('backFromMusic').addEventListener('click', goHome);
+
+// 新增图标点击事件（暂时占位）
+document.getElementById('goToMoments').addEventListener('click', function() {
+  alert('朋友圈功能开发中…');
+});
+document.getElementById('goToProfile').addEventListener('click', function() {
+  alert('个人主页功能开发中…');
+});
+
+document.getElementById('backFromCreateChar').addEventListener('click', () => {
+  renderWechatContent();
+  showWechat();
+});
+
+document.getElementById('backFromContactDetail').addEventListener('click', () => {
+  if (isEditing) {
+    document.getElementById('detailNameInput').value = originalName;
+    document.getElementById('detailPromptInput').value = originalPrompt;
+    document.getElementById('viewMode').style.display = 'block';
+    document.getElementById('editMode').style.display = 'none';
+    isEditing = false;
+    document.getElementById('detailStatus').textContent = '';
+  }
+  renderWechatContent();
+  showWechat();
+});
+
+// ============================================================
+// 2. 状态栏时间
+// ============================================================
+function updateTime() {
+  const now = new Date();
+  document.getElementById('statusTime').textContent =
+    String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+}
+updateTime();
+setInterval(updateTime, 10000);
+
+// ============================================================
+// 3. 全屏模式切换
+// ============================================================
+const phoneContainer = document.getElementById('phoneContainer');
+const fullscreenToggle = document.getElementById('fullscreenToggle');
+const displayStatus = document.getElementById('displayStatus');
+
+function loadDisplayMode() {
+  const isFullscreen = localStorage.getItem('fullscreenMode') === 'true';
+  fullscreenToggle.checked = isFullscreen;
+  applyDisplayMode(isFullscreen);
+}
+
+function applyDisplayMode(isFullscreen) {
+  if (isFullscreen) {
+    phoneContainer.classList.add('fullscreen');
+  } else {
+    phoneContainer.classList.remove('fullscreen');
+  }
+  localStorage.setItem('fullscreenMode', isFullscreen ? 'true' : 'false');
+  displayStatus.textContent = isFullscreen ? '✅ 全屏模式已启用' : '✅ 带黑框模式已启用';
+  setTimeout(() => {
+    if (displayStatus.textContent.includes('已启用')) displayStatus.textContent = '';
+  }, 2000);
+}
+
+fullscreenToggle.addEventListener('change', function() {
+  applyDisplayMode(this.checked);
+});
+
+loadDisplayMode();
+
+// ============================================================
+// 4. DOM 引用（API 设置、流式等）
+// ============================================================
+const apiBase = document.getElementById('apiBase');
+const apiKey = document.getElementById('apiKey');
+const modelSelect = document.getElementById('modelSelect');
+const fetchModelsBtn = document.getElementById('fetchModelsBtn');
+const saveApiBtn = document.getElementById('saveApiBtn');
+const apiStatus = document.getElementById('apiStatus');
+const streamToggle = document.getElementById('streamToggle');
+const streamStatus = document.getElementById('streamStatus');
+
+streamToggle.addEventListener('change', () => {
+  streamStatus.textContent = streamToggle.checked ? '开启' : '关闭';
+  localStorage.setItem('streamEnabled', streamToggle.checked ? 'true' : 'false');
+});
+
+// ============================================================
+// 5. 存储工具
+// ============================================================
+function getChars() {
+  try { return JSON.parse(localStorage.getItem('chars')) || []; } catch (e) { return []; }
+}
+function saveChars(chars) {
+  localStorage.setItem('chars', JSON.stringify(chars));
+}
+function getCharHistory(charId) {
+  try { return JSON.parse(localStorage.getItem('charHistory_' + charId)) || []; } catch (e) { return []; }
+}
+function saveCharHistory(charId, history) {
+  localStorage.setItem('charHistory_' + charId, JSON.stringify(history));
+}
+
+function loadStreamSetting() {
+  const saved = localStorage.getItem('streamEnabled');
+  if (saved === 'true') { streamToggle.checked = true; streamStatus.textContent = '开启'; }
+  else { streamToggle.checked = false; streamStatus.textContent = '关闭'; }
+}
+loadStreamSetting();
+
+let currentDialogCharId = null;
+let editingCharId = null;
+let avatarDataUrl = null;
+let detailCharId = null;
+let isEditing = false;
+let originalName = '';
+let originalPrompt = '';
+
+// ============================================================
+// 6. 微信风格渲染
+// ============================================================
+function renderWechatContent() {
+  const container = document.getElementById('wechatTabContent');
+  const chars = getChars();
+  const activeTab = document.querySelector('.wechat-app .tab.active')?.dataset.tab || 'chats';
+  document.getElementById('wechatTitle').textContent = activeTab === 'chats' ? '聊天' : '通讯录';
+
+  if (activeTab === 'chats') {
+    renderChatList(container, chars);
+  } else {
+    renderContactList(container, chars);
+  }
+}
+
+function renderChatList(container, chars) {
+  if (chars.length === 0) {
+    container.innerHTML = `<div class="empty-state">📭 还没有联系人<br>去通讯录添加吧</div>`;
+    return;
+  }
+  let html = `<div style="background:#E3EEFA;padding:10px 16px;font-size:14px;color:#8e8e93;">最近聊天</div>`;
+  chars.forEach(c => {
+    const history = getCharHistory(c.id);
+    const lastMsg = history.length > 0 ? history[history.length-1] : null;
+    const preview = lastMsg ? (lastMsg.content || '') : '暂无消息';
+    const time = lastMsg ? new Date().toLocaleTimeString('zh-CN', {hour:'2-digit',minute:'2-digit'}) : '';
+    const avatarHtml = c.avatar ? `<img src="${c.avatar}" />` : '🧑';
+    html += `
       <div class="list-item" data-id="${c.id}">
         <div class="avatar">${avatarHtml}</div>
         <div class="info">
@@ -1433,550 +788,548 @@
         <div class="time">${time}</div>
       </div>
     `;
-            });
-            container.innerHTML = html;
-            container.querySelectorAll('.list-item').forEach(el => {
-                el.addEventListener('click', () => {
-                    const id = el.dataset.id;
-                    const char = getChars().find(c => c.id === id);
-                    if (char) openDialog(char);
-                });
-            });
-        }
+  });
+  container.innerHTML = html;
+  container.querySelectorAll('.list-item').forEach(el => {
+    el.addEventListener('click', () => {
+      const id = el.dataset.id;
+      const char = getChars().find(c => c.id === id);
+      if (char) openDialog(char);
+    });
+  });
+}
 
-        function renderContactList(container, chars) {
-            let html = `
-    <div style="display:flex;justify-content:space-between;align-items:center;background:#fff;padding:10px 16px;border-bottom:1px solid #f0f0f0;">
+function renderContactList(container, chars) {
+  let html = `
+    <div style="display:flex;justify-content:space-between;align-items:center;background:#E3EEFA;padding:10px 16px;border-bottom:1px solid #e5e5ea;">
       <span style="font-size:14px;color:#8e8e93;">所有角色</span>
       <button id="newContactBtn" style="background:#007aff;color:#fff;border:none;border-radius:16px;padding:4px 14px;font-size:14px;cursor:pointer;">+ 新建</button>
     </div>
   `;
-            if (chars.length === 0) {
-                html += `<div class="empty-state">📭 还没有角色，点击“新建”创建</div>`;
-            } else {
-                chars.forEach(c => {
-                    const avatarHtml = c.avatar ? `<img src="${c.avatar}" />` : '🧑';
-                    html += `
+  if (chars.length === 0) {
+    html += `<div class="empty-state">📭 还没有角色，点击“新建”创建</div>`;
+  } else {
+    chars.forEach(c => {
+      const avatarHtml = c.avatar ? `<img src="${c.avatar}" />` : '🧑';
+      html += `
         <div class="list-item" data-id="${c.id}">
           <div class="avatar">${avatarHtml}</div>
           <div class="info">
             <div class="name">${c.name || '未命名'}</div>
-            <div class="preview">${c.prompt ? c.prompt.substring(0, 30) + '...' : '未设置人设'}</div>
+            <div class="preview">${c.prompt ? c.prompt.substring(0,30)+'...' : '未设置人设'}</div>
           </div>
         </div>
       `;
-                });
-            }
-            container.innerHTML = html;
-            container.querySelectorAll('.list-item').forEach(el => {
-                el.addEventListener('click', () => {
-                    const id = el.dataset.id;
-                    openContactDetail(id);
-                });
-            });
-            const newBtn = document.getElementById('newContactBtn');
-            if (newBtn) {
-                newBtn.addEventListener('click', () => {
-                    editingCharId = null;
-                    document.getElementById('createCharTitle').textContent = '新建 Char';
-                    document.getElementById('charNameInput').value = '';
-                    document.getElementById('charPromptInput').value = '';
-                    document.getElementById('charAvatarPreview').innerHTML = '🧑';
-                    document.getElementById('charAvatarPreview').querySelector('img')?.remove();
-                    avatarDataUrl = null;
-                    document.getElementById('createCharStatus').textContent = '';
-                    showPage('createCharPage');
-                });
-            }
-        }
+    });
+  }
+  container.innerHTML = html;
+  container.querySelectorAll('.list-item').forEach(el => {
+    el.addEventListener('click', () => {
+      const id = el.dataset.id;
+      openContactDetail(id);
+    });
+  });
+  const newBtn = document.getElementById('newContactBtn');
+  if (newBtn) {
+    newBtn.addEventListener('click', () => {
+      editingCharId = null;
+      document.getElementById('createCharTitle').textContent = '新建 Char';
+      document.getElementById('charNameInput').value = '';
+      document.getElementById('charPromptInput').value = '';
+      document.getElementById('charAvatarPreview').innerHTML = '🧑';
+      document.getElementById('charAvatarPreview').querySelector('img')?.remove();
+      avatarDataUrl = null;
+      document.getElementById('createCharStatus').textContent = '';
+      showPage('createCharPage');
+    });
+  }
+}
 
-        document.querySelectorAll('.wechat-app .tab').forEach(tab => {
-            tab.addEventListener('click', function () {
-                document.querySelectorAll('.wechat-app .tab').forEach(t => t.classList.remove('active'));
-                this.classList.add('active');
-                renderWechatContent();
-            });
-        });
+document.querySelectorAll('.wechat-app .tab').forEach(tab => {
+  tab.addEventListener('click', function() {
+    document.querySelectorAll('.wechat-app .tab').forEach(t => t.classList.remove('active'));
+    this.classList.add('active');
+    renderWechatContent();
+  });
+});
 
-        // ============================================================
-        // 7. 聊天对话（覆盖层）
-        // ============================================================
-        function openDialog(char) {
-            currentDialogCharId = char.id;
-            document.getElementById('dialogAvatar').innerHTML = char.avatar ? `<img src="${char.avatar}" />` : '🧑';
-            document.getElementById('dialogName').textContent = char.name || '未命名';
-            document.getElementById('dialogModel').textContent = '模型: ' + (modelSelect.value || '未选择');
-            updateDialogPrompt();
-            renderDialogMessages();
-            document.getElementById('chatDialogPage').classList.add('active');
-        }
+// ============================================================
+// 7. 聊天对话（覆盖层）
+// ============================================================
+function openDialog(char) {
+  currentDialogCharId = char.id;
+  document.getElementById('dialogAvatar').innerHTML = char.avatar ? `<img src="${char.avatar}" />` : '🧑';
+  document.getElementById('dialogName').textContent = char.name || '未命名';
+  document.getElementById('dialogModel').textContent = '模型: ' + (modelSelect.value || '未选择');
+  updateDialogPrompt();
+  renderDialogMessages();
+  document.getElementById('chatDialogPage').classList.add('active');
+}
 
-        function updateDialogPrompt() {
-            if (!currentDialogCharId) { document.getElementById('dialogPromptBox').innerHTML = ''; return; }
-            const chars = getChars();
-            const char = chars.find(c => c.id === currentDialogCharId);
-            if (char && char.prompt) {
-                document.getElementById('dialogPromptBox').innerHTML = `<div><span class="label">📋 人设：</span>${char.prompt}</div>`;
-            } else {
-                document.getElementById('dialogPromptBox').innerHTML = `<div style="color:#8e8e93;">⚠️ 未设置人设</div>`;
-            }
-        }
+function updateDialogPrompt() {
+  if (!currentDialogCharId) { document.getElementById('dialogPromptBox').innerHTML = ''; return; }
+  const chars = getChars();
+  const char = chars.find(c => c.id === currentDialogCharId);
+  if (char && char.prompt) {
+    document.getElementById('dialogPromptBox').innerHTML = `<div><span class="label">📋 人设：</span>${char.prompt}</div>`;
+  } else {
+    document.getElementById('dialogPromptBox').innerHTML = `<div style="color:#8e8e93;">⚠️ 未设置人设</div>`;
+  }
+}
 
-        document.getElementById('dialogAvatar').addEventListener('click', () => {
-            document.getElementById('dialogPromptBox').classList.toggle('show');
-        });
+document.getElementById('dialogAvatar').addEventListener('click', () => {
+  document.getElementById('dialogPromptBox').classList.toggle('show');
+});
 
-        function renderDialogMessages() {
-            const container = document.getElementById('dialogMessages');
-            if (!currentDialogCharId) { container.innerHTML = ''; return; }
-            const history = getCharHistory(currentDialogCharId);
-            if (history.length === 0) {
-                container.innerHTML = `<div style="color:#8e8e93;text-align:center;padding:40px 0;font-size:16px;">开始对话吧 💬</div>`;
-                return;
-            }
-            let html = '';
-            history.forEach(msg => {
-                const t = new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
-                html += `<div class="message ${msg.role}">${msg.content}<div class="msg-time">${t}</div></div>`;
-            });
-            container.innerHTML = html;
-            container.scrollTop = container.scrollHeight;
-        }
+function renderDialogMessages() {
+  const container = document.getElementById('dialogMessages');
+  if (!currentDialogCharId) { container.innerHTML = ''; return; }
+  const history = getCharHistory(currentDialogCharId);
+  if (history.length === 0) {
+    container.innerHTML = `<div style="color:#8e8e93;text-align:center;padding:40px 0;font-size:16px;">开始对话吧 💬</div>`;
+    return;
+  }
+  let html = '';
+  history.forEach(msg => {
+    const t = new Date().toLocaleTimeString('zh-CN', {hour:'2-digit',minute:'2-digit'});
+    html += `<div class="message ${msg.role}">${msg.content}<div class="msg-time">${t}</div></div>`;
+  });
+  container.innerHTML = html;
+  container.scrollTop = container.scrollHeight;
+}
 
-        function addDialogMessage(role, content) {
-            if (!currentDialogCharId) return;
-            const history = getCharHistory(currentDialogCharId);
-            history.push({ role, content });
-            saveCharHistory(currentDialogCharId, history);
-            renderDialogMessages();
-            renderWechatContent();
-        }
+function addDialogMessage(role, content) {
+  if (!currentDialogCharId) return;
+  const history = getCharHistory(currentDialogCharId);
+  history.push({ role, content });
+  saveCharHistory(currentDialogCharId, history);
+  renderDialogMessages();
+  renderWechatContent();
+}
 
-        function clearDialogHistory() {
-            if (!currentDialogCharId) return;
-            const history = getCharHistory(currentDialogCharId);
-            if (history.length > 0 && !confirm('确定清空该角色的聊天记录吗？')) return;
-            saveCharHistory(currentDialogCharId, []);
-            renderDialogMessages();
-            renderWechatContent();
-        }
+function clearDialogHistory() {
+  if (!currentDialogCharId) return;
+  const history = getCharHistory(currentDialogCharId);
+  if (history.length > 0 && !confirm('确定清空该角色的聊天记录吗？')) return;
+  saveCharHistory(currentDialogCharId, []);
+  renderDialogMessages();
+  renderWechatContent();
+}
 
-        document.getElementById('backFromDialog').addEventListener('click', () => {
-            document.getElementById('chatDialogPage').classList.remove('active');
-            renderWechatContent();
-        });
-        document.getElementById('dialogNewBtn').addEventListener('click', clearDialogHistory);
+document.getElementById('backFromDialog').addEventListener('click', () => {
+  document.getElementById('chatDialogPage').classList.remove('active');
+  renderWechatContent();
+});
+document.getElementById('dialogNewBtn').addEventListener('click', clearDialogHistory);
 
-        // ============================================================
-        // 8. 发送消息（对话页）
-        // ============================================================
-        document.getElementById('dialogSendBtn').addEventListener('click', async () => {
-            const base = apiBase.value.trim(), key = apiKey.value.trim(), model = modelSelect.value;
-            const msg = document.getElementById('dialogInput').value.trim();
-            if (!base || !key) { alert('请先设置 API'); showPage('apiSettingsPage'); return; }
-            if (!model) { alert('请先选择模型'); return; }
-            if (!msg) { alert('请输入问题'); return; }
-            if (!currentDialogCharId) { alert('没有选中的角色'); return; }
-            const chars = getChars();
-            const char = chars.find(c => c.id === currentDialogCharId);
-            if (!char) { alert('角色不存在'); return; }
+// ============================================================
+// 8. 发送消息（对话页）
+// ============================================================
+document.getElementById('dialogSendBtn').addEventListener('click', async () => {
+  const base = apiBase.value.trim(), key = apiKey.value.trim(), model = modelSelect.value;
+  const msg = document.getElementById('dialogInput').value.trim();
+  if (!base || !key) { alert('请先设置 API'); showPage('apiSettingsPage'); return; }
+  if (!model) { alert('请先选择模型'); return; }
+  if (!msg) { alert('请输入问题'); return; }
+  if (!currentDialogCharId) { alert('没有选中的角色'); return; }
+  const chars = getChars();
+  const char = chars.find(c => c.id === currentDialogCharId);
+  if (!char) { alert('角色不存在'); return; }
 
-            addDialogMessage('user', msg);
-            document.getElementById('dialogInput').value = '';
-            document.getElementById('dialogInput').style.height = 'auto';
+  addDialogMessage('user', msg);
+  document.getElementById('dialogInput').value = '';
+  document.getElementById('dialogInput').style.height = 'auto';
 
-            let history = getCharHistory(currentDialogCharId);
-            const messages = [];
-            if (char.prompt) {
-                messages.push({ role: 'system', content: char.prompt });
-            }
-            const filtered = history.filter(m => m.content !== '🤔 思考中...');
-            messages.push(...filtered);
+  let history = getCharHistory(currentDialogCharId);
+  const messages = [];
+  if (char.prompt) {
+    messages.push({ role: 'system', content: char.prompt });
+  }
+  const filtered = history.filter(m => m.content !== '🤔 思考中...');
+  messages.push(...filtered);
 
-            history.push({ role: 'assistant', content: '🤔 思考中...' });
-            saveCharHistory(currentDialogCharId, history);
-            renderDialogMessages();
+  history.push({ role: 'assistant', content: '🤔 思考中...' });
+  saveCharHistory(currentDialogCharId, history);
+  renderDialogMessages();
 
-            const isStream = streamToggle.checked;
+  const isStream = streamToggle.checked;
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'chat', baseUrl: base, apiKey: key, model, messages, stream: isStream })
+    });
+
+    if (isStream) {
+      let h = getCharHistory(currentDialogCharId);
+      if (h.length > 0 && h[h.length-1].content === '🤔 思考中...') { h.pop(); saveCharHistory(currentDialogCharId, h); }
+      h.push({ role: 'assistant', content: '' });
+      saveCharHistory(currentDialogCharId, h);
+      renderDialogMessages();
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let done = false, full = '';
+      while (!done) {
+        const { value, done: d } = await reader.read();
+        done = d;
+        if (done) break;
+        const chunk = decoder.decode(value);
+        const lines = chunk.split('\n');
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const json = line.slice(6);
+            if (json === '[DONE]') continue;
             try {
-                const res = await fetch('/api/chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'chat', baseUrl: base, apiKey: key, model, messages, stream: isStream })
-                });
-
-                if (isStream) {
-                    let h = getCharHistory(currentDialogCharId);
-                    if (h.length > 0 && h[h.length - 1].content === '🤔 思考中...') { h.pop(); saveCharHistory(currentDialogCharId, h); }
-                    h.push({ role: 'assistant', content: '' });
-                    saveCharHistory(currentDialogCharId, h);
-                    renderDialogMessages();
-
-                    const reader = res.body.getReader();
-                    const decoder = new TextDecoder();
-                    let done = false, full = '';
-                    while (!done) {
-                        const { value, done: d } = await reader.read();
-                        done = d;
-                        if (done) break;
-                        const chunk = decoder.decode(value);
-                        const lines = chunk.split('\n');
-                        for (const line of lines) {
-                            if (line.startsWith('data: ')) {
-                                const json = line.slice(6);
-                                if (json === '[DONE]') continue;
-                                try {
-                                    const parsed = JSON.parse(json);
-                                    const delta = parsed.choices?.[0]?.delta?.content;
-                                    if (delta) {
-                                        full += delta;
-                                        let cur = getCharHistory(currentDialogCharId);
-                                        if (cur.length > 0 && cur[cur.length - 1].role === 'assistant') {
-                                            cur[cur.length - 1].content = full;
-                                            saveCharHistory(currentDialogCharId, cur);
-                                            renderDialogMessages();
-                                        }
-                                    }
-                                } catch (e) { }
-                            }
-                        }
-                    }
-                    let fin = getCharHistory(currentDialogCharId);
-                    if (fin.length > 0 && fin[fin.length - 1].role === 'assistant') {
-                        fin[fin.length - 1].content = full || '无回复';
-                        saveCharHistory(currentDialogCharId, fin);
-                        renderDialogMessages();
-                        renderWechatContent();
-                    }
-                } else {
-                    const data = await res.json();
-                    let h = getCharHistory(currentDialogCharId);
-                    if (h.length > 0 && h[h.length - 1].content === '🤔 思考中...') { h.pop(); saveCharHistory(currentDialogCharId, h); }
-                    if (data.reply) { addDialogMessage('assistant', data.reply); }
-                    else { addDialogMessage('assistant', '❌ 无回复'); }
+              const parsed = JSON.parse(json);
+              const delta = parsed.choices?.[0]?.delta?.content;
+              if (delta) {
+                full += delta;
+                let cur = getCharHistory(currentDialogCharId);
+                if (cur.length > 0 && cur[cur.length-1].role === 'assistant') {
+                  cur[cur.length-1].content = full;
+                  saveCharHistory(currentDialogCharId, cur);
+                  renderDialogMessages();
                 }
-            } catch (e) {
-                let h = getCharHistory(currentDialogCharId);
-                if (h.length > 0 && h[h.length - 1].content === '🤔 思考中...') { h.pop(); saveCharHistory(currentDialogCharId, h); }
-                addDialogMessage('assistant', '❌ 出错：' + e.message);
-            }
-        });
-
-        document.getElementById('dialogInput').addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); document.getElementById('dialogSendBtn').click(); }
-        });
-        document.getElementById('dialogInput').addEventListener('input', function () {
-            this.style.height = 'auto';
-            this.style.height = this.scrollHeight + 'px';
-        });
-
-        // ============================================================
-        // 9. 通讯录详情
-        // ============================================================
-        function openContactDetail(charId) {
-            detailCharId = charId;
-            const chars = getChars();
-            const char = chars.find(c => c.id === charId);
-            if (!char) return;
-
-            document.getElementById('detailAvatar').innerHTML = char.avatar ? `<img src="${char.avatar}" />` : '🧑';
-            document.getElementById('detailNameDisplay').textContent = char.name || '未命名';
-            document.getElementById('detailPromptDisplay').textContent = char.prompt || '未设置人设';
-
-            document.getElementById('detailAvatarEdit').innerHTML = char.avatar ? `<img src="${char.avatar}" />` : '🧑';
-            document.getElementById('detailNameInput').value = char.name || '';
-            document.getElementById('detailPromptInput').value = char.prompt || '';
-
-            originalName = char.name || '';
-            originalPrompt = char.prompt || '';
-
-            document.getElementById('viewMode').style.display = 'block';
-            document.getElementById('editMode').style.display = 'none';
-            isEditing = false;
-            document.getElementById('detailStatus').textContent = '';
-
-            document.getElementById('contactDetailTitle').textContent = '角色详情';
-            showPage('contactDetailPage');
+              }
+            } catch (e) {}
+          }
         }
+      }
+      let fin = getCharHistory(currentDialogCharId);
+      if (fin.length > 0 && fin[fin.length-1].role === 'assistant') {
+        fin[fin.length-1].content = full || '无回复';
+        saveCharHistory(currentDialogCharId, fin);
+        renderDialogMessages();
+        renderWechatContent();
+      }
+    } else {
+      const data = await res.json();
+      let h = getCharHistory(currentDialogCharId);
+      if (h.length > 0 && h[h.length-1].content === '🤔 思考中...') { h.pop(); saveCharHistory(currentDialogCharId, h); }
+      if (data.reply) { addDialogMessage('assistant', data.reply); }
+      else { addDialogMessage('assistant', '❌ 无回复'); }
+    }
+  } catch (e) {
+    let h = getCharHistory(currentDialogCharId);
+    if (h.length > 0 && h[h.length-1].content === '🤔 思考中...') { h.pop(); saveCharHistory(currentDialogCharId, h); }
+    addDialogMessage('assistant', '❌ 出错：' + e.message);
+  }
+});
 
-        document.getElementById('detailEditBtn').addEventListener('click', () => {
-            if (!detailCharId) return;
-            document.getElementById('viewMode').style.display = 'none';
-            document.getElementById('editMode').style.display = 'block';
-            isEditing = true;
-            const chars = getChars();
-            const char = chars.find(c => c.id === detailCharId);
-            if (char) {
-                document.getElementById('detailNameInput').value = char.name || '';
-                document.getElementById('detailPromptInput').value = char.prompt || '';
-                originalName = char.name || '';
-                originalPrompt = char.prompt || '';
-                document.getElementById('detailAvatarEdit').innerHTML = char.avatar ? `<img src="${char.avatar}" />` : '🧑';
-            }
-            document.getElementById('detailStatus').textContent = '';
+document.getElementById('dialogInput').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); document.getElementById('dialogSendBtn').click(); }
+});
+document.getElementById('dialogInput').addEventListener('input', function() {
+  this.style.height = 'auto';
+  this.style.height = this.scrollHeight + 'px';
+});
+
+// ============================================================
+// 9. 通讯录详情
+// ============================================================
+function openContactDetail(charId) {
+  detailCharId = charId;
+  const chars = getChars();
+  const char = chars.find(c => c.id === charId);
+  if (!char) return;
+
+  document.getElementById('detailAvatar').innerHTML = char.avatar ? `<img src="${char.avatar}" />` : '🧑';
+  document.getElementById('detailNameDisplay').textContent = char.name || '未命名';
+  document.getElementById('detailPromptDisplay').textContent = char.prompt || '未设置人设';
+
+  document.getElementById('detailAvatarEdit').innerHTML = char.avatar ? `<img src="${char.avatar}" />` : '🧑';
+  document.getElementById('detailNameInput').value = char.name || '';
+  document.getElementById('detailPromptInput').value = char.prompt || '';
+
+  originalName = char.name || '';
+  originalPrompt = char.prompt || '';
+
+  document.getElementById('viewMode').style.display = 'block';
+  document.getElementById('editMode').style.display = 'none';
+  isEditing = false;
+  document.getElementById('detailStatus').textContent = '';
+
+  document.getElementById('contactDetailTitle').textContent = '角色详情';
+  showPage('contactDetailPage');
+}
+
+document.getElementById('detailEditBtn').addEventListener('click', () => {
+  if (!detailCharId) return;
+  document.getElementById('viewMode').style.display = 'none';
+  document.getElementById('editMode').style.display = 'block';
+  isEditing = true;
+  const chars = getChars();
+  const char = chars.find(c => c.id === detailCharId);
+  if (char) {
+    document.getElementById('detailNameInput').value = char.name || '';
+    document.getElementById('detailPromptInput').value = char.prompt || '';
+    originalName = char.name || '';
+    originalPrompt = char.prompt || '';
+    document.getElementById('detailAvatarEdit').innerHTML = char.avatar ? `<img src="${char.avatar}" />` : '🧑';
+  }
+  document.getElementById('detailStatus').textContent = '';
+});
+
+document.getElementById('detailSaveBtn').addEventListener('click', () => {
+  if (!detailCharId) return;
+  const newName = document.getElementById('detailNameInput').value.trim();
+  const newPrompt = document.getElementById('detailPromptInput').value.trim();
+  if (!newName) { document.getElementById('detailStatus').textContent = '❌ 名字不能为空'; return; }
+  let chars = getChars();
+  const idx = chars.findIndex(c => c.id === detailCharId);
+  if (idx !== -1) {
+    chars[idx].name = newName;
+    chars[idx].prompt = newPrompt;
+    saveChars(chars);
+    document.getElementById('detailNameDisplay').textContent = newName;
+    document.getElementById('detailPromptDisplay').textContent = newPrompt || '未设置人设';
+    originalName = newName;
+    originalPrompt = newPrompt;
+    document.getElementById('detailStatus').textContent = '✅ 保存成功！';
+    document.getElementById('viewMode').style.display = 'block';
+    document.getElementById('editMode').style.display = 'none';
+    isEditing = false;
+    renderWechatContent();
+    setTimeout(() => { document.getElementById('detailStatus').textContent = ''; }, 2000);
+  }
+});
+
+document.getElementById('detailCancelBtn').addEventListener('click', () => {
+  if (!detailCharId) return;
+  document.getElementById('detailNameInput').value = originalName;
+  document.getElementById('detailPromptInput').value = originalPrompt;
+  document.getElementById('viewMode').style.display = 'block';
+  document.getElementById('editMode').style.display = 'none';
+  isEditing = false;
+  document.getElementById('detailStatus').textContent = '';
+});
+
+document.getElementById('detailDeleteBtn').addEventListener('click', () => {
+  if (!detailCharId) return;
+  if (!confirm('确定删除这个角色吗？')) return;
+  let chars = getChars();
+  chars = chars.filter(c => c.id !== detailCharId);
+  saveChars(chars);
+  localStorage.removeItem('charHistory_' + detailCharId);
+  if (currentDialogCharId === detailCharId) { currentDialogCharId = null; }
+  renderWechatContent();
+  showWechat();
+});
+
+// ============================================================
+// 10. 创建/编辑 Char
+// ============================================================
+document.getElementById('avatarUploadBtn').addEventListener('click', () => document.getElementById('charAvatarInput').click());
+document.getElementById('charAvatarInput').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    avatarDataUrl = ev.target.result;
+    document.getElementById('charAvatarPreview').innerHTML = `<img src="${avatarDataUrl}" />`;
+  };
+  reader.readAsDataURL(file);
+});
+
+document.getElementById('saveCharBtn').addEventListener('click', () => {
+  const name = document.getElementById('charNameInput').value.trim();
+  const prompt = document.getElementById('charPromptInput').value.trim();
+  if (!name) { document.getElementById('createCharStatus').textContent = '❌ 请填写名字'; return; }
+  if (!prompt) { document.getElementById('createCharStatus').textContent = '❌ 请填写人设'; return; }
+  let chars = getChars();
+  if (editingCharId) {
+    const idx = chars.findIndex(c => c.id === editingCharId);
+    if (idx !== -1) {
+      chars[idx].name = name;
+      chars[idx].prompt = prompt;
+      if (avatarDataUrl) chars[idx].avatar = avatarDataUrl;
+    }
+  } else {
+    chars.push({ id: 'char_' + Date.now(), name, prompt, avatar: avatarDataUrl || null, created: Date.now() });
+  }
+  saveChars(chars);
+  document.getElementById('createCharStatus').textContent = '✅ 保存成功！';
+  setTimeout(() => {
+    renderWechatContent();
+    showWechat();
+  }, 500);
+});
+
+// ============================================================
+// 11. 设置 & 模型
+// ============================================================
+function loadSettings() {
+  const savedBase = localStorage.getItem('apiBase');
+  const savedKey = localStorage.getItem('apiKey');
+  const savedModel = localStorage.getItem('selectedModel');
+  if (savedBase) apiBase.value = savedBase;
+  if (savedKey) apiKey.value = savedKey;
+  if (savedModel) { window._savedModel = savedModel; }
+}
+function saveSettings(includeModel) {
+  localStorage.setItem('apiBase', apiBase.value.trim());
+  localStorage.setItem('apiKey', apiKey.value.trim());
+  if (includeModel && modelSelect.value) {
+    localStorage.setItem('selectedModel', modelSelect.value);
+  }
+  apiStatus.textContent = '✅ 已保存';
+  setTimeout(() => { if (apiStatus.textContent === '✅ 已保存') apiStatus.textContent = '就绪'; }, 2000);
+}
+loadSettings();
+
+fetchModelsBtn.addEventListener('click', async () => {
+  const base = apiBase.value.trim(), key = apiKey.value.trim();
+  if (!base || !key) { apiStatus.textContent = '❌ 请填写地址和Key'; return; }
+  saveSettings(false);
+  apiStatus.textContent = '📥 拉取中...';
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'models', baseUrl: base, apiKey: key })
+    });
+    const data = await res.json();
+    if (data.models) {
+      modelSelect.innerHTML = '<option value="">请选择</option>';
+      data.models.forEach(m => {
+        const opt = document.createElement('option');
+        opt.value = m.id || m;
+        opt.textContent = m.id || m;
+        modelSelect.appendChild(opt);
+      });
+      apiStatus.textContent = `✅ 成功拉取 ${data.models.length} 个模型`;
+      const savedModel = localStorage.getItem('selectedModel');
+      if (savedModel && [...modelSelect.options].some(opt => opt.value === savedModel)) {
+        modelSelect.value = savedModel;
+      }
+    } else {
+      apiStatus.textContent = '❌ 拉取失败：' + (data.error || '未知错误');
+    }
+  } catch (e) {
+    apiStatus.textContent = '❌ 请求失败：' + e.message;
+  }
+});
+
+saveApiBtn.addEventListener('click', () => { saveSettings(true); });
+modelSelect.addEventListener('change', () => {
+  if (modelSelect.value) localStorage.setItem('selectedModel', modelSelect.value);
+});
+
+// ============================================================
+// 12. 小说功能
+// ============================================================
+const novelFileInput = document.getElementById('novelFileInput');
+const importNovelBtn = document.getElementById('importNovelBtn');
+const novelContent = document.getElementById('novelContent');
+
+importNovelBtn.addEventListener('click', () => novelFileInput.click());
+novelFileInput.addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    const text = ev.target.result;
+    novelContent.textContent = text;
+  };
+  reader.readAsText(file, 'UTF-8');
+});
+
+// ============================================================
+// 13. 音乐功能
+// ============================================================
+const musicFileInput = document.getElementById('musicFileInput');
+const importMusicBtn = document.getElementById('importMusicBtn');
+const audioPlayer = document.getElementById('audioPlayer');
+const playPauseBtn = document.getElementById('playPauseBtn');
+const musicInfo = document.getElementById('musicInfo');
+
+importMusicBtn.addEventListener('click', () => musicFileInput.click());
+musicFileInput.addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const url = URL.createObjectURL(file);
+  audioPlayer.src = url;
+  audioPlayer.load();
+  musicInfo.textContent = `已加载: ${file.name}`;
+  playPauseBtn.textContent = '▶️ 播放';
+});
+
+playPauseBtn.addEventListener('click', function() {
+  if (!audioPlayer.src) {
+    alert('请先导入 MP3 文件');
+    return;
+  }
+  if (audioPlayer.paused) {
+    audioPlayer.play().catch(err => {
+      alert('播放失败：' + err.message);
+    });
+    this.textContent = '⏸ 暂停';
+  } else {
+    audioPlayer.pause();
+    this.textContent = '▶️ 播放';
+  }
+});
+
+audioPlayer.addEventListener('ended', function() {
+  playPauseBtn.textContent = '▶️ 播放';
+  this.currentTime = 0;
+});
+
+// ============================================================
+// 14. 初始化 + 版本信息
+// ============================================================
+window.addEventListener('load', async () => {
+  document.documentElement.style.backgroundColor = '#E3EEFA';
+  document.documentElement.style.colorScheme = 'light';
+  document.body.style.backgroundColor = '#E3EEFA';
+
+  const versionEl = document.getElementById('versionInfo');
+  if (versionEl) {
+    const lastMod = new Date(document.lastModified);
+    versionEl.textContent = 'v1.0.0 · ' + lastMod.toLocaleString('zh-CN', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
+
+  const savedBase = localStorage.getItem('apiBase');
+  const savedKey = localStorage.getItem('apiKey');
+  const savedModel = localStorage.getItem('selectedModel');
+  if (savedBase) apiBase.value = savedBase;
+  if (savedKey) apiKey.value = savedKey;
+  if (savedModel) {
+    if (savedBase && savedKey) {
+      try {
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'models', baseUrl: savedBase, apiKey: savedKey })
         });
-
-        document.getElementById('detailSaveBtn').addEventListener('click', () => {
-            if (!detailCharId) return;
-            const newName = document.getElementById('detailNameInput').value.trim();
-            const newPrompt = document.getElementById('detailPromptInput').value.trim();
-            if (!newName) { document.getElementById('detailStatus').textContent = '❌ 名字不能为空'; return; }
-            let chars = getChars();
-            const idx = chars.findIndex(c => c.id === detailCharId);
-            if (idx !== -1) {
-                chars[idx].name = newName;
-                chars[idx].prompt = newPrompt;
-                saveChars(chars);
-                document.getElementById('detailNameDisplay').textContent = newName;
-                document.getElementById('detailPromptDisplay').textContent = newPrompt || '未设置人设';
-                originalName = newName;
-                originalPrompt = newPrompt;
-                document.getElementById('detailStatus').textContent = '✅ 保存成功！';
-                document.getElementById('viewMode').style.display = 'block';
-                document.getElementById('editMode').style.display = 'none';
-                isEditing = false;
-                renderWechatContent();
-                setTimeout(() => { document.getElementById('detailStatus').textContent = ''; }, 2000);
-            }
-        });
-
-        document.getElementById('detailCancelBtn').addEventListener('click', () => {
-            if (!detailCharId) return;
-            document.getElementById('detailNameInput').value = originalName;
-            document.getElementById('detailPromptInput').value = originalPrompt;
-            document.getElementById('viewMode').style.display = 'block';
-            document.getElementById('editMode').style.display = 'none';
-            isEditing = false;
-            document.getElementById('detailStatus').textContent = '';
-        });
-
-        document.getElementById('detailDeleteBtn').addEventListener('click', () => {
-            if (!detailCharId) return;
-            if (!confirm('确定删除这个角色吗？')) return;
-            let chars = getChars();
-            chars = chars.filter(c => c.id !== detailCharId);
-            saveChars(chars);
-            localStorage.removeItem('charHistory_' + detailCharId);
-            if (currentDialogCharId === detailCharId) { currentDialogCharId = null; }
-            renderWechatContent();
-            showWechat();
-        });
-
-        // ============================================================
-        // 10. 创建/编辑 Char
-        // ============================================================
-        document.getElementById('avatarUploadBtn').addEventListener('click', () => document.getElementById('charAvatarInput').click());
-        document.getElementById('charAvatarInput').addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (ev) => {
-                avatarDataUrl = ev.target.result;
-                document.getElementById('charAvatarPreview').innerHTML = `<img src="${avatarDataUrl}" />`;
-            };
-            reader.readAsDataURL(file);
-        });
-
-        document.getElementById('saveCharBtn').addEventListener('click', () => {
-            const name = document.getElementById('charNameInput').value.trim();
-            const prompt = document.getElementById('charPromptInput').value.trim();
-            if (!name) { document.getElementById('createCharStatus').textContent = '❌ 请填写名字'; return; }
-            if (!prompt) { document.getElementById('createCharStatus').textContent = '❌ 请填写人设'; return; }
-            let chars = getChars();
-            if (editingCharId) {
-                const idx = chars.findIndex(c => c.id === editingCharId);
-                if (idx !== -1) {
-                    chars[idx].name = name;
-                    chars[idx].prompt = prompt;
-                    if (avatarDataUrl) chars[idx].avatar = avatarDataUrl;
-                }
-            } else {
-                chars.push({ id: 'char_' + Date.now(), name, prompt, avatar: avatarDataUrl || null, created: Date.now() });
-            }
-            saveChars(chars);
-            document.getElementById('createCharStatus').textContent = '✅ 保存成功！';
-            setTimeout(() => {
-                renderWechatContent();
-                showWechat();
-            }, 500);
-        });
-
-        // ============================================================
-        // 11. 设置 & 模型
-        // ============================================================
-        function loadSettings() {
-            const savedBase = localStorage.getItem('apiBase');
-            const savedKey = localStorage.getItem('apiKey');
-            const savedModel = localStorage.getItem('selectedModel');
-            if (savedBase) apiBase.value = savedBase;
-            if (savedKey) apiKey.value = savedKey;
-            if (savedModel) { window._savedModel = savedModel; }
+        const data = await res.json();
+        if (data.models) {
+          modelSelect.innerHTML = '<option value="">请选择</option>';
+          data.models.forEach(m => {
+            const opt = document.createElement('option');
+            opt.value = m.id || m;
+            opt.textContent = m.id || m;
+            modelSelect.appendChild(opt);
+          });
+          if ([...modelSelect.options].some(opt => opt.value === savedModel)) {
+            modelSelect.value = savedModel;
+            localStorage.setItem('selectedModel', savedModel);
+          }
+          apiStatus.textContent = `✅ 自动拉取 ${data.models.length} 个模型`;
+          setTimeout(() => { if (apiStatus.textContent.includes('自动拉取')) apiStatus.textContent = '就绪'; }, 3000);
         }
-        function saveSettings(includeModel) {
-            localStorage.setItem('apiBase', apiBase.value.trim());
-            localStorage.setItem('apiKey', apiKey.value.trim());
-            if (includeModel && modelSelect.value) {
-                localStorage.setItem('selectedModel', modelSelect.value);
-            }
-            apiStatus.textContent = '✅ 已保存';
-            setTimeout(() => { if (apiStatus.textContent === '✅ 已保存') apiStatus.textContent = '就绪'; }, 2000);
-        }
-        loadSettings();
-
-        fetchModelsBtn.addEventListener('click', async () => {
-            const base = apiBase.value.trim(), key = apiKey.value.trim();
-            if (!base || !key) { apiStatus.textContent = '❌ 请填写地址和Key'; return; }
-            saveSettings(false);
-            apiStatus.textContent = '📥 拉取中...';
-            try {
-                const res = await fetch('/api/chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'models', baseUrl: base, apiKey: key })
-                });
-                const data = await res.json();
-                if (data.models) {
-                    modelSelect.innerHTML = '<option value="">请选择</option>';
-                    data.models.forEach(m => {
-                        const opt = document.createElement('option');
-                        opt.value = m.id || m;
-                        opt.textContent = m.id || m;
-                        modelSelect.appendChild(opt);
-                    });
-                    apiStatus.textContent = `✅ 成功拉取 ${data.models.length} 个模型`;
-                    const savedModel = localStorage.getItem('selectedModel');
-                    if (savedModel && [...modelSelect.options].some(opt => opt.value === savedModel)) {
-                        modelSelect.value = savedModel;
-                    }
-                } else {
-                    apiStatus.textContent = '❌ 拉取失败：' + (data.error || '未知错误');
-                }
-            } catch (e) {
-                apiStatus.textContent = '❌ 请求失败：' + e.message;
-            }
-        });
-
-        saveApiBtn.addEventListener('click', () => { saveSettings(true); });
-        modelSelect.addEventListener('change', () => {
-            if (modelSelect.value) localStorage.setItem('selectedModel', modelSelect.value);
-        });
-
-        // ============================================================
-        // 12. 小说功能
-        // ============================================================
-        const novelFileInput = document.getElementById('novelFileInput');
-        const importNovelBtn = document.getElementById('importNovelBtn');
-        const novelContent = document.getElementById('novelContent');
-
-        importNovelBtn.addEventListener('click', () => novelFileInput.click());
-        novelFileInput.addEventListener('change', function (e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function (ev) {
-                const text = ev.target.result;
-                novelContent.textContent = text;
-            };
-            reader.readAsText(file, 'UTF-8');
-        });
-
-        // ============================================================
-        // 13. 音乐功能
-        // ============================================================
-        const musicFileInput = document.getElementById('musicFileInput');
-        const importMusicBtn = document.getElementById('importMusicBtn');
-        const audioPlayer = document.getElementById('audioPlayer');
-        const playPauseBtn = document.getElementById('playPauseBtn');
-        const musicInfo = document.getElementById('musicInfo');
-
-        importMusicBtn.addEventListener('click', () => musicFileInput.click());
-        musicFileInput.addEventListener('change', function (e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            const url = URL.createObjectURL(file);
-            audioPlayer.src = url;
-            audioPlayer.load();
-            musicInfo.textContent = `已加载: ${file.name}`;
-            playPauseBtn.textContent = '▶️ 播放';
-        });
-
-        playPauseBtn.addEventListener('click', function () {
-            if (!audioPlayer.src) {
-                alert('请先导入 MP3 文件');
-                return;
-            }
-            if (audioPlayer.paused) {
-                audioPlayer.play().catch(err => {
-                    alert('播放失败：' + err.message);
-                });
-                this.textContent = '⏸ 暂停';
-            } else {
-                audioPlayer.pause();
-                this.textContent = '▶️ 播放';
-            }
-        });
-
-        audioPlayer.addEventListener('ended', function () {
-            playPauseBtn.textContent = '▶️ 播放';
-            this.currentTime = 0;
-        });
-
-        // ============================================================
-        // 14. 初始化 + 版本信息
-        // ============================================================
-        window.addEventListener('load', async () => {
-            document.documentElement.style.backgroundColor = '#E3EEFA';
-            document.documentElement.style.colorScheme = 'light';
-            document.body.style.backgroundColor = '#E3EEFA';
-
-            // 设置版本信息（显示部署时间）
-            const versionEl = document.getElementById('versionInfo');
-            if (versionEl) {
-                const lastMod = new Date(document.lastModified);
-                versionEl.textContent = 'v1.0.0 · ' + lastMod.toLocaleString('zh-CN', {
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
-            }
-
-            const savedBase = localStorage.getItem('apiBase');
-            const savedKey = localStorage.getItem('apiKey');
-            const savedModel = localStorage.getItem('selectedModel');
-            if (savedBase) apiBase.value = savedBase;
-            if (savedKey) apiKey.value = savedKey;
-            if (savedModel) {
-                if (savedBase && savedKey) {
-                    try {
-                        const res = await fetch('/api/chat', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ action: 'models', baseUrl: savedBase, apiKey: savedKey })
-                        });
-                        const data = await res.json();
-                        if (data.models) {
-                            modelSelect.innerHTML = '<option value="">请选择</option>';
-                            data.models.forEach(m => {
-                                const opt = document.createElement('option');
-                                opt.value = m.id || m;
-                                opt.textContent = m.id || m;
-                                modelSelect.appendChild(opt);
-                            });
-                            if ([...modelSelect.options].some(opt => opt.value === savedModel)) {
-                                modelSelect.value = savedModel;
-                                localStorage.setItem('selectedModel', savedModel);
-                            }
-                            apiStatus.textContent = `✅ 自动拉取 ${data.models.length} 个模型`;
-                            setTimeout(() => { if (apiStatus.textContent.includes('自动拉取')) apiStatus.textContent = '就绪'; }, 3000);
-                        }
-                    } catch (e) { console.log('自动拉取失败'); }
-                }
-            }
-            showPage('homePage');
-        });
-    </script>
+      } catch (e) { console.log('自动拉取失败'); }
+    }
+  }
+  showPage('homePage');
+});
+</script>
 </body>
-
 </html>
