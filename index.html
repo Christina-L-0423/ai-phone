@@ -9,11 +9,12 @@
   <style>
     :root {
       color-scheme: light !important;
-      --bg: #F0F4FA;          /* 极浅紫蓝色 */
-      --btn: #C5D6E5;         /* 按钮/交互元素颜色，比背景稍深 */
+      --bg: #F0F4FA;
+      --btn: #C5D6E5;
       --btn-active: #A8BFD4;
-      --tab-bg: #DCE5EF;      /* 底部Tab栏颜色 */
+      --tab-bg: #DCE5EF;
       --card-bg: rgba(255,255,255,0.5);
+      --border: #d1d9e3;
     }
     html, body {
       background-color: var(--bg) !important;
@@ -37,7 +38,7 @@
       position:relative;display:flex;flex-direction:column
     }
     .phone.fullscreen{
-      width:100dvw;height:100dvh;max-width:100dvw;max-height:100dvh;aspect-ratio:auto;
+      width:100vw;height:100vh;max-width:100vw;max-height:100vh;aspect-ratio:auto;
       border-radius:0;padding:0;background:var(--bg);box-shadow:none;margin:0;
     }
     .phone.fullscreen .phone-screen{
@@ -64,11 +65,7 @@
       overflow:hidden;
       transition: all 0.2s;
     }
-    .app-icon .icon-circle svg {
-      width: 34px;
-      height: 34px;
-      display: block;
-    }
+    .app-icon .icon-circle svg { width:34px;height:34px;display:block; }
     .app-icon .icon-label{font-size:11px;color:#1c1c1e;text-align:center}
     .dock{background:rgba(255,255,255,.5);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);border-radius:30px;padding:12px 16px;margin:0 4px 16px;display:flex;justify-content:space-around;flex-shrink:0;margin-top:auto}
     .dock .app-icon .icon-circle{width:56px;height:56px;border-radius:14px}
@@ -79,7 +76,7 @@
     .settings-page .header{font-size:28px;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:10px}
     .settings-page .header .back{font-size:24px;cursor:pointer;padding:4px 8px}
     .settings-list{background:var(--card-bg);backdrop-filter:blur(6px);border-radius:14px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.04)}
-    .settings-item{padding:14px 16px;border-bottom:1px solid #d1d9e3;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:background .1s}
+    .settings-item{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:background .1s}
     .settings-item:last-child{border-bottom:none}
     .settings-item:active{background:var(--btn)}
     .settings-item .label{font-size:16px;color:#1c1c1e}
@@ -89,14 +86,14 @@
     .api-settings-page .header .back{font-size:24px;cursor:pointer;padding:4px 8px}
     .api-group{background:var(--card-bg);backdrop-filter:blur(6px);border-radius:14px;padding:16px;margin-bottom:16px;box-shadow:0 2px 10px rgba(0,0,0,0.04)}
     .api-group label{display:block;font-size:14px;font-weight:600;color:#3a3a3c;margin-bottom:4px}
-    .api-group input,.api-group select,.api-group textarea{width:100%;padding:10px 12px;border:1px solid #d1d9e3;border-radius:10px;font-size:15px;background:rgba(255,255,255,0.5);margin-bottom:12px;outline:none;font-family:inherit}
+    .api-group input,.api-group select,.api-group textarea{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;font-size:15px;background:rgba(255,255,255,0.5);margin-bottom:12px;outline:none;font-family:inherit}
     .api-group input:focus,.api-group select:focus,.api-group textarea:focus{border-color:var(--btn-active);background:#fff}
     .api-group textarea{min-height:80px;resize:vertical}
     .api-group button{background:var(--btn);color:#1c1c1e;border:none;padding:10px 16px;border-radius:10px;font-size:16px;font-weight:600;cursor:pointer;transition:background .2s;width:100%}
     .api-group button:active{background:var(--btn-active)}
     .api-group .status-msg{margin-top:8px;font-size:14px;color:#3a3a3c;min-height:20px}
     .api-group .avatar-upload{display:flex;align-items:center;gap:12px;margin-bottom:12px}
-    .api-group .avatar-preview{width:64px;height:64px;border-radius:50%;background:#e5e5ea;display:flex;align-items:center;justify-content:center;font-size:30px;overflow:hidden;flex-shrink:0;border:2px solid #d1d9e3}
+    .api-group .avatar-preview{width:64px;height:64px;border-radius:50%;background:#e5e5ea;display:flex;align-items:center;justify-content:center;font-size:30px;overflow:hidden;flex-shrink:0;border:2px solid var(--border)}
     .api-group .avatar-preview img{width:100%;height:100%;object-fit:cover}
     .api-group .avatar-upload input[type=file]{display:none}
     .api-group .avatar-upload .upload-btn{background:var(--btn);padding:6px 14px;border-radius:8px;font-size:14px;cursor:pointer;color:#1c1c1e}
@@ -109,41 +106,14 @@
     input:checked+.slider:before{transform:translateX(20px)}
     .wechat-app{display:none;flex-direction:column;height:100%;background:var(--bg) !important}
     .wechat-app.active{display:flex}
-    .wechat-app .top-bar{display:flex;justify-content:space-between;align-items:center;padding:8px 16px;background:var(--bg) !important;border-bottom:1px solid #d1d9e3;flex-shrink:0}
+    .wechat-app .top-bar{display:flex;justify-content:space-between;align-items:center;padding:8px 16px;background:var(--bg) !important;border-bottom:1px solid var(--border);flex-shrink:0}
     .wechat-app .top-bar .back{font-size:24px;cursor:pointer;padding:4px 8px}
     .wechat-app .top-bar .title{font-size:18px;font-weight:600}
-    .wechat-app .tab-bar{
-      display:flex;
-      background:var(--tab-bg);
-      border-top:1px solid #d1d9e3;
-      flex-shrink:0;
-      justify-content:space-around;
-      padding:12px 0 10px;  /* 加厚 */
-      min-height:64px;
-      backdrop-filter:blur(6px);
-    }
-    .wechat-app .tab-bar .tab{
-      flex:1;
-      text-align:center;
-      padding:4px 0;
-      font-size:12px;
-      color:#5a6a7a;
-      cursor:pointer;
-      border-bottom:2px solid transparent;
-      transition:.2s;
-    }
-    .wechat-app .tab-bar .tab.active{
-      color:var(--btn-active);
-      border-bottom-color:var(--btn-active);
-      font-weight:600;
-    }
+    .wechat-app .tab-bar{display:flex;background:var(--tab-bg);border-top:1px solid var(--border);flex-shrink:0;justify-content:space-around;padding:12px 0 10px;min-height:64px;backdrop-filter:blur(6px)}
+    .wechat-app .tab-bar .tab{flex:1;text-align:center;padding:4px 0;font-size:12px;color:#5a6a7a;cursor:pointer;border-bottom:2px solid transparent;transition:.2s}
+    .wechat-app .tab-bar .tab.active{color:var(--btn-active);border-bottom-color:var(--btn-active);font-weight:600}
     .wechat-app .tab-content{flex:1;overflow-y:auto;background:var(--bg) !important;padding:8px 8px 4px}
-    .wechat-app .tab-content .list-item{
-      display:flex;align-items:center;padding:14px 16px;border-bottom:1px solid #d1d9e3;
-      cursor:pointer;transition:background .1s;
-      background:var(--card-bg);backdrop-filter:blur(6px);
-      border-radius:10px;margin-bottom:6px;box-shadow:0 1px 4px rgba(0,0,0,0.03)
-    }
+    .wechat-app .tab-content .list-item{display:flex;align-items:center;padding:14px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s;background:var(--card-bg);backdrop-filter:blur(6px);border-radius:10px;margin-bottom:6px;box-shadow:0 1px 4px rgba(0,0,0,0.03)}
     .wechat-app .tab-content .list-item:active{background:var(--btn)}
     .wechat-app .tab-content .list-item .avatar{width:48px;height:48px;border-radius:50%;background:#e5e5ea;display:flex;align-items:center;justify-content:center;font-size:24px;overflow:hidden;flex-shrink:0;margin-right:12px}
     .wechat-app .tab-content .list-item .avatar img{width:100%;height:100%;object-fit:cover}
@@ -154,7 +124,7 @@
     .wechat-app .tab-content .empty-state{text-align:center;color:#8a9aa8;padding:60px 20px;font-size:15px}
     .chat-dialog-page{display:none;flex-direction:column;height:100%;background:var(--bg) !important;position:absolute;top:0;left:0;right:0;bottom:0;z-index:10;border-radius:30px;overflow:hidden}
     .chat-dialog-page.active{display:flex}
-    .chat-dialog-page .chat-header{padding:12px 16px;background:var(--card-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid #d1d9e3;display:flex;align-items:center;gap:12px;flex-shrink:0}
+    .chat-dialog-page .chat-header{padding:12px 16px;background:var(--card-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0}
     .chat-dialog-page .chat-header .back{font-size:24px;cursor:pointer;padding:4px 8px}
     .chat-dialog-page .chat-header .avatar{width:36px;height:36px;border-radius:50%;background:#e5e5ea;display:flex;align-items:center;justify-content:center;font-size:18px;overflow:hidden;flex-shrink:0;cursor:pointer}
     .chat-dialog-page .chat-header .avatar img{width:100%;height:100%;object-fit:cover}
@@ -171,12 +141,12 @@
     .chat-dialog-page .message.user .msg-time{color:rgba(0,0,0,0.5)}
     .chat-dialog-page .message.assistant .msg-time{color:#8a9aa8}
     @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-    .chat-dialog-page .chat-input-area{padding:10px 12px 16px;background:var(--card-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid #d1d9e3;display:flex;gap:8px;flex-shrink:0}
-    .chat-dialog-page .chat-input-area textarea{flex:1;border:1px solid #d1d9e3;border-radius:20px;padding:8px 14px;font-size:15px;resize:none;outline:none;background:rgba(255,255,255,0.5);font-family:inherit;min-height:36px;max-height:80px}
+    .chat-dialog-page .chat-input-area{padding:10px 12px 16px;background:var(--card-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;gap:8px;flex-shrink:0}
+    .chat-dialog-page .chat-input-area textarea{flex:1;border:1px solid var(--border);border-radius:20px;padding:8px 14px;font-size:15px;resize:none;outline:none;background:rgba(255,255,255,0.5);font-family:inherit;min-height:36px;max-height:80px}
     .chat-dialog-page .chat-input-area textarea:focus{border-color:var(--btn-active);background:#fff}
     .chat-dialog-page .chat-input-area button{background:var(--btn);color:#1c1c1e;border:none;border-radius:20px;padding:0 16px;font-size:15px;font-weight:600;cursor:pointer;transition:background .2s}
     .chat-dialog-page .chat-input-area button:active{background:var(--btn-active)}
-    .chat-dialog-page .prompt-box{background:var(--card-bg);padding:6px 16px;font-size:12px;color:#3a3a3c;border-bottom:1px solid #d1d9e3;display:none;word-break:break-word}
+    .chat-dialog-page .prompt-box{background:var(--card-bg);padding:6px 16px;font-size:12px;color:#3a3a3c;border-bottom:1px solid var(--border);display:none;word-break:break-word}
     .chat-dialog-page .prompt-box.show{display:block}
     .chat-dialog-page .prompt-box .label{font-weight:600;color:#1c1c1e}
     ::-webkit-scrollbar{width:3px}
@@ -202,21 +172,23 @@
     .moment-card .header .name { font-weight:600; font-size:15px; color:#1c1c1e; }
     .moment-card .header .time { font-size:11px; color:#8a9aa8; margin-left:auto; }
     .moment-card .content { font-size:15px; line-height:1.5; margin:4px 0 6px; color:#1c1c1e; word-break:break-word; }
-    .moment-card .image { max-width:100%; border-radius:10px; margin-top:6px; max-height:200px; object-fit:cover; }
-    .moment-card .actions { display:flex; gap:16px; margin-top:8px; border-top:1px solid #d1d9e3; padding-top:8px; font-size:14px; color:#6a7a8a; }
-    .moment-card .actions span { cursor:pointer; user-select:none; }
+    .moment-card .image-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-top:6px; }
+    .moment-card .image-grid .img-slot { aspect-ratio:1; border-radius:6px; overflow:hidden; background:#e5e5ea; }
+    .moment-card .image-grid .img-slot img { width:100%; height:100%; object-fit:cover; }
+    .moment-card .actions { display:flex; gap:12px; margin-top:8px; border-top:1px solid var(--border); padding-top:8px; font-size:14px; color:#6a7a8a; flex-wrap:wrap; }
+    .moment-card .actions span { cursor:pointer; user-select:none; padding:2px 4px; }
     .moment-card .actions span:active { opacity:0.6; }
     .moment-card .actions .liked { color:#007aff; font-weight:600; }
-    .moment-card .comments { margin-top:6px; padding-left:12px; border-left:2px solid #d1d9e3; }
+    .moment-card .comments { margin-top:6px; padding-left:12px; border-left:2px solid var(--border); }
     .moment-card .comments .comment { font-size:13px; color:#3a3a3c; padding:2px 0; }
     .moment-card .comments .comment .name { font-weight:600; color:#1c1c1e; }
 
-    /* 朋友圈封面 - 加大 */
+    /* 朋友圈封面 */
     .moments-cover {
       position:relative;
       width:100%;
-      height:160px;  /* 增加高度 */
-      background: linear-gradient(135deg, #d5e0ec, #b8cce0); /* 更浅的紫色 */
+      height:160px;
+      background: linear-gradient(135deg, #d5e0ec, #b8cce0);
       border-radius:0;
       overflow:hidden;
       margin:0;
@@ -253,6 +225,74 @@
     .moments-profile .info .name { font-size:17px; font-weight:600; color:#1c1c1e; }
     .moments-profile .info .sig { font-size:13px; color:#6a7a8a; }
 
+    /* 朋友圈发布编辑器 */
+    .moment-editor {
+      position:absolute;
+      top:0;left:0;right:0;bottom:0;
+      background:var(--bg);
+      z-index:20;
+      display:none;
+      flex-direction:column;
+      padding:20px 16px;
+      border-radius:30px;
+      overflow:hidden;
+    }
+    .moment-editor.show { display:flex; }
+    .moment-editor .header {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:16px;
+    }
+    .moment-editor .header .title { font-size:20px; font-weight:700; }
+    .moment-editor .header .close-btn { font-size:24px; cursor:pointer; padding:4px 8px; }
+    .moment-editor textarea {
+      width:100%; flex:0 0 auto; min-height:100px; max-height:180px;
+      border:1px solid var(--border); border-radius:12px;
+      padding:12px; font-size:16px;
+      background:rgba(255,255,255,0.5);
+      resize:none; outline:none; font-family:inherit;
+    }
+    .moment-editor textarea:focus { border-color:var(--btn-active); background:#fff; }
+    .moment-editor .image-grid {
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);
+      gap:8px;
+      margin:12px 0;
+    }
+    .moment-editor .image-grid .slot {
+      aspect-ratio:1;
+      border:1px dashed var(--border);
+      border-radius:8px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:28px;
+      color:#aab5c0;
+      cursor:pointer;
+      background:rgba(255,255,255,0.3);
+      position:relative;
+      overflow:hidden;
+      transition:border-color 0.2s;
+    }
+    .moment-editor .image-grid .slot:active { background:var(--btn); }
+    .moment-editor .image-grid .slot img {
+      width:100%; height:100%; object-fit:cover; position:absolute; top:0; left:0;
+    }
+    .moment-editor .image-grid .slot .remove-btn {
+      position:absolute; top:2px; right:4px;
+      background:rgba(0,0,0,0.5); color:#fff;
+      border:none; border-radius:50%; width:20px; height:20px;
+      font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+      z-index:5;
+    }
+    .moment-editor .publish-btn {
+      background:var(--btn); color:#1c1c1e; border:none;
+      padding:12px; border-radius:12px; font-size:16px; font-weight:600;
+      cursor:pointer; width:100%; margin-top:8px;
+    }
+    .moment-editor .publish-btn:active { background:var(--btn-active); }
+
     .profile-edit-page {
       padding:20px 16px;
       flex:1;
@@ -279,17 +319,15 @@
       font-size:48px; overflow:hidden;
       cursor:pointer;
       margin:0 auto 16px;
-      border:2px solid #d1d9e3;
+      border:2px solid var(--border);
     }
     .profile-edit-page .avatar-large img { width:100%; height:100%; object-fit:cover; }
-    .profile-edit-page .input-group {
-      margin-bottom:12px;
-    }
+    .profile-edit-page .input-group { margin-bottom:12px; }
     .profile-edit-page .input-group label {
       font-size:14px; font-weight:600; color:#3a3a3c; display:block; margin-bottom:4px;
     }
     .profile-edit-page .input-group input, .profile-edit-page .input-group textarea {
-      width:100%; padding:10px 12px; border:1px solid #d1d9e3; border-radius:10px;
+      width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:10px;
       font-size:15px; background:rgba(255,255,255,0.5); outline:none; font-family:inherit;
     }
     .profile-edit-page .input-group input:focus, .profile-edit-page .input-group textarea:focus {
@@ -397,9 +435,9 @@
         overflow: hidden;
       }
       .phone.fullscreen {
-        width: 100dvw;
-        height: 100dvh;
-        max-height: 100dvh;
+        width: 100vw;
+        height: 100vh;
+        max-height: 100vh;
         aspect-ratio: auto;
         padding: 0;
         border-radius: 0;
@@ -420,7 +458,7 @@
 </head>
 <body>
 <div class="phone" id="phoneContainer">
-  <div class="phone-screen">
+  <div class="phone-screen" id="phoneScreen">
     <div class="status-bar" id="statusBar">
       <span class="time" id="statusTime">00:00</span>
       <span class="icons">
@@ -652,6 +690,17 @@
       </div>
     </div>
 
+    <!-- 朋友圈发布编辑器（全屏覆盖层） -->
+    <div class="moment-editor" id="momentEditor">
+      <div class="header">
+        <span class="title" id="editorTitle">发布动态</span>
+        <span class="close-btn" id="editorClose">✕</span>
+      </div>
+      <textarea id="momentText" placeholder="说点什么..."></textarea>
+      <div class="image-grid" id="imageGrid"></div>
+      <button class="publish-btn" id="publishMomentBtn2">发布</button>
+    </div>
+
   </div>
 </div>
 
@@ -691,6 +740,7 @@ function showPage(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('wechatApp').classList.remove('active');
   document.getElementById('chatDialogPage').classList.remove('active');
+  document.getElementById('momentEditor').classList.remove('show');
   const target = document.getElementById(id);
   if (target) target.classList.add('active');
 }
@@ -698,6 +748,7 @@ function showWechat(tab) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('wechatApp').classList.add('active');
   document.getElementById('chatDialogPage').classList.remove('active');
+  document.getElementById('momentEditor').classList.remove('show');
   if (tab) {
     document.querySelectorAll('.wechat-app .tab').forEach(t => t.classList.remove('active'));
     const targetTab = document.querySelector(`.wechat-app .tab[data-tab="${tab}"]`);
@@ -738,6 +789,7 @@ document.getElementById('backFromContactDetail').addEventListener('click', () =>
   renderWechatContent(); showWechat('contacts');
 });
 document.getElementById('backFromProfileEdit').addEventListener('click', () => { renderWechatContent(); showWechat('profile'); });
+document.getElementById('editorClose').addEventListener('click', closeEditor);
 
 document.querySelectorAll('.wechat-app .tab').forEach(tab => {
   tab.addEventListener('click', function() {
@@ -759,7 +811,7 @@ updateTime();
 setInterval(updateTime, 10000);
 
 // ============================================================
-// 全屏模式
+// 全屏模式 - 适配 Safari/Edge
 // ============================================================
 const phoneContainer = document.getElementById('phoneContainer');
 const fullscreenToggle = document.getElementById('fullscreenToggle');
@@ -772,12 +824,14 @@ function loadDisplayMode() {
 function applyDisplayMode(isFullscreen) {
   if (isFullscreen) {
     phoneContainer.classList.add('fullscreen');
-    setTimeout(() => {
-      phoneContainer.style.height = window.innerHeight + 'px';
-    }, 100);
+    // 强制刷新高度以适配 Safari/Edge
+    const h = window.innerHeight;
+    phoneContainer.style.height = h + 'px';
+    document.getElementById('phoneScreen').style.height = h + 'px';
   } else {
     phoneContainer.classList.remove('fullscreen');
     phoneContainer.style.height = '';
+    document.getElementById('phoneScreen').style.height = '';
   }
   localStorage.setItem('fullscreenMode', isFullscreen ? 'true' : 'false');
   displayStatus.textContent = isFullscreen ? '✅ 全屏模式已启用' : '✅ 带黑框模式已启用';
@@ -786,7 +840,9 @@ function applyDisplayMode(isFullscreen) {
 fullscreenToggle.addEventListener('change', function() { applyDisplayMode(this.checked); });
 window.addEventListener('resize', function() {
   if (fullscreenToggle.checked) {
-    phoneContainer.style.height = window.innerHeight + 'px';
+    const h = window.innerHeight;
+    phoneContainer.style.height = h + 'px';
+    document.getElementById('phoneScreen').style.height = h + 'px';
   }
 });
 loadDisplayMode();
@@ -875,7 +931,7 @@ function renderChatList(container) {
 function renderContactList(container) {
   const chars = getChars();
   let html = `
-    <div style="display:flex;justify-content:space-between;align-items:center;background:var(--bg);padding:10px 16px;border-bottom:1px solid #d1d9e3;">
+    <div style="display:flex;justify-content:space-between;align-items:center;background:var(--bg);padding:10px 16px;border-bottom:1px solid var(--border);">
       <span style="font-size:14px;color:#6a7a8a;">所有角色</span>
       <button id="newContactBtn" style="background:var(--btn);color:#1c1c1e;border:none;border-radius:16px;padding:4px 14px;font-size:14px;cursor:pointer;">+ 新建</button>
     </div>
@@ -918,26 +974,170 @@ function renderContactList(container) {
   }
 }
 
-// ========== 朋友圈 ==========
+// ============================================================
+// 朋友圈 - 完整功能（发布编辑器、编辑、点赞评论删除）
+// ============================================================
+let editingMomentIndex = null; // 用于编辑
+
+function openEditor(editIndex = null) {
+  editingMomentIndex = editIndex;
+  const editor = document.getElementById('momentEditor');
+  const title = document.getElementById('editorTitle');
+  const textarea = document.getElementById('momentText');
+  const grid = document.getElementById('imageGrid');
+
+  if (editIndex !== null) {
+    title.textContent = '编辑动态';
+    const moments = getMoments();
+    const m = moments[editIndex];
+    textarea.value = m.text || '';
+    // 加载已有图片
+    const images = m.images || [];
+    renderImageGrid(grid, images);
+  } else {
+    title.textContent = '发布动态';
+    textarea.value = '';
+    renderImageGrid(grid, []);
+  }
+  editor.classList.add('show');
+  textarea.focus();
+}
+
+function closeEditor() {
+  document.getElementById('momentEditor').classList.remove('show');
+  editingMomentIndex = null;
+}
+
+function renderImageGrid(container, images) {
+  const maxSlots = 9;
+  let html = '';
+  for (let i = 0; i < maxSlots; i++) {
+    if (i < images.length) {
+      const img = images[i];
+      html += `
+        <div class="slot" data-index="${i}">
+          <img src="${img}" />
+          <span class="remove-btn" data-index="${i}">✕</span>
+        </div>
+      `;
+    } else if (i === images.length && images.length < maxSlots) {
+      html += `<div class="slot" id="addImageSlot">+</div>`;
+    } else {
+      html += `<div class="slot" style="border:none;background:transparent;"></div>`;
+    }
+  }
+  container.innerHTML = html;
+
+  // 点击加号添加图片
+  const addSlot = document.getElementById('addImageSlot');
+  if (addSlot) {
+    addSlot.addEventListener('click', function() {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.onchange = function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+          const dataUrl = ev.target.result;
+          // 获取当前编辑的图片列表
+          const isEdit = editingMomentIndex !== null;
+          let images = [];
+          if (isEdit) {
+            const moments = getMoments();
+            images = moments[editingMomentIndex].images || [];
+          } else {
+            // 从当前界面读取已有图片
+            const slots = container.querySelectorAll('.slot img');
+            slots.forEach(img => { if (img && img.src) images.push(img.src); });
+          }
+          if (images.length >= 9) { alert('最多添加9张图片'); return; }
+          images.push(dataUrl);
+          if (isEdit) {
+            const moments = getMoments();
+            moments[editingMomentIndex].images = images;
+            saveMoments(moments);
+          }
+          renderImageGrid(container, images);
+        };
+        reader.readAsDataURL(file);
+      };
+      input.click();
+    });
+  }
+
+  // 删除图片
+  container.querySelectorAll('.remove-btn').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      const idx = parseInt(this.dataset.index);
+      const isEdit = editingMomentIndex !== null;
+      let images = [];
+      if (isEdit) {
+        const moments = getMoments();
+        images = moments[editingMomentIndex].images || [];
+        images.splice(idx, 1);
+        moments[editingMomentIndex].images = images;
+        saveMoments(moments);
+      } else {
+        const slots = container.querySelectorAll('.slot img');
+        const temp = [];
+        slots.forEach(img => { if (img && img.src) temp.push(img.src); });
+        temp.splice(idx, 1);
+        images = temp;
+      }
+      renderImageGrid(container, images);
+    });
+  });
+}
+
+// 发布/更新动态
+document.getElementById('publishMomentBtn2').addEventListener('click', function() {
+  const text = document.getElementById('momentText').value.trim();
+  if (!text) { alert('请输入内容'); return; }
+  // 收集图片
+  const grid = document.getElementById('imageGrid');
+  const imgElements = grid.querySelectorAll('.slot img');
+  const images = [];
+  imgElements.forEach(img => { if (img && img.src) images.push(img.src); });
+
+  const moments = getMoments();
+  if (editingMomentIndex !== null) {
+    // 编辑
+    moments[editingMomentIndex].text = text;
+    moments[editingMomentIndex].images = images;
+    saveMoments(moments);
+  } else {
+    // 新建
+    moments.push({
+      text: text,
+      time: Date.now(),
+      images: images,
+      likes: 0,
+      liked: false,
+      comments: []
+    });
+    saveMoments(moments);
+  }
+  closeEditor();
+  renderWechatContent();
+});
+
+// 渲染朋友圈列表
 function renderMoments(container) {
   const profile = getProfile();
   const moments = getMoments();
   let html = `
-    <!-- 封面 -->
     <div class="moments-cover" id="coverUpload">
       ${profile.cover ? `<img src="${profile.cover}" />` : '<div style="width:100%;height:100%;background:linear-gradient(135deg,#d5e0ec,#b8cce0);display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;">点击上传封面</div>'}
       <div class="cover-hint">点击更换封面</div>
     </div>
     <input type="file" id="coverFileInput" accept="image/*" style="display:none;" />
-    <!-- 个人信息 -->
     <div class="moments-profile">
       <div class="avatar">${profile.avatar ? `<img src="${profile.avatar}" />` : '👤'}</div>
-      <div class="info">
-        <div class="name">${profile.name}</div>
-        <div class="sig">${profile.signature}</div>
-      </div>
+      <div class="info"><div class="name">${profile.name}</div><div class="sig">${profile.signature}</div></div>
     </div>
-    <!-- 发布按钮 -->
     <div style="display:flex;justify-content:flex-end;margin-bottom:10px;">
       <button id="publishMomentBtn" style="background:var(--btn);color:#1c1c1e;border:none;border-radius:16px;padding:6px 16px;font-size:14px;cursor:pointer;">+ 发布动态</button>
     </div>
@@ -960,32 +1160,7 @@ function renderMoments(container) {
   });
 
   document.getElementById('publishMomentBtn').addEventListener('click', function() {
-    const text = prompt('输入动态内容：');
-    if (text === null || text.trim() === '') return;
-    const addImage = confirm('是否添加图片？');
-    if (addImage) {
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.accept = 'image/*';
-      input.onchange = function(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = function(ev) {
-          const moments = getMoments();
-          moments.push({ text: text.trim(), time: Date.now(), image: ev.target.result, likes: 0, liked: false, comments: [] });
-          saveMoments(moments);
-          renderWechatContent();
-        };
-        reader.readAsDataURL(file);
-      };
-      input.click();
-    } else {
-      const moments = getMoments();
-      moments.push({ text: text.trim(), time: Date.now(), image: null, likes: 0, liked: false, comments: [] });
-      saveMoments(moments);
-      renderWechatContent();
-    }
+    openEditor(null);
   });
 
   const list = document.getElementById('momentsList');
@@ -1000,6 +1175,14 @@ function renderMoments(container) {
       const avatarHtml = profile.avatar ? `<img src="${profile.avatar}" />` : '👤';
       const likedClass = m.liked ? 'liked' : '';
       const likeText = m.liked ? '❤️ 取消赞' : '🤍 赞';
+      let imagesHtml = '';
+      if (m.images && m.images.length > 0) {
+        imagesHtml = '<div class="image-grid">';
+        m.images.forEach(img => {
+          imagesHtml += `<div class="img-slot"><img src="${img}" /></div>`;
+        });
+        imagesHtml += '</div>';
+      }
       items += `
         <div class="moment-card">
           <div class="header">
@@ -1008,10 +1191,11 @@ function renderMoments(container) {
             <span class="time">${new Date(m.time).toLocaleString('zh-CN', {hour:'2-digit',minute:'2-digit',month:'short',day:'numeric'})}</span>
           </div>
           <div class="content">${m.text}</div>
-          ${m.image ? `<img src="${m.image}" class="image" />` : ''}
+          ${imagesHtml}
           <div class="actions">
             <span class="${likedClass}" data-idx="${realIdx}">${likeText}</span>
             <span class="comment-btn" data-idx="${realIdx}">💬 评论</span>
+            <span class="edit-btn" data-idx="${realIdx}">✎ 编辑</span>
             <span class="delete-btn" data-idx="${realIdx}">🗑️ 删除</span>
           </div>
           ${m.comments && m.comments.length > 0 ? `<div class="comments">${m.comments.map(c => `<div class="comment"><span class="name">${c.name || '我'}</span>：${c.text}</div>`).join('')}</div>` : ''}
@@ -1020,7 +1204,8 @@ function renderMoments(container) {
     });
     list.innerHTML = items;
 
-    list.querySelectorAll('.actions .liked, .actions .comment-btn, .actions .delete-btn').forEach(el => {
+    // 事件绑定
+    list.querySelectorAll('.actions .liked, .actions .comment-btn, .actions .edit-btn, .actions .delete-btn').forEach(el => {
       el.addEventListener('click', function(e) {
         const idx = parseInt(this.dataset.idx);
         const moments = getMoments();
@@ -1038,6 +1223,8 @@ function renderMoments(container) {
             saveMoments(moments);
             renderWechatContent();
           }
+        } else if (this.classList.contains('edit-btn')) {
+          openEditor(idx);
         } else if (this.classList.contains('delete-btn')) {
           if (confirm('确定删除这条动态吗？')) {
             moments.splice(idx, 1);
@@ -1055,7 +1242,7 @@ function renderProfile(container) {
   const profile = getProfile();
   container.innerHTML = `
     <div style="padding:20px 16px;background:var(--bg);flex:1;display:flex;flex-direction:column;align-items:center;">
-      <div class="avatar-large" style="width:100px;height:100px;border-radius:50%;background:#e5e5ea;display:flex;align-items:center;justify-content:center;font-size:48px;overflow:hidden;border:2px solid #d1d9e3;margin-bottom:16px;">
+      <div class="avatar-large" style="width:100px;height:100px;border-radius:50%;background:#e5e5ea;display:flex;align-items:center;justify-content:center;font-size:48px;overflow:hidden;border:2px solid var(--border);margin-bottom:16px;">
         ${profile.avatar ? `<img src="${profile.avatar}" />` : '👤'}
       </div>
       <div style="font-size:20px;font-weight:600;color:#1c1c1e;margin-bottom:4px;">${profile.name}</div>
@@ -1534,6 +1721,13 @@ window.addEventListener('load', async () => {
   document.documentElement.style.backgroundColor = '#F0F4FA';
   document.documentElement.style.colorScheme = 'light';
   document.body.style.backgroundColor = '#F0F4FA';
+
+  // 强制全屏适配
+  if (fullscreenToggle.checked) {
+    const h = window.innerHeight;
+    phoneContainer.style.height = h + 'px';
+    document.getElementById('phoneScreen').style.height = h + 'px';
+  }
 
   const versionEl = document.getElementById('versionInfo');
   if (versionEl) {
