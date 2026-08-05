@@ -107,6 +107,14 @@
     ::-webkit-scrollbar { width:4px; }
     ::-webkit-scrollbar-thumb { background:#c6c6c8; border-radius:4px; }
     @media (max-width:420px) { .phone { width:100%; height:100vh; border-radius:0; padding:0; } .phone-screen { border-radius:0; } body { padding:0; } }
+
+    /* 开关样式 */
+    .switch { position:relative; display:inline-block; width:44px; height:24px; flex-shrink:0; }
+    .switch input { opacity:0; width:0; height:0; }
+    .slider { position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background:#ccc; transition:.3s; border-radius:24px; }
+    .slider:before { content:""; position:absolute; height:18px; width:18px; left:3px; bottom:3px; background:white; transition:.3s; border-radius:50%; }
+    input:checked + .slider { background:#007aff; }
+    input:checked + .slider:before { transform:translateX(20px); }
   </style>
 </head>
 <body>
@@ -159,6 +167,15 @@
           <div style="display:flex; gap:8px;">
             <select id="modelSelect" style="flex:1; margin-bottom:0;"><option value="">请先拉取</option></select>
             <button id="fetchModelsBtn" style="width:auto; padding:10px 16px; background:#34c759;">🔄</button>
+          </div>
+          <!-- 流式开关 -->
+          <div style="display:flex; align-items:center; gap:12px; margin:12px 0 8px;">
+            <label style="font-weight:600; margin-bottom:0;">⚡ 流式输出</label>
+            <label class="switch">
+              <input type="checkbox" id="streamToggle" />
+              <span class="slider round"></span>
+            </label>
+            <span style="font-size:13px; color:#8e8e93;" id="streamStatus">关闭</span>
           </div>
           <div class="status-msg" id="apiStatus">就绪</div>
           <button id="saveApiBtn" style="background:#8e8e93; margin-top:8px;">保存设置</button>
@@ -289,6 +306,14 @@
   const saveApiBtn = document.getElementById('saveApiBtn');
   const apiStatus = document.getElementById('apiStatus');
   const modelDisplay = document.getElementById('modelDisplay');
+  const streamToggle = document.getElementById('streamToggle');
+  const streamStatus = document.getElementById('streamStatus');
+
+  // 流式开关状态显示
+  streamToggle.addEventListener('change', () => {
+    streamStatus.textContent = streamToggle.checked ? '开启' : '关闭';
+    localStorage.setItem('streamEnabled', streamToggle.checked ? 'true' : 'false');
+  });
 
   const chatMessages = document.getElementById('chatMessages');
   const userInput = document.getElementById('userInput');
@@ -333,6 +358,19 @@
     localStorage.setItem('charHistory_' + charId, JSON.stringify(history));
   }
 
+  // 加载流式设置
+  function loadStreamSetting() {
+    const saved = localStorage.getItem('streamEnabled');
+    if (saved === 'true') {
+      streamToggle.checked = true;
+      streamStatus.textContent = '开启';
+    } else {
+      streamToggle.checked = false;
+      streamStatus.textContent = '关闭';
+    }
+  }
+  loadStreamSetting();
+
   // ============================================================
   //  5. 普通聊天
   // ============================================================
@@ -369,32 +407,104 @@
   loadChatHistory();
 
   // ============================================================
-  //  6. 发送普通消息
+  //  6. 发送普通消息（支持流式）
   // ============================================================
   sendBtn.addEventListener('click', async () => {
     const base = apiBase.value.trim(), key = apiKey.value.trim(), model = modelSelect.value, msg = userInput.value.trim();
     if (!base || !key) { alert('请先设置 API'); showPage('apiSettingsPage'); return; }
     if (!model) { alert('请先选择模型'); return; }
     if (!msg) { alert('请输入问题'); return; }
+
+    // 添加用户消息
     addChatMessage('user', msg);
     userInput.value = ''; userInput.style.height = 'auto';
+
+    // 显示“思考中”
     chatHistory.push({ role: 'assistant', content: '🤔 思考中...' });
     saveChatHistory();
     renderChatMessages();
+
+    const isStream = streamToggle.checked;
+    const messages = chatHistory.filter(m => m.content !== '🤔 思考中...');
+
     try {
       const res = await fetch('/api/chat', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'chat', baseUrl: base, apiKey: key, model, messages: chatHistory.filter(m => m.content !== '🤔 思考中...') })
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'chat',
+          baseUrl: base,
+          apiKey: key,
+          model,
+          messages: messages,
+          stream: isStream
+        })
       });
-      const data = await res.json();
-      chatHistory.pop(); saveChatHistory();
-      if (data.reply) addChatMessage('assistant', data.reply);
-      else addChatMessage('assistant', '❌ 无回复');
+
+      if (isStream) {
+        // 移除“思考中”
+        chatHistory.pop();
+        saveChatHistory();
+        // 添加一个空白助手消息用于累积
+        chatHistory.push({ role: 'assistant', content: '' });
+        saveChatHistory();
+        renderChatMessages();
+
+        // 读取流
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let done = false;
+        let fullContent = '';
+        while (!done) {
+          const { value, done: doneReading } = await reader.read();
+          done = doneReading;
+          if (done) break;
+          const chunk = decoder.decode(value);
+          // 解析 SSE 格式
+          const lines = chunk.split('\n');
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              const json = line.slice(6);
+              if (json === '[DONE]') continue;
+              try {
+                const parsed = JSON.parse(json);
+                const delta = parsed.choices?.[0]?.delta?.content;
+                if (delta) {
+                  fullContent += delta;
+                  // 更新最后一条消息
+                  if (chatHistory.length > 0 && chatHistory[chatHistory.length-1].role === 'assistant') {
+                    chatHistory[chatHistory.length-1].content = fullContent;
+                  }
+                  saveChatHistory();
+                  renderChatMessages();
+                }
+              } catch (e) { /* 忽略解析错误 */ }
+            }
+          }
+        }
+        // 最终保存完整内容
+        if (chatHistory.length > 0 && chatHistory[chatHistory.length-1].role === 'assistant') {
+          chatHistory[chatHistory.length-1].content = fullContent || '无回复';
+        }
+        saveChatHistory();
+        renderChatMessages();
+      } else {
+        // 非流式
+        const data = await res.json();
+        chatHistory.pop(); // 移除思考中
+        saveChatHistory();
+        if (data.reply) {
+          addChatMessage('assistant', data.reply);
+        } else {
+          addChatMessage('assistant', '❌ 无回复');
+        }
+      }
     } catch (e) {
       chatHistory.pop(); saveChatHistory();
       addChatMessage('assistant', '❌ 出错：' + e.message);
     }
   });
+
   userInput.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendBtn.click(); } });
   userInput.addEventListener('input', () => { userInput.style.height = 'auto'; userInput.style.height = userInput.scrollHeight + 'px'; });
   newChatBtn.addEventListener('click', clearChatHistory);
@@ -424,7 +534,6 @@
     });
     charGrid.innerHTML = html;
 
-    // 点击卡片进入聊天
     charGrid.querySelectorAll('.char-card').forEach(el => {
       el.addEventListener('click', (e) => {
         if (e.target.closest('button')) return;
@@ -435,7 +544,6 @@
       });
     });
 
-    // 编辑按钮
     charGrid.querySelectorAll('.edit-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -443,7 +551,6 @@
         const chars = getChars();
         const char = chars.find(c => c.id === id);
         if (!char) return;
-        // 填充编辑表单
         editingCharId = id;
         document.getElementById('createCharTitle').textContent = '编辑 Char';
         charNameInput.value = char.name || '';
@@ -459,7 +566,6 @@
       });
     });
 
-    // 删除按钮
     charGrid.querySelectorAll('.delete-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -526,7 +632,6 @@
     const modelName = modelSelect.value || '未选择';
     charChatModel.textContent = '模型: ' + modelName;
     currentCharId = char.id;
-    // 更新人设显示
     updatePromptDisplay();
     renderCharChatMessages();
     showPage('charChatPage');
@@ -543,7 +648,6 @@
     }
   }
 
-  // 人设显示切换
   promptToggleBtn.addEventListener('click', () => {
     promptBox.classList.toggle('show');
   });
@@ -590,7 +694,7 @@
   }
 
   // ============================================================
-  //  10. 发送角色消息（强化系统消息）
+  //  10. 发送角色消息（支持流式）
   // ============================================================
   charChatSendBtn.addEventListener('click', async () => {
     const base = apiBase.value.trim();
@@ -605,13 +709,13 @@
     const char = chars.find(c => c.id === currentCharId);
     if (!char) { alert('角色不存在'); return; }
 
+    // 添加用户消息
     addCharMessage('user', msg);
     charChatInput.value = ''; charChatInput.style.height = 'auto';
 
-    // 构建消息：系统人设 + 历史对话（不含 thinking）
+    // 构建消息
     let history = getCurrentCharHistory();
     const messages = [];
-    // 强制加入系统消息（即使之前已有，也重新插入在最前面）
     if (char.prompt) {
       messages.push({ role: 'system', content: char.prompt });
     }
@@ -623,6 +727,8 @@
     saveCurrentCharHistory(history);
     renderCharChatMessages();
 
+    const isStream = streamToggle.checked;
+
     try {
       const res = await fetch('/api/chat', {
         method: 'POST',
@@ -632,20 +738,73 @@
           baseUrl: base,
           apiKey: key,
           model,
-          messages: messages
+          messages: messages,
+          stream: isStream
         })
       });
-      const data = await res.json();
-      // 移除 thinking
-      let h = getCurrentCharHistory();
-      if (h.length > 0 && h[h.length-1].content === '🤔 思考中...') {
-        h.pop();
+
+      if (isStream) {
+        // 移除“思考中”
+        let h = getCurrentCharHistory();
+        if (h.length > 0 && h[h.length-1].content === '🤔 思考中...') {
+          h.pop();
+          saveCurrentCharHistory(h);
+        }
+        // 添加空白助手消息
+        h.push({ role: 'assistant', content: '' });
         saveCurrentCharHistory(h);
-      }
-      if (data.reply) {
-        addCharMessage('assistant', data.reply);
+        renderCharChatMessages();
+
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let done = false;
+        let fullContent = '';
+        while (!done) {
+          const { value, done: doneReading } = await reader.read();
+          done = doneReading;
+          if (done) break;
+          const chunk = decoder.decode(value);
+          const lines = chunk.split('\n');
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              const json = line.slice(6);
+              if (json === '[DONE]') continue;
+              try {
+                const parsed = JSON.parse(json);
+                const delta = parsed.choices?.[0]?.delta?.content;
+                if (delta) {
+                  fullContent += delta;
+                  let currentH = getCurrentCharHistory();
+                  if (currentH.length > 0 && currentH[currentH.length-1].role === 'assistant') {
+                    currentH[currentH.length-1].content = fullContent;
+                    saveCurrentCharHistory(currentH);
+                    renderCharChatMessages();
+                  }
+                }
+              } catch (e) {}
+            }
+          }
+        }
+        // 最终保存
+        let finalH = getCurrentCharHistory();
+        if (finalH.length > 0 && finalH[finalH.length-1].role === 'assistant') {
+          finalH[finalH.length-1].content = fullContent || '无回复';
+          saveCurrentCharHistory(finalH);
+          renderCharChatMessages();
+        }
       } else {
-        addCharMessage('assistant', '❌ 无回复');
+        // 非流式
+        const data = await res.json();
+        let h = getCurrentCharHistory();
+        if (h.length > 0 && h[h.length-1].content === '🤔 思考中...') {
+          h.pop();
+          saveCurrentCharHistory(h);
+        }
+        if (data.reply) {
+          addCharMessage('assistant', data.reply);
+        } else {
+          addCharMessage('assistant', '❌ 无回复');
+        }
       }
     } catch (e) {
       let h = getCurrentCharHistory();
