@@ -16,6 +16,7 @@
       --card-bg: rgba(255,255,255,0.5);
       --border: #d1d9e3;
     }
+    /* 强制全屏，无任何空隙 */
     html, body {
       background-color: var(--bg) !important;
       color-scheme: light !important;
@@ -30,7 +31,6 @@
       right: 0;
       bottom: 0;
     }
-    *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
     body{display:flex;justify-content:center;align-items:center;margin:0;padding:0;background:#1a1a1a}
     
     .phone{
@@ -59,8 +59,10 @@
       flex-direction:column;
     }
     
+    /* 确保没有任何额外限制 */
     .phone { width:100% !important; max-width:100% !important; height:100% !important; max-height:100% !important; }
     
+    /* 状态栏 */
     .status-bar{
       background:transparent;
       padding:12px 20px 8px;
@@ -75,6 +77,7 @@
     .status-bar .icons{display:flex;gap:8px;align-items:center}
     .status-bar .icons svg { stroke: #C5C8F0; fill: #C5C8F0; }
     
+    /* 主屏幕 */
     .home-screen{
       flex:1;
       padding:20px 16px 0;
@@ -116,8 +119,11 @@
     .dock .app-icon .icon-circle{width:56px;height:56px;border-radius:14px}
     .dock .app-icon .icon-circle svg{width:28px;height:28px}
     
+    /* 页面容器 */
     .page{display:none;flex-direction:column;height:100%;background:var(--bg) !important}
     .page.active{display:flex}
+    
+    /* 设置 */
     .settings-page{padding:20px 16px;flex:1;overflow-y:auto;background:var(--bg) !important}
     .settings-page .header{font-size:28px;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:10px}
     .settings-page .header .back{font-size:24px;cursor:pointer;padding:4px 8px}
@@ -127,6 +133,7 @@
     .settings-item:active{background:var(--btn)}
     .settings-item .label{font-size:16px;color:#1c1c1e}
     .settings-item .arrow{color:#8e8e93;font-size:18px}
+    
     .api-settings-page{padding:20px 16px;flex:1;overflow-y:auto;background:var(--bg) !important}
     .api-settings-page .header{font-size:28px;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:10px}
     .api-settings-page .header .back{font-size:24px;cursor:pointer;padding:4px 8px}
@@ -150,6 +157,8 @@
     .slider:before{content:"";position:absolute;height:18px;width:18px;left:3px;bottom:3px;background:#fff;transition:.3s;border-radius:50%}
     input:checked+.slider{background:var(--btn)}
     input:checked+.slider:before{transform:translateX(20px)}
+    
+    /* 微信应用 */
     .wechat-app{display:none;flex-direction:column;height:100%;background:var(--bg) !important}
     .wechat-app.active{display:flex}
     .wechat-app .top-bar{display:flex;justify-content:space-between;align-items:center;padding:8px 16px;background:var(--bg) !important;border-bottom:1px solid var(--border);flex-shrink:0}
@@ -168,6 +177,8 @@
     .wechat-app .tab-content .list-item .info .preview{font-size:13px;color:#6a7a8a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .wechat-app .tab-content .list-item .time{font-size:11px;color:#aab5c0;flex-shrink:0;margin-left:8px}
     .wechat-app .tab-content .empty-state{text-align:center;color:#8a9aa8;padding:60px 20px;font-size:15px}
+    
+    /* 聊天对话页 */
     .chat-dialog-page{display:none;flex-direction:column;height:100%;background:var(--bg) !important;position:absolute;top:0;left:0;right:0;bottom:0;z-index:10;border-radius:0;overflow:hidden}
     .chat-dialog-page.active{display:flex}
     .chat-dialog-page .chat-header{padding:12px 16px;background:var(--card-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0}
@@ -231,6 +242,7 @@
     ::-webkit-scrollbar{width:3px}
     ::-webkit-scrollbar-thumb{background:var(--btn);border-radius:4px}
 
+    /* 朋友圈卡片 */
     .moment-card {
       background: var(--card-bg);
       backdrop-filter: blur(6px);
@@ -261,6 +273,7 @@
     .moment-card .comments .comment { font-size:13px; color:#3a3a3c; padding:2px 0; }
     .moment-card .comments .comment .name { font-weight:600; color:#1c1c1e; }
 
+    /* 朋友圈封面 */
     .moments-cover {
       position:relative;
       width:100%;
@@ -302,6 +315,7 @@
     .moments-profile .info .name { font-size:17px; font-weight:600; color:#1c1c1e; }
     .moments-profile .info .sig { font-size:13px; color:#6a7a8a; }
 
+    /* 朋友圈发布编辑器 */
     .moment-editor {
       position:absolute;
       top:0;left:0;right:0;bottom:0;
@@ -481,6 +495,7 @@
       color:#3a3a3c;
     }
 
+    /* 全屏适配：手机端同样强制全屏 */
     @media(max-width:420px){
       html, body {
         overflow: hidden;
@@ -1304,7 +1319,7 @@ document.getElementById('profileEditSaveBtn').addEventListener('click', function
 });
 
 // ============================================================
-// 角色聊天（核心改动：增加发送+AI回答两个按钮）
+// 角色聊天（核心改动：发送+AI回答两个按钮）
 // ============================================================
 function openDialog(char) {
   currentDialogCharId = char.id;
@@ -1398,7 +1413,6 @@ document.getElementById('dialogReplyBtn').addEventListener('click', async functi
   if (char && char.prompt) {
     messages.push({ role: 'system', content: char.prompt });
   }
-  // 取所有历史消息（包括已回复和待回复），保持顺序
   const allHistory = getCharHistory(currentDialogCharId);
   allHistory.forEach(m => {
     if (m.role === 'user' || m.role === 'assistant') {
@@ -1406,7 +1420,6 @@ document.getElementById('dialogReplyBtn').addEventListener('click', async functi
     }
   });
 
-  // 显示加载状态
   const btn = document.getElementById('dialogReplyBtn');
   const originalText = btn.innerHTML;
   btn.innerHTML = '⏳ 处理中...';
@@ -1420,7 +1433,6 @@ document.getElementById('dialogReplyBtn').addEventListener('click', async functi
     });
     const data = await res.json();
     if (data.reply) {
-      // 标记所有pending为已回复
       let hist = getCharHistory(currentDialogCharId);
       hist.forEach(m => {
         if (m.role === 'user' && m.replied === false) {
@@ -1428,7 +1440,6 @@ document.getElementById('dialogReplyBtn').addEventListener('click', async functi
         }
       });
       saveCharHistory(currentDialogCharId, hist);
-      // 添加AI回复
       addDialogMessage('assistant', data.reply);
       updateReplyCount();
     } else {
