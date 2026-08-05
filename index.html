@@ -131,7 +131,7 @@
     ::-webkit-scrollbar-thumb{background:#c6c6c8;border-radius:4px}
 
     /* ===== 手机端适配：禁止外部滚动，固定页面 ===== */
-    @media(max-width:420px){
+ @media(max-width:420px){
   html, body {
     overflow: hidden;
     height: 100%;
@@ -143,11 +143,11 @@
     align-items: center;
     justify-content: center;
   }
-  /* 非全屏默认样式：等比例缩小，留出大边距 */
+  /* 非全屏默认样式：等比例缩放，留出边距，固定大小不受内容影响 */
   .phone {
-    width: auto;
-    height: auto;
+    width: 100%;
     max-width: calc(100% - 24px);   /* 左右各留12px */
+    height: auto;
     max-height: calc(100vh - 100px); /* 上下各留50px */
     aspect-ratio: 380 / 780;
     padding: 6px;
@@ -156,10 +156,14 @@
     box-shadow: 0 0 20px rgba(0,0,0,0.5);
     margin: auto;
     overflow: hidden;
+    flex-shrink: 0; /* 防止被压缩 */
   }
   .phone .phone-screen {
     border-radius: 14px;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
   }
   /* 全屏模式：完全填满，无黑框 */
   .phone.fullscreen {
@@ -173,6 +177,7 @@
     box-shadow: none;
     margin: 0;
     overflow: hidden;
+    flex-shrink: 0;
   }
   .phone.fullscreen .phone-screen {
     border-radius: 0;
