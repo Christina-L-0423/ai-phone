@@ -1,6 +1,5 @@
 // api/chat.js
 export default async function handler(req, res) {
-  // 处理 CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -35,6 +34,7 @@ export default async function handler(req, res) {
 
   // 聊天
   if (action === 'chat') {
+    // 直接使用前端传来的 messages（已包含 system）
     let chatMessages = messages;
     if (!chatMessages || chatMessages.length === 0) {
       if (message) {
@@ -51,7 +51,7 @@ export default async function handler(req, res) {
     try {
       const payload = {
         model: model,
-        messages: chatMessages,
+        messages: chatMessages,  // 直接转发，不修改
         max_tokens: 1000,
         stream: stream
       };
@@ -66,11 +66,9 @@ export default async function handler(req, res) {
       });
 
       if (stream) {
-        // 流式响应 - 直接将 SSE 流转发给前端
         res.setHeader('Content-Type', 'text/event-stream');
         res.setHeader('Cache-Control', 'no-cache');
         res.setHeader('Connection', 'keep-alive');
-        // 将后端的流式响应管道到 res
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
         let done = false;
@@ -92,7 +90,6 @@ export default async function handler(req, res) {
       }
     } catch (err) {
       if (stream) {
-        // 流式出错，尝试发送错误事件
         res.write(`data: {"error":"服务器繁忙"}\n\n`);
         res.end();
       } else {
