@@ -1,12 +1,13 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" style="background-color: #E3EEFA !important; color-scheme: light !important;">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="color-scheme" content="light" />
+  <meta name="theme-color" content="#E3EEFA" />
   <title>AI 小手机</title>
   <style>
-    /* 强制浅色模式，阻止深色反色 */
+    /* 强制浅色模式 */
     :root { color-scheme: light !important; }
     html, body {
       background-color: #E3EEFA !important;
@@ -142,12 +143,12 @@
         align-items: center;
         justify-content: center;
       }
-      /* 非全屏默认样式：窄黑框 + 上下留空，且不溢出 */
+      /* 非全屏默认样式：窄黑框 + 等比例缩放，留出边距 */
       .phone {
         width: 100%;
-        height: calc(100vh - 60px);
+        height: auto;
         max-height: calc(100vh - 60px);
-        aspect-ratio: auto;
+        aspect-ratio: 380 / 780;
         padding: 8px;
         border-radius: 20px;
         background: #000;
@@ -164,6 +165,7 @@
         width: 100%;
         height: 100vh;
         max-height: 100vh;
+        aspect-ratio: auto;
         padding: 0;
         border-radius: 0;
         background: #E3EEFA !important;
@@ -1002,7 +1004,7 @@ modelSelect.addEventListener('change', () => {
 // 13. 初始化（额外强制背景色）
 // ============================================================
 window.addEventListener('load', async () => {
-  // 强制锁定背景色，防止深色模式反色
+  // 强制锁定背景色
   document.documentElement.style.backgroundColor = '#E3EEFA';
   document.documentElement.style.colorScheme = 'light';
   document.body.style.backgroundColor = '#E3EEFA';
