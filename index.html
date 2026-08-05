@@ -33,7 +33,6 @@
     *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
     body{display:flex;justify-content:center;align-items:center;margin:0;padding:0;background:#1a1a1a}
     
-    /* ===== 手机外壳 - 强制全屏 ===== */
     .phone{
       position:fixed;
       top:0;
@@ -60,23 +59,8 @@
       flex-direction:column;
     }
     
-    /* ===== Edge 浏览器专用修正 ===== */
-    @supports (-webkit-touch-callout: none) {
-      .phone { height:100% !important; }
-    }
-    /* 针对 Edge 的额外适配 */
-    @media screen and (-webkit-min-device-pixel-ratio:0) {
-      .phone { width:100% !important; height:100% !important; }
-    }
-    /* 确保 Edge 不会出现右侧空白 */
-    .phone {
-      width: 100% !important;
-      max-width: 100% !important;
-      height: 100% !important;
-      max-height: 100% !important;
-    }
+    .phone { width:100% !important; max-width:100% !important; height:100% !important; max-height:100% !important; }
     
-    /* ===== 状态栏 ===== */
     .status-bar{
       background:transparent;
       padding:12px 20px 8px;
@@ -91,7 +75,6 @@
     .status-bar .icons{display:flex;gap:8px;align-items:center}
     .status-bar .icons svg { stroke: #C5C8F0; fill: #C5C8F0; }
     
-    /* ===== 主屏幕 ===== */
     .home-screen{
       flex:1;
       padding:20px 16px 0;
@@ -133,7 +116,6 @@
     .dock .app-icon .icon-circle{width:56px;height:56px;border-radius:14px}
     .dock .app-icon .icon-circle svg{width:28px;height:28px}
     
-    /* ===== 其他页面 ===== */
     .page{display:none;flex-direction:column;height:100%;background:var(--bg) !important}
     .page.active{display:flex}
     .settings-page{padding:20px 16px;flex:1;overflow-y:auto;background:var(--bg) !important}
@@ -205,10 +187,43 @@
     .chat-dialog-page .message.user .msg-time{color:rgba(0,0,0,0.5)}
     .chat-dialog-page .message.assistant .msg-time{color:#8a9aa8}
     @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-    .chat-dialog-page .chat-input-area{padding:10px 12px 16px;background:var(--card-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;gap:8px;flex-shrink:0}
-    .chat-dialog-page .chat-input-area textarea{flex:1;border:1px solid var(--border);border-radius:20px;padding:8px 14px;font-size:15px;resize:none;outline:none;background:rgba(255,255,255,0.5);font-family:inherit;min-height:36px;max-height:80px}
+    .chat-dialog-page .chat-input-area{
+      padding:10px 12px 16px;
+      background:var(--card-bg);
+      backdrop-filter:blur(20px);
+      -webkit-backdrop-filter:blur(20px);
+      border-top:1px solid var(--border);
+      display:flex;
+      gap:8px;
+      flex-shrink:0;
+    }
+    .chat-dialog-page .chat-input-area textarea{
+      flex:1;
+      border:1px solid var(--border);
+      border-radius:20px;
+      padding:8px 14px;
+      font-size:15px;
+      resize:none;
+      outline:none;
+      background:rgba(255,255,255,0.5);
+      font-family:inherit;
+      min-height:36px;
+      max-height:80px;
+    }
     .chat-dialog-page .chat-input-area textarea:focus{border-color:var(--btn-active);background:#fff}
-    .chat-dialog-page .chat-input-area button{background:var(--btn);color:#1c1c1e;border:none;border-radius:20px;padding:0 16px;font-size:15px;font-weight:600;cursor:pointer;transition:background .2s}
+    .chat-dialog-page .chat-input-area button{
+      background:var(--btn);
+      color:#1c1c1e;
+      border:none;
+      border-radius:20px;
+      padding:0 16px;
+      font-size:15px;
+      font-weight:600;
+      cursor:pointer;
+      transition:background .2s;
+      white-space:nowrap;
+      min-width:44px;
+    }
     .chat-dialog-page .chat-input-area button:active{background:var(--btn-active)}
     .chat-dialog-page .prompt-box{background:var(--card-bg);padding:6px 16px;font-size:12px;color:#3a3a3c;border-bottom:1px solid var(--border);display:none;word-break:break-word}
     .chat-dialog-page .prompt-box.show{display:block}
@@ -216,7 +231,6 @@
     ::-webkit-scrollbar{width:3px}
     ::-webkit-scrollbar-thumb{background:var(--btn);border-radius:4px}
 
-    /* 朋友圈卡片 */
     .moment-card {
       background: var(--card-bg);
       backdrop-filter: blur(6px);
@@ -247,7 +261,6 @@
     .moment-card .comments .comment { font-size:13px; color:#3a3a3c; padding:2px 0; }
     .moment-card .comments .comment .name { font-weight:600; color:#1c1c1e; }
 
-    /* 朋友圈封面 */
     .moments-cover {
       position:relative;
       width:100%;
@@ -289,7 +302,6 @@
     .moments-profile .info .name { font-size:17px; font-weight:600; color:#1c1c1e; }
     .moments-profile .info .sig { font-size:13px; color:#6a7a8a; }
 
-    /* 朋友圈发布编辑器 */
     .moment-editor {
       position:absolute;
       top:0;left:0;right:0;bottom:0;
@@ -469,7 +481,6 @@
       color:#3a3a3c;
     }
 
-    /* ===== 手机端适配 ===== */
     @media(max-width:420px){
       html, body {
         overflow: hidden;
@@ -538,7 +549,7 @@
       </div>
     </div>
 
-    <!-- 设置页面 -->
+    <!-- 设置 -->
     <div class="page" id="settingsPage">
       <div class="settings-page">
         <div class="header"><span class="back" id="backFromSettings">‹</span><span>设置</span></div>
@@ -631,7 +642,8 @@
       <div class="chat-body" id="dialogMessages"></div>
       <div class="chat-input-area">
         <textarea id="dialogInput" rows="1" placeholder="输入问题..."></textarea>
-        <button id="dialogSendBtn">发送</button>
+        <button id="dialogSendBtn" title="发送消息（暂存）">📤</button>
+        <button id="dialogReplyBtn" title="AI 回答">⚡ <span id="replyCount">0</span></button>
       </div>
     </div>
 
@@ -842,19 +854,19 @@ updateTime();
 setInterval(updateTime, 10000);
 
 // ============================================================
-// 全屏模式 - 强制填满，不依赖 vw/vh
+// 全屏适配
 // ============================================================
+const phoneContainer = document.getElementById('phoneContainer');
+const phoneScreen = document.getElementById('phoneScreen');
 function applyFullscreen() {
-  // 直接使用 body 的宽高，无需额外调整
-  // 所有容器已使用 position:fixed + top/left/right/bottom:0
+  const h = window.innerHeight;
+  const w = window.innerWidth;
+  phoneContainer.style.width = w + 'px';
+  phoneContainer.style.height = h + 'px';
+  phoneScreen.style.height = h + 'px';
 }
-
-// 初始适配
 applyFullscreen();
-
-// 窗口变化时无需额外操作，因为 position:fixed 会自动适应
-
-// 针对 PWA 模式（display-mode: standalone）
+window.addEventListener('resize', applyFullscreen);
 if (window.matchMedia('(display-mode: standalone)').matches) {
   applyFullscreen();
 }
@@ -907,7 +919,6 @@ function renderWechatContent() {
   else if (activeTab === 'profile') renderProfile(container);
 }
 
-// ========== 聊天列表 ==========
 function renderChatList(container) {
   const chars = getChars();
   if (chars.length === 0) {
@@ -939,7 +950,6 @@ function renderChatList(container) {
   });
 }
 
-// ========== 通讯录 ==========
 function renderContactList(container) {
   const chars = getChars();
   let html = `
@@ -987,7 +997,7 @@ function renderContactList(container) {
 }
 
 // ============================================================
-// 朋友圈 - 完整功能
+// 朋友圈
 // ============================================================
 let editingMomentIndex = null;
 
@@ -1294,7 +1304,7 @@ document.getElementById('profileEditSaveBtn').addEventListener('click', function
 });
 
 // ============================================================
-// 角色聊天功能
+// 角色聊天（核心改动：增加发送+AI回答两个按钮）
 // ============================================================
 function openDialog(char) {
   currentDialogCharId = char.id;
@@ -1304,7 +1314,9 @@ function openDialog(char) {
   updateDialogPrompt();
   renderDialogMessages();
   document.getElementById('chatDialogPage').classList.add('active');
+  updateReplyCount();
 }
+
 function updateDialogPrompt() {
   if (!currentDialogCharId) { document.getElementById('dialogPromptBox').innerHTML = ''; return; }
   const chars = getChars();
@@ -1318,6 +1330,7 @@ function updateDialogPrompt() {
 document.getElementById('dialogAvatar').addEventListener('click', () => {
   document.getElementById('dialogPromptBox').classList.toggle('show');
 });
+
 function renderDialogMessages() {
   const container = document.getElementById('dialogMessages');
   if (!currentDialogCharId) { container.innerHTML = ''; return; }
@@ -1329,19 +1342,117 @@ function renderDialogMessages() {
   let html = '';
   history.forEach(msg => {
     const t = new Date().toLocaleTimeString('zh-CN', {hour:'2-digit',minute:'2-digit'});
-    html += `<div class="message ${msg.role}">${msg.content}<div class="msg-time">${t}</div></div>`;
+    const isPending = msg.role === 'user' && msg.replied === false;
+    const pendingClass = isPending ? ' style="opacity:0.7;border:1px dashed #8a9aa8;"' : '';
+    html += `<div class="message ${msg.role}"${pendingClass}>${msg.content}<div class="msg-time">${t}${isPending ? ' ⏳' : ''}</div></div>`;
   });
   container.innerHTML = html;
   container.scrollTop = container.scrollHeight;
 }
-function addDialogMessage(role, content) {
+
+function addDialogMessage(role, content, replied = true) {
   if (!currentDialogCharId) return;
   const history = getCharHistory(currentDialogCharId);
-  history.push({ role, content });
+  history.push({ role, content, replied });
   saveCharHistory(currentDialogCharId, history);
   renderDialogMessages();
   renderWechatContent();
 }
+
+function updateReplyCount() {
+  if (!currentDialogCharId) return;
+  const history = getCharHistory(currentDialogCharId);
+  const count = history.filter(m => m.role === 'user' && m.replied === false).length;
+  document.getElementById('replyCount').textContent = count;
+}
+
+// 发送按钮（只添加用户消息，不触发AI）
+document.getElementById('dialogSendBtn').addEventListener('click', function() {
+  const msg = document.getElementById('dialogInput').value.trim();
+  if (!msg) { alert('请输入内容'); return; }
+  if (!currentDialogCharId) { alert('请先选择角色'); return; }
+  addDialogMessage('user', msg, false);
+  document.getElementById('dialogInput').value = '';
+  document.getElementById('dialogInput').style.height = 'auto';
+  updateReplyCount();
+});
+
+// AI回答按钮（批量处理未回复消息）
+document.getElementById('dialogReplyBtn').addEventListener('click', async function() {
+  if (!currentDialogCharId) { alert('请先选择角色'); return; }
+  const base = apiBase.value.trim(), key = apiKey.value.trim(), model = modelSelect.value;
+  if (!base || !key) { alert('请先设置 API'); showPage('apiSettingsPage'); return; }
+  if (!model) { alert('请先选择模型'); return; }
+
+  const history = getCharHistory(currentDialogCharId);
+  const pending = history.filter(m => m.role === 'user' && m.replied === false);
+  if (pending.length === 0) { alert('没有待回复的消息'); return; }
+
+  const chars = getChars();
+  const char = chars.find(c => c.id === currentDialogCharId);
+  const messages = [];
+  const profile = getProfile();
+  if (profile.persona) {
+    messages.push({ role: 'system', content: '用户人设：' + profile.persona });
+  }
+  if (char && char.prompt) {
+    messages.push({ role: 'system', content: char.prompt });
+  }
+  // 取所有历史消息（包括已回复和待回复），保持顺序
+  const allHistory = getCharHistory(currentDialogCharId);
+  allHistory.forEach(m => {
+    if (m.role === 'user' || m.role === 'assistant') {
+      messages.push({ role: m.role, content: m.content });
+    }
+  });
+
+  // 显示加载状态
+  const btn = document.getElementById('dialogReplyBtn');
+  const originalText = btn.innerHTML;
+  btn.innerHTML = '⏳ 处理中...';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'chat', baseUrl: base, apiKey: key, model, messages, stream: false })
+    });
+    const data = await res.json();
+    if (data.reply) {
+      // 标记所有pending为已回复
+      let hist = getCharHistory(currentDialogCharId);
+      hist.forEach(m => {
+        if (m.role === 'user' && m.replied === false) {
+          m.replied = true;
+        }
+      });
+      saveCharHistory(currentDialogCharId, hist);
+      // 添加AI回复
+      addDialogMessage('assistant', data.reply);
+      updateReplyCount();
+    } else {
+      alert('AI 没有返回回复');
+    }
+  } catch (e) {
+    alert('请求失败：' + e.message);
+  } finally {
+    btn.innerHTML = originalText;
+    btn.disabled = false;
+  }
+});
+
+document.getElementById('dialogInput').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    document.getElementById('dialogSendBtn').click();
+  }
+});
+document.getElementById('dialogInput').addEventListener('input', function() {
+  this.style.height = 'auto';
+  this.style.height = this.scrollHeight + 'px';
+});
+
 function clearDialogHistory() {
   if (!currentDialogCharId) return;
   const history = getCharHistory(currentDialogCharId);
@@ -1349,6 +1460,7 @@ function clearDialogHistory() {
   saveCharHistory(currentDialogCharId, []);
   renderDialogMessages();
   renderWechatContent();
+  updateReplyCount();
 }
 document.getElementById('backFromDialog').addEventListener('click', () => {
   document.getElementById('chatDialogPage').classList.remove('active');
@@ -1357,108 +1469,7 @@ document.getElementById('backFromDialog').addEventListener('click', () => {
 document.getElementById('dialogNewBtn').addEventListener('click', clearDialogHistory);
 
 // ============================================================
-// 发送消息
-// ============================================================
-document.getElementById('dialogSendBtn').addEventListener('click', async () => {
-  const base = apiBase.value.trim(), key = apiKey.value.trim(), model = modelSelect.value;
-  const msg = document.getElementById('dialogInput').value.trim();
-  if (!base || !key) { alert('请先设置 API'); showPage('apiSettingsPage'); return; }
-  if (!model) { alert('请先选择模型'); return; }
-  if (!msg) { alert('请输入问题'); return; }
-  if (!currentDialogCharId) { alert('没有选中的角色'); return; }
-  const chars = getChars();
-  const char = chars.find(c => c.id === currentDialogCharId);
-  if (!char) { alert('角色不存在'); return; }
-
-  addDialogMessage('user', msg);
-  document.getElementById('dialogInput').value = '';
-  document.getElementById('dialogInput').style.height = 'auto';
-
-  let history = getCharHistory(currentDialogCharId);
-  const messages = [];
-  const profile = getProfile();
-  if (profile.persona) {
-    messages.push({ role: 'system', content: '用户人设：' + profile.persona });
-  }
-  if (char.prompt) messages.push({ role: 'system', content: char.prompt });
-  const filtered = history.filter(m => m.content !== '🤔 思考中...');
-  messages.push(...filtered);
-  history.push({ role: 'assistant', content: '🤔 思考中...' });
-  saveCharHistory(currentDialogCharId, history);
-  renderDialogMessages();
-
-  const isStream = streamToggle.checked;
-  try {
-    const res = await fetch('/api/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'chat', baseUrl: base, apiKey: key, model, messages, stream: isStream })
-    });
-    if (isStream) {
-      let h = getCharHistory(currentDialogCharId);
-      if (h.length > 0 && h[h.length-1].content === '🤔 思考中...') { h.pop(); saveCharHistory(currentDialogCharId, h); }
-      h.push({ role: 'assistant', content: '' });
-      saveCharHistory(currentDialogCharId, h);
-      renderDialogMessages();
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      let done = false, full = '';
-      while (!done) {
-        const { value, done: d } = await reader.read();
-        done = d;
-        if (done) break;
-        const chunk = decoder.decode(value);
-        const lines = chunk.split('\n');
-        for (const line of lines) {
-          if (line.startsWith('data: ')) {
-            const json = line.slice(6);
-            if (json === '[DONE]') continue;
-            try {
-              const parsed = JSON.parse(json);
-              const delta = parsed.choices?.[0]?.delta?.content;
-              if (delta) {
-                full += delta;
-                let cur = getCharHistory(currentDialogCharId);
-                if (cur.length > 0 && cur[cur.length-1].role === 'assistant') {
-                  cur[cur.length-1].content = full;
-                  saveCharHistory(currentDialogCharId, cur);
-                  renderDialogMessages();
-                }
-              }
-            } catch (e) {}
-          }
-        }
-      }
-      let fin = getCharHistory(currentDialogCharId);
-      if (fin.length > 0 && fin[fin.length-1].role === 'assistant') {
-        fin[fin.length-1].content = full || '无回复';
-        saveCharHistory(currentDialogCharId, fin);
-        renderDialogMessages();
-        renderWechatContent();
-      }
-    } else {
-      const data = await res.json();
-      let h = getCharHistory(currentDialogCharId);
-      if (h.length > 0 && h[h.length-1].content === '🤔 思考中...') { h.pop(); saveCharHistory(currentDialogCharId, h); }
-      if (data.reply) addDialogMessage('assistant', data.reply);
-      else addDialogMessage('assistant', '❌ 无回复');
-    }
-  } catch (e) {
-    let h = getCharHistory(currentDialogCharId);
-    if (h.length > 0 && h[h.length-1].content === '🤔 思考中...') { h.pop(); saveCharHistory(currentDialogCharId, h); }
-    addDialogMessage('assistant', '❌ 出错：' + e.message);
-  }
-});
-document.getElementById('dialogInput').addEventListener('keydown', (e) => {
-  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); document.getElementById('dialogSendBtn').click(); }
-});
-document.getElementById('dialogInput').addEventListener('input', function() {
-  this.style.height = 'auto';
-  this.style.height = this.scrollHeight + 'px';
-});
-
-// ============================================================
-// 角色详情（含头像编辑，只有编辑模式可换头像）
+// 角色详情（含头像编辑）
 // ============================================================
 function openContactDetail(charId) {
   detailCharId = charId;
@@ -1720,8 +1731,6 @@ window.addEventListener('load', async () => {
   document.documentElement.style.backgroundColor = '#F0F4FA';
   document.documentElement.style.colorScheme = 'light';
   document.body.style.backgroundColor = '#F0F4FA';
-
-  // 强制全屏适配（再次确保）
   applyFullscreen();
 
   const versionEl = document.getElementById('versionInfo');
