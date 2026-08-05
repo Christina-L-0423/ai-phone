@@ -45,37 +45,17 @@
             background: #1a1a1a
         }
 
-        .phone {
-            width: 100%;
-            max-width: 420px;
-            aspect-ratio: 380/780;
-            height: auto;
-            max-height: 95vh;
-            background: #000;
-            border-radius: 40px;
-            padding: 12px;
-            box-shadow: 0 30px 80px rgba(0, 0, 0, .8), inset 0 0 0 2px #333;
-            position: relative;
-            margin: 0 auto;
-            transition: all 0.3s ease;
-        }
-
+        /* 为 Edge 底部栏留出安全边距 */
         .phone-screen {
-            width: 100%;
-            height: 100%;
-            background: var(--bg) !important;
-            border-radius: 30px;
-            overflow: hidden;
-            position: relative;
-            display: flex;
-            flex-direction: column
+            padding-bottom: env(safe-area-inset-bottom, 0px);
         }
 
+        /* 全屏模式使用 100dvh */
         .phone.fullscreen {
+            height: 100dvh !important;
             width: 100vw !important;
-            height: 100vh !important;
             max-width: 100vw !important;
-            max-height: 100vh !important;
+            max-height: 100dvh !important;
             aspect-ratio: unset !important;
             border-radius: 0 !important;
             padding: 0 !important;
@@ -85,6 +65,16 @@
             position: fixed;
             top: 0;
             left: 0;
+        }
+
+        /* 非全屏模式保持比例 */
+        .phone {
+            width: 100%;
+            max-width: 420px;
+            aspect-ratio: 380 / 780;
+            height: auto;
+            max-height: 95vh;
+            /* 其他不变 */
         }
 
         .phone.fullscreen .phone-screen {
@@ -2731,6 +2721,25 @@
             document.documentElement.style.colorScheme = 'light';
             document.body.style.backgroundColor = '#F0F4FA';
 
+            // 检测是否处于 PWA 模式
+            if (window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches) {
+                const h = window.innerHeight;
+                document.documentElement.style.height = h + 'px';
+                document.body.style.height = h + 'px';
+                const phoneScreen = document.getElementById('phoneScreen');
+                if (phoneScreen) phoneScreen.style.height = h + 'px';
+            }
+
+            // 监听视口变化
+            window.addEventListener('resize', function () {
+                if (document.querySelector('.phone.fullscreen')) {
+                    const h = window.innerHeight;
+                    document.documentElement.style.height = h + 'px';
+                    document.body.style.height = h + 'px';
+                    const phoneScreen = document.getElementById('phoneScreen');
+                    if (phoneScreen) phoneScreen.style.height = h + 'px';
+                }
+            });
             // 强制全屏适配
             if (fullscreenToggle.checked) {
                 const h = window.innerHeight;
